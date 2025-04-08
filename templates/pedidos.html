@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/style_pedidos.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="sidebar-container">
+    {% include "sidebar.html" %}
+    
+    <div class="content p-4">
+        <div class="row">
+            <div class="col-md-8">
+                <h2 class="mb-4" style="color: #1e9b0f">Selecciona una hamburguesa</h2>
+                <div class="row row-cols-1 row-cols-md-2 g-4">
+                    {% for h in hamburguesas %}
+                    <div class="col">
+                        <div class="card h-100 shadow">
+                            <div class="card-body">
+                                <h5 class="card-title" style="color: #1e9b0f">{{ h.nombre }}</h5>
+                                <p class="card-text">{{ h.descripcion }}</p>
+                                <p class="fw-bold">{{ h.precio }} €</p>
+                                <a href="{% url 'personalizar_hamburguesa' h.id %}" class="btn btn-dark">Personalizar</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <h4 class="text-center mb-3" style="color: #1e9b0f">Tu pedido</h4>
+                <div id="pedidoResumen" class="p-3 border rounded bg-light">
+                    {% if pedido %}
+                        <ul class="list-group">
+                            {% for item in pedido %}
+                                <li class="list-group-item">
+                                    <strong>{{ item.hamburguesa }}</strong>
+                                    <br>
+                                    <small>Ingredientes extras:</small>
+                                    <ul>
+                                        {% for ing in item.ingredientes %}
+                                            <li>{{ ing.nombre }} x{{ ing.cantidad }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                    <form method="POST" action="{% url 'eliminar_pedido' forloop.counter0 %}" style="display:inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn-eliminar">Eliminar</button>
+                                    </form>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted">Aún no has añadido hamburguesas.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

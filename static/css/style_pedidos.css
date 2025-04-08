@@ -1,0 +1,20 @@
+.card {
+    border: 2px solid #28c112;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.card:hover {
+    transform: scale(1.02);
+    background-color: #e8f5e9;
+}
+
+#pedidoResumen {
+    min-height: 300px;
+}
+
+.btn-eliminar {
+        background: #e74c3c;
+        color: white;
+        border-radius: 6px;
+    }

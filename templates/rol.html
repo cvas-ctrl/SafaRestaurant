@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/style_rol.css' %}">
+    <style>
+    .nav-link {
+                color: #28c112;
+                text-decoration: none;
+                padding: 0.5rem 1rem;
+                margin-left: 1rem;
+                border-radius: 4px;
+                transition: background 0.3s;
+            }
+            
+            .nav-link:hover{
+                background-color: #28c112;;
+                color: black;
+            }
+    </style>
+{% endblock %}
+
+{% block content %}
+<section class="container">
+    <h1 class="titulo-principal">Chill Burguer</h1>
+    <p class="texto-principal" style="font-size: 2.5rem; color: white; max-width: 800px; margin: 0 auto 6rem;">
+        Bienvenido a nuestro sistema de gestión
+    </p>
+    
+    <div class="container-roles">
+        
+        <!-- Camarero -->
+        <div class="cards-rol" onclick="window.location.href='{% url 'seguridad_camarero' %}'" style="cursor: pointer;">
+            <h2 class="titulo-rol">Camarero</h2>
+            <p class="descripcion-rol">Gestiona mesas y atiende pedidos</p>
+        </div>
+        
+        <!-- Cocinero -->
+        <div class="cards-rol" onclick="window.location.href='{% url 'cocinero' %}'" style="cursor: pointer;">
+            <h2 class="titulo-rol">Cocinero</h2>
+            <p class="descripcion-rol">Prepara los pedidos y gestiona la cocina</p>
+        </div>
+        
+        <!-- Administrador -->
+        <div class="cards-rol" onclick="window.location.href='{% url 'seguridad_admin' %}'" style="cursor: pointer;">
+            <h2 class="titulo-rol">Administrador</h2>
+            <p class="descripcion-rol">Gestiona el restaurante y empleados</p>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

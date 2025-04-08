@@ -1,0 +1,26 @@
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/style_adminn.css' %}">
+    <style>
+
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Gestiona a los empleados</h1>
+    <div class="options">
+        <div class="box" onclick="window.location.href='{% url 'admin' %}'">
+            <img src="{% static 'img/camarero.png' %}" alt="Camareros">
+            <h2>Camareros</h2>
+        </div>
+        <div class="box" >
+            <img src="{% static 'img/cocinero.png' %}" alt="Cocineros">
+            <h2>Cocineros</h2>
+        </div>
+    </div>
+</div>
+{% endblock %}

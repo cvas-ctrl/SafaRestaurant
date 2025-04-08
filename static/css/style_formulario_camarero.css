@@ -1,0 +1,133 @@
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    padding-top: 4rem;
+}
+
+.form-container {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    width: 100%;
+    margin: auto;
+}
+
+.form-title {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-weight: bold;
+    color: #1c7e03;
+}
+
+.form-title i {
+    margin-right: 10px;
+}
+
+.form-control {
+    padding: 5px;
+    border: 2px solid #1c7e03;
+    border-radius: 5px;
+    transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #000000;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.mb-4 {
+    margin-bottom: 1.5rem;
+}
+
+.mb-3 {
+    text-align: center;
+    padding-bottom: 1rem;
+}
+
+.input-group-text {
+    background-color: #f1f1f1;
+    border: 1px solid #1c7e03;
+    color: #1c7e03;
+}
+
+.input-group-text i {
+    color: #1c7e03;
+}
+
+.invalid-feedback {
+    color: #e74c3c;
+}
+
+.form-check-label {
+    color: #1c7e03;
+    font-weight: bold;
+}
+
+.form-check-input {
+    width: 3em;
+    height: 1.5em;
+}
+
+.btn-primary {
+    background-color: #1c7e03;
+    color: black;
+    border: none;
+    padding: 0.75rem;
+    border-radius: 5px;
+    width: 100%;
+    transition: background 0.3s ease;
+    font-weight: bold;
+}
+
+.btn-primary:hover {
+    background-color: black;
+    color: #1c7e03;
+}
+
+.btn-amargura {
+    background-color: #1c7e03;
+    color: black;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.btn-amargura:hover {
+    background-color: black;
+    color: #1c7e03;
+    transform: scale(1.05);
+}
+
+.d-grid {
+    display: grid;
+    gap: 1rem;
+}
+
+.d-md-flex {
+    display: flex;
+}
+
+.justify-content-md-end {
+    justify-content: flex-end;
+}
+
+@media (max-width: 768px) {
+    .form-container {
+        padding: 1.5rem;
+    }
+
+    .form-title {
+        font-size: 1.5rem;
+    }
+}

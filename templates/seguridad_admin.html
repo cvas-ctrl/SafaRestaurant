@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/style_seguridad_admin.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="form-container">
+        <h2 class="form-title">
+            <i class="bi bi-shield-lock"></i> Acceso al Sistema de Administrador
+        </h2>
+        
+        <form id="loginForm">
+            {% csrf_token %}
+            
+            <div class="mb-4">
+                <label for="selectRol" style="color: white" class="form-label fw-bold">Rol</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-person-rolodex"></i></span>
+                    <select class="form-select" id="selectRol" required>
+                        <option value="admin">Administrador</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="mb-4">
+                <label for="inputPassword" style="color: white" class="form-label fw-bold">Contraseña</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-key"></i></span>
+                    <input type="password" class="form-control" id="inputPassword" 
+                           placeholder="Ingrese la contraseña" required>
+                    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="mb-4">
+                <label for="inputPIN" style="color: white" class="form-label fw-bold">PIN de Seguridad</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                    <input type="password" class="form-control" id="inputPIN" 
+                           placeholder="Ingrese el PIN" maxlength="4">
+                </div>
+            </div>
+         
+            <div class="d-grid gap-2 mt-4">
+                <a href="{% url 'adminn' %}" class="btn btn-amargura">
+                    <i class="bi bi-box-arrow-in-right"></i> Ingresar
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/style_formulario_camarero.css' %}">
+
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="form-container">
+        <h2 class="form-title">
+            <i class="bi bi-pencil-square"></i> Formulario de Registro
+        </h2>
+
+        <form method="post" action="{% url 'new_camarero' camarero.id|default:0 %}">
+            {% csrf_token %}
+
+            <div class="mb-4">
+                <label for="inputAutor" class="form-label fw-bold">Camarero</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+                    <input type="text" name="nombre" class="form-control" value="{{ camarero.nombre | default:''}}" 
+                           id="inputAutor" placeholder="Nombre del camarero" required>
+                </div>
+                <div class="invalid-feedback">
+                    Por favor ingrese un autor válido.
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label for="inputNombre" class="form-label fw-bold">DNI</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-card-heading"></i></span>
+                    <input type="text" class="form-control" value="{{ camarero.dni | default:''}}" id="inputNombre"
+                           name="dni" placeholder="Ingrese el DNI" required>
+                </div>
+                <div class="invalid-feedback">
+                    Por favor ingrese un nombre válido.
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label for="inputAutor" class="form-label fw-bold">Email</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+                    <input type="text" name="email" class="form-control" value="{{ camarero.email | default:''}}"
+                           id="inputAutor" placeholder="Ingrese su gmail" required>
+                </div>
+                <div class="invalid-feedback">
+                    Por favor ingrese un autor válido.
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label for="inputFecha" class="form-label fw-bold">Fecha de nacimiento</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-calendar-date"></i></span>
+                    <input type="date" name="fecha" class="form-control" value="{{ camarero.fecha_nacimiento | date:'Y-m-d'}}"
+                           id="inputFecha" required>
+                </div>
+                <div class="invalid-feedback">
+                    Por favor seleccione una fecha válida.
+                </div>
+            </div>
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                <button type="submit" class="btn-amargura">
+                    <i class="bi bi-save"></i> Guardar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

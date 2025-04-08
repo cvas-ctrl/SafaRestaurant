@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/style_personalizar.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="sidebar-container">
+    {% include "sidebar.html" %}
+
+    <div class="content d-flex justify-content-center align-items-center">
+        <div class="card personalizar-card shadow-lg">
+            <div class="card-body">
+                <h2 class="text-center mb-4" style="color: #1e9b0f">{{ hamburguesa.nombre }}</h2>
+                <p class="text-center text-muted mb-4">{{ hamburguesa.descripcion }}</p>
+
+                <form method="POST" action="{% url 'agregar_a_pedido' hamburguesa.id %}">
+                    {% csrf_token %}
+                    <h5 class="mb-3">Ingredientes</h5>
+                    <div class="form-group mb-4">
+                        {% for ingrediente in todos_ingredientes %}
+                        <div class="form-check">
+                            <label for="ingrediente{{ ingrediente.id }}">
+                                {{ ingrediente.nombre }}
+                            </label>
+                            <input type="number" name="ingredientes_{{ ingrediente.id }}" min="0" value="0"
+                                   id="ingrediente{{ ingrediente.id }}" class="form-control" style="width: 60px;">
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-success">Añadir al pedido</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

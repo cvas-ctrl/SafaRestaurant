@@ -1,0 +1,30 @@
+.sidebar-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.content {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+}
+
+.personalizar-card {
+    width: 100%;
+    max-width: 600px;
+    background-color: #fff;
+    border-radius: 20px;
+    padding: 30px;
+}
+
+.form-check {
+    margin-bottom: 10px;
+}
+
+.btn-success {
+    font-weight: bold;
+    font-size: 1.1rem;
+    border-radius: 12px;
+}

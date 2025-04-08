@@ -1,0 +1,37 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chill Burguer</title>
+    <link rel="stylesheet" href="{% static 'css/style_camarero.css' %}">
+</head>
+<body>
+    <div class="sidebar">
+            <div class="sidebar-profile">
+                <img src="{% static 'img/LOGO.png' %}" alt="Tu Foto" class="profile-img">
+                <div class="profile-info">
+                    <span class="profile-role">Camarero</span>
+                </div>
+            </div>
+            <div class="sidebar-menu">
+                <a style="cursor: pointer" onclick="window.location.href='{% url 'camarero' %}'">
+                    <img src="{% static 'img/silla.png' %}" alt="Mesas" class="menu-icon">
+                    <span>Mesas</span>
+                </a>
+                <a style="cursor: pointer" onclick="window.location.href='{% url 'ver_pedidos' %}'">
+                    <img src="{% static 'img/pedidos.png' %}" alt="Pedidos" class="menu-icon">
+                    <span>Tomar pedidos</span>
+                </a>
+                <a href="#">
+                    <img src="{% static 'img/reservas.png' %}" alt="Reservas" class="menu-icon">
+                    <span>Reservas</span>
+                </a>
+                <a href="#">
+                    <img src="{% static 'img/cuenta.png' %}" alt="Cuentas" class="menu-icon">
+                    <span>Cuentas</span>
+                </a>
+            </div>
+        </div>
+</body>
+</html>
