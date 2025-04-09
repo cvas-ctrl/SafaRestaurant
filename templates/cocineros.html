@@ -1,0 +1,201 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <style>
+        body {
+        background-color: #f8f9fa;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .contenedor-admin {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+    
+    .titulo-admin {
+        text-align: center;
+        color: #28c112; 
+        margin-bottom: 2rem;
+        font-size: 2.5rem;
+        position: relative;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+    
+    .titulo-admin::after {
+        content: '';
+        display: block;
+        width: 100px;
+        height: 4px;
+        background: black;
+        margin: 0.5rem auto;
+    }
+    
+    .grid-empleados {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2rem;
+        justify-content: center;
+        padding-top: 30px;
+    }
+    
+    .tarjeta-empleado {
+        background: linear-gradient(135deg, #ffffff, #f8f9fa); 
+        border-radius: 20px; 
+        padding: 1.5rem;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 3px solid #28c112; 
+    }
+    
+    .tarjeta-empleado:hover {
+        transform: translateY(-10px);
+        box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.25);
+        background: linear-gradient(135deg, #e3ffe7, #d9f5d5); 
+    }
+    
+    .avatar-empleado {
+        font-size: 3rem;
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+    
+    .tarjeta-empleado h2 {
+        color: #28c112; 
+        text-align: center;
+        margin-bottom: 1rem;
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+    
+    .detalle-empleado p {
+        color: #7f8c8d;
+        margin: 0.5rem 0;
+        font-size: 0.95rem;
+    }
+    
+    .detalle-empleado strong {
+        color: black;
+    }
+    
+    .acciones-empleado {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+    
+    .btn-editar, .btn-eliminar, .btn-anadir {
+        padding: 0.75rem 1.5rem; 
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-anadir {
+        background: #000000;
+        color: #28c112; 
+        border-radius: 6px; 
+    }
+    
+    .btn-editar {
+        background: #3498db;
+        color: white;
+        border-radius: 6px;
+    }
+    
+    .btn-eliminar {
+        background: #e74c3c;
+        color: white;
+        border-radius: 6px;
+    }
+    
+    .btn-editar:hover {
+        background: #2980b9;
+    }
+    
+    .btn-eliminar:hover {
+        background: #c0392b;
+    }
+    
+    .btn-anadir:hover {
+        background-color: #28c112; 
+        color: black;
+    }
+    
+    @media (max-width: 768px) {
+        .grid-empleados {
+            grid-template-columns: 1fr;
+        }
+    
+        .titulo-admin {
+            font-size: 2rem;
+        }
+    }
+
+        .nav-link {
+            color: #28c112;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            margin-left: 1rem;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+            
+        .nav-link:hover{
+            background-color: #28c112;;
+            color: black;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="contenedor-admin">
+    <h1 class="titulo-admin">Cocineros</h1>
+    <a href="{% url 'crear_cocinero' %}"> 
+        <button class="btn-anadir" >Añadir un cocinero</button>
+    </a>
+    <div class="grid-empleados">
+        {% for c in cocineros %}
+        <div class="tarjeta-empleado" style="cursor: pointer">
+            <div class="avatar-empleado">
+            </div>
+            <h2>{{ c.nombre }} {{ c.apellidos }}</h2>
+            <div class="detalle-empleado">
+                <p><strong>DNI:</strong> {{ c.dni }}</p>
+                <p><strong>Email:</strong> {{ c.email }}</p>
+                <p><strong>Nacimiento:</strong> {{ c.fecha_nacimiento|date:"d/m/Y" }}</p>
+                <!-- Añade esta línea para mostrar el tipo -->
+                <p><strong>Tipo:</strong> 
+                   {% if c.tareas.first %}
+                       {{ c.tareas.first.get_tipo_display }}
+                   {% else %}
+                       No asignado
+                   {% endif %}
+                </p>
+            </div>
+        
+            <div class="acciones-empleado">
+                <button class="btn-editar" onclick="window.location.href='{% url 'editar_cocinero' id=c.id %}'">Editar</button>
+                <form method="POST" action="{% url 'eliminar_cocinero' c.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-eliminar">Eliminar</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

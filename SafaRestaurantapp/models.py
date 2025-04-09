@@ -28,3 +28,35 @@ class Ingrediente(models.Model):
     def __str__(self):
         return self.nombre
 
+class Cocinero(models.Model):
+    nombre = models.CharField(max_length=250)
+    apellidos = models.CharField(max_length=250)
+    dni = models.CharField(max_length=250)
+    email = models.EmailField(max_length=250)
+    fecha_nacimiento = models.DateField()
+
+    def __str__(self):
+        return self.nombre
+
+class TipoCocinero(models.TextChoices):
+    ASADOR = 'ASADOR', 'Asador'
+    FREIDOR = 'FREIDOR', 'Freidor'
+    PLANCHA = 'PLANCHA', 'Plancha'
+    GENERAL = 'GENERAL', 'General'
+
+class TareaCocina(models.Model):
+    codigo = models.CharField(max_length=15)
+
+    tipo = models.CharField(
+        max_length=50,
+        choices=TipoCocinero.choices,
+        default=TipoCocinero.GENERAL
+    )
+
+    cocinero = models.ForeignKey(
+        'Cocinero',
+        on_delete=models.DO_NOTHING,
+        related_name='tareas'
+    )
+
+

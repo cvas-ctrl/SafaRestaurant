@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/style_formulario_camarero.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="form-container">
+        <h2 class="form-title">
+            <i class="bi bi-pencil-square"></i> 
+            {% if cocinero.id %}Editar{% else %}Crear{% endif %} Cocinero
+        </h2>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="mb-4">
+                <label for="inputNombre" class="form-label fw-bold">Nombre</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+                    <input type="text" name="nombre" class="form-control" 
+                           value="{{ cocinero.nombre|default:'' }}" 
+                           id="inputNombre" placeholder="Nombre del cocinero" required>
+                </div>
+            </div>
+        
+            <div class="mb-4">
+                <label for="inputApellidos" class="form-label fw-bold">Apellidos</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+                    <input type="text" name="apellidos" class="form-control" 
+                           value="{{ cocinero.apellidos|default:'' }}" 
+                           id="inputApellidos" placeholder="Apellidos del cocinero" required>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label for="inputDni" class="form-label fw-bold">DNI</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-card-heading"></i></span>
+                    <input type="text" class="form-control" 
+                           value="{{ cocinero.dni|default:'' }}" 
+                           id="inputDni" name="dni" placeholder="Ingrese el DNI" required>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label for="inputEmail" class="form-label fw-bold">Email</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                    <input type="email" name="email" class="form-control" 
+                           value="{{ cocinero.email|default:'' }}"
+                           id="inputEmail" placeholder="Ingrese su email" required>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label for="inputFecha" class="form-label fw-bold">Fecha de nacimiento</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-calendar-date"></i></span>
+                    <input type="date" name="fecha" class="form-control" 
+                           value="{{ cocinero.fecha_nacimiento|date:'Y-m-d' }}"
+                           id="inputFecha" required>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label for="inputTipo" class="form-label fw-bold">Tipo de Cocinero</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-people"></i></span>
+                    <select class="form-select" id="inputTipo" name="tipo" required>
+                        <option value="">Seleccione un tipo</option>
+                        {% for valor, nombre in elecciones %}
+                            <option value="{{ valor }}" 
+                                {% if tipo_actual == valor %}selected{% endif %}>
+                                {{ nombre }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                <button type="submit" class="btn-amargura">
+                    <i class="bi bi-save"></i> 
+                    {% if cocinero.id %}Actualizar{% else %}Crear{% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

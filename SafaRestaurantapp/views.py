@@ -2,7 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from reportlab.pdfgen import canvas
 from SafaRestaurantapp.forms import *
-from SafaRestaurantapp.models import Camarero, Hamburguesa, Ingrediente
+from SafaRestaurantapp.models import Camarero, Hamburguesa, Ingrediente, Cocinero, TareaCocina, TipoCocinero
+
 
 # ============================ PÁGINAS ESTÁTICAS ============================
 
@@ -56,10 +57,8 @@ def new_camarero(request, id):
         camarero_nuevo.email = request.POST['email']
         camarero_nuevo.fecha_nacimiento = request.POST['fecha']
 
-        # Guardar en base de datos
         camarero_nuevo.save()
 
-        # Redirigir al usuario a la página de listado
         return redirect('admin')
     else:
         return render(request, 'formulario_camarero.html', {'camarero': camarero_nuevo})
@@ -143,5 +142,56 @@ def eliminar_pedido(request, id):
         pedido.pop(id)
         request.session['pedido'] = pedido
     return redirect('ver_pedidos')
+
+# ============================ COCINEROS(ADMIN) ============================
+
+def cargar_listado_cocineros(request):
+    cocineros = Cocinero.objects.prefetch_related('tareas').all()
+
+    return render(request, 'cocineros.html', {
+        'cocineros': cocineros
+    })
+
+def formulario_cocinero(request):
+    return render(request, 'formulario_cocinero.html')
+
+
+def crear_editar_cocinero(request, id=None):
+    if id:
+        cocinero = Cocinero.objects.get(id=id)
+        tarea = TareaCocina.objects.filter(cocinero=cocinero).first()
+    else:
+        cocinero = Cocinero()
+        tarea = None
+
+    if request.method == 'POST':
+        cocinero.nombre = request.POST['nombre']
+        cocinero.apellidos = request.POST['apellidos']
+        cocinero.dni = request.POST['dni']
+        cocinero.email = request.POST['email']
+        cocinero.fecha_nacimiento = request.POST['fecha']
+        cocinero.save()
+
+        if not tarea:
+            tarea = TareaCocina(cocinero=cocinero)
+
+        tarea.tipo = request.POST['tipo']
+        tarea.save()
+
+        return redirect('cocineros')
+    else:
+        elecciones = TipoCocinero.choices
+        return render(request, 'formulario_cocinero.html', {
+            'elecciones': elecciones,
+            'cocinero': cocinero,
+            'tipo_actual': tarea.tipo if tarea else None
+        })
+
+def eliminar_cocinero(request, id):
+    cocinero = get_object_or_404(Cocinero, id=id)
+    cocinero.tareas.all().delete()
+    cocinero.delete()
+    return redirect('cocineros')
+
 
 
