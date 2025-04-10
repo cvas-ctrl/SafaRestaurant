@@ -1,6 +1,7 @@
 from django.db import models
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
+from django.utils import timezone
 
 
 # Create your models here.
@@ -22,14 +23,6 @@ class AuditoriaCamarero(models.Model):
 
     def __str__(self):
         return f"Auditoría {self.id} - {self.nombre_completo}"
-
-@receiver(post_save, sender=Camarero)
-def crear_auditoria_camarero(sender, instance, created, **kwargs):
-    if created:
-        AuditoriaCamarero.objects.create(
-            nombre_completo=f"{instance.nombre} {instance.apellidos}",
-            mensaje=f"Se ha creado un nuevo camarero con DNI: {instance.dni}"
-        )
 
 class Hamburguesa(models.Model):
     nombre = models.CharField(max_length=100)
