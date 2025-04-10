@@ -176,8 +176,7 @@
                 <p><strong>DNI:</strong> {{ c.dni }}</p>
                 <p><strong>Email:</strong> {{ c.email }}</p>
                 <p><strong>Nacimiento:</strong> {{ c.fecha_nacimiento|date:"d/m/Y" }}</p>
-                <!-- Añade esta línea para mostrar el tipo -->
-                <p><strong>Tipo:</strong> 
+                <p><strong>Tipo:</strong>
                    {% if c.tareas.first %}
                        {{ c.tareas.first.get_tipo_display }}
                    {% else %}
