@@ -53,6 +53,7 @@ def new_camarero(request, id):
 
     if request.method == 'POST':
         camarero_nuevo.nombre = request.POST['nombre']
+        camarero_nuevo.apellidos = request.POST['apellidos']
         camarero_nuevo.dni = request.POST['dni']
         camarero_nuevo.email = request.POST['email']
         camarero_nuevo.fecha_nacimiento = request.POST['fecha']

@@ -27,6 +27,16 @@
                     Por favor ingrese un autor válido.
                 </div>
             </div>
+            
+            <div class="mb-4">
+                <label for="inputApellidos" class="form-label fw-bold">Apellidos</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+                    <input type="text" name="apellidos" class="form-control" 
+                           value="{{ camarero.apellidos|default:'' }}" 
+                           id="inputApellidos" placeholder="Apellidos del camarero" required>
+                </div>
+            </div>
 
             <div class="mb-4">
                 <label for="inputNombre" class="form-label fw-bold">DNI</label>
