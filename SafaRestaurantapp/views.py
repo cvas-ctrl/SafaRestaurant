@@ -2,7 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from reportlab.pdfgen import canvas
 from SafaRestaurantapp.forms import *
-from SafaRestaurantapp.models import Camarero, Hamburguesa, Ingrediente, Cocinero, TareaCocina, TipoCocinero
+from SafaRestaurantapp.models import Camarero, Hamburguesa, Ingrediente, Cocinero, TareaCocina, TipoCocinero, \
+    DetallePedido, Pedido, IngredienteDetalle
 
 
 # ============================ PÁGINAS ESTÁTICAS ============================
@@ -105,8 +106,19 @@ def generar_pdf(request):
 # ============================ PEDIDOS (LO TOMA EL CAMARERO) ============================
 
 def ver_pedidos(request):
+    pedido_id = request.session.get('pedido_id')
+    pedido = None
+
+    if pedido_id:
+        try:
+            pedido = Pedido.objects.prefetch_related(
+                'detalles__hamburguesa',
+                'detalles__ingredientedetalle_set__ingrediente'
+            ).get(id=pedido_id)
+        except Pedido.DoesNotExist:
+            del request.session['pedido_id']
+
     hamburguesas = Hamburguesa.objects.all()
-    pedido = request.session.get('pedido', [])
     return render(request, 'pedidos.html', {
         'hamburguesas': hamburguesas,
         'pedido': pedido
@@ -122,30 +134,44 @@ def personalizar_hamburguesa(request, id):
 
 def agregar_a_pedido(request, id):
     if request.method == 'POST':
-        ids_ingredientes = request.POST
-        ingredientes = []
-
-        for ingrediente_id, cantidad in ids_ingredientes.items():
-            if ingrediente_id.startswith('ingredientes_') and int(cantidad) > 0:
-                ingrediente_id = int(ingrediente_id.split('_')[1])
-                ingrediente = get_object_or_404(Ingrediente, id=ingrediente_id)
-                ingredientes.append({'nombre': ingrediente.nombre, 'cantidad': int(cantidad)})
-
         hamburguesa = get_object_or_404(Hamburguesa, id=id)
-        pedido = request.session.get('pedido', [])
-        pedido.append({
-            'hamburguesa': hamburguesa.nombre,
-            'ingredientes': ingredientes
-        })
-        request.session['pedido'] = pedido
+
+        pedido_id = request.session.get('pedido_id')
+        if pedido_id:
+            pedido = get_object_or_404(Pedido, id=pedido_id)
+        else:
+            pedido = Pedido.objects.create()
+            request.session['pedido_id'] = pedido.id
+
+        detalle = DetallePedido.objects.create(pedido=pedido, hamburguesa=hamburguesa)
+
+        for key, value in request.POST.items():
+            if key.startswith('ingredientes_') and int(value) > 0:
+                ingrediente_id = int(key.split('_')[1])
+                ingrediente = get_object_or_404(Ingrediente, id=ingrediente_id)
+                IngredienteDetalle.objects.create(
+                    detalle=detalle,
+                    ingrediente=ingrediente,
+                    cantidad=int(value)
+                )
+
         return redirect('ver_pedidos')
 
+
 def eliminar_pedido(request, id):
-    pedido = request.session.get('pedido', [])
-    if 0 <= id < len(pedido):
-        pedido.pop(id)
-        request.session['pedido'] = pedido
+    pedido_id = request.session.get('pedido_id')
+    if pedido_id:
+        pedido = Pedido.objects.get(id=pedido_id)
+        detalles = list(pedido.detalles.all())
+        if 0 <= id < len(detalles):
+            detalles[id].delete()
+
+            if not pedido.detalles.exists():
+                pedido.delete()
+                del request.session['pedido_id']
+
     return redirect('ver_pedidos')
+
 
 # ============================ COCINEROS(ADMIN) ============================
 

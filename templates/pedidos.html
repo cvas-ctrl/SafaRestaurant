@@ -33,24 +33,42 @@
                 <h4 class="text-center mb-3" style="color: #1e9b0f">Tu pedido</h4>
                 <div id="pedidoResumen" class="p-3 border rounded bg-light">
                     {% if pedido %}
-                        <ul class="list-group">
-                            {% for item in pedido %}
-                                <li class="list-group-item">
-                                    <strong>{{ item.hamburguesa }}</strong>
-                                    <br>
-                                    <small>Ingredientes extras:</small>
-                                    <ul>
-                                        {% for ing in item.ingredientes %}
-                                            <li>{{ ing.nombre }} x{{ ing.cantidad }}</li>
-                                        {% endfor %}
-                                    </ul>
-                                    <form method="POST" action="{% url 'eliminar_pedido' forloop.counter0 %}" style="display:inline;">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn-eliminar">Eliminar</button>
-                                    </form>
-                                </li>
-                            {% endfor %}
-                        </ul>
+                        <h3>Pedido #{{ pedido.id }}</h3>
+                        <p>Fecha: {{ pedido.fecha }}</p>
+                        
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Hamburguesa</th>
+                                    <th>Ingredientes</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for detalle in pedido.detalles.all %}
+                                    <tr>
+                                        <td>{{ detalle.hamburguesa.nombre }}</td>
+                                        <td>
+                                            {% for ingrediente_detalle in detalle.ingredientedetalle_set.all %}
+                                                {{ ingrediente_detalle.ingrediente.nombre }} x{{ ingrediente_detalle.cantidad }}{% if not forloop.last %}, {% endif %}
+                                            {% empty %}
+                                                Sin ingredientes adicionales
+                                            {% endfor %}
+                                        </td>
+                                        <td>
+                                            <form method="post" action="{% url 'eliminar_pedido' forloop.counter0 %}">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-danger">Eliminar</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="3">No hay items en este pedido</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     {% else %}
                         <p class="text-muted">Aún no has añadido hamburguesas.</p>
                     {% endif %}

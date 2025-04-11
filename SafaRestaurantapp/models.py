@@ -44,6 +44,24 @@ class Ingrediente(models.Model):
     def __str__(self):
         return self.nombre
 
+class Pedido(models.Model):
+    fecha = models.DateTimeField(auto_now_add=True)
+    camarero = models.ForeignKey(Camarero, on_delete=models.SET_NULL, null=True, blank=True)
+
+    def __str__(self):
+        return f"Pedido #{self.id} - {self.fecha.strftime('%Y-%m-%d %H:%M')}"
+
+class DetallePedido(models.Model):
+    pedido = models.ForeignKey(Pedido, related_name='detalles', on_delete=models.CASCADE)
+    hamburguesa = models.ForeignKey(Hamburguesa, on_delete=models.CASCADE)
+    ingredientes = models.ManyToManyField(Ingrediente, through='IngredienteDetalle')
+    cantidad = models.PositiveIntegerField(default=1)
+
+class IngredienteDetalle(models.Model):
+    detalle = models.ForeignKey(DetallePedido, on_delete=models.CASCADE)
+    ingrediente = models.ForeignKey(Ingrediente, on_delete=models.CASCADE)
+    cantidad = models.PositiveIntegerField(default=1)
+
 ##################### COCINERO
 
 class Cocinero(models.Model):
