@@ -7,7 +7,8 @@ from SafaRestaurantapp.views import (
     cargar_listado_camareros, formulario_camarero, new_camarero, crear_editar, eliminar_camarero,
     generar_pdf, cargar_listado_cocineros,
     ver_pedidos, personalizar_hamburguesa, agregar_a_pedido, eliminar_pedido, formulario_cocinero,
-    crear_editar_cocinero, eliminar_cocinero
+    crear_editar_cocinero, eliminar_cocinero, go_register
+
 )
 
 urlpatterns = [
@@ -15,6 +16,9 @@ urlpatterns = [
     path('home/', go_home_page, name='home_page'),
     path('aboutus/', go_about_us, name='about_us'),
     path('rol/', go_rol_page, name='rol_page'),
+    path('register/', go_register, name='register_page'),
+
+
 
     # Roles
     path('cliente/', go_cliente_view, name='cliente'),

@@ -16,6 +16,9 @@ def go_about_us(request):
 def go_rol_page(request):
     return render(request, 'rol.html')
 
+def go_register(request):
+    return render(request, 'register.html')
+
 # ============================ VISTAS POR ROL ============================
 
 def go_cliente_view(request):
