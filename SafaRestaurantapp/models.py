@@ -6,6 +6,8 @@ from django.utils import timezone
 
 # Create your models here.
 
+##################### CAMARERO
+
 class Camarero(models.Model):
     nombre = models.CharField(max_length=250)
     apellidos = models.CharField(max_length=250)
@@ -24,6 +26,8 @@ class AuditoriaCamarero(models.Model):
     def __str__(self):
         return f"Auditoría {self.id} - {self.nombre_completo}"
 
+##################### PEDIDOS
+
 class Hamburguesa(models.Model):
     nombre = models.CharField(max_length=100)
     descripcion = models.TextField()
@@ -39,6 +43,8 @@ class Ingrediente(models.Model):
 
     def __str__(self):
         return self.nombre
+
+##################### COCINERO
 
 class Cocinero(models.Model):
     nombre = models.CharField(max_length=250)
