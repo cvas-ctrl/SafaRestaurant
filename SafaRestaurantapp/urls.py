@@ -7,7 +7,7 @@ from SafaRestaurantapp.views import (
     cargar_listado_camareros, formulario_camarero, new_camarero, crear_editar, eliminar_camarero,
     generar_pdf, cargar_listado_cocineros,
     ver_pedidos, personalizar_hamburguesa, agregar_a_pedido, eliminar_pedido, formulario_cocinero,
-    crear_editar_cocinero, eliminar_cocinero, go_register
+    crear_editar_cocinero, eliminar_cocinero, go_register, seleccionar_cliente, asignar_cliente, liberar_mesa
 
 )
 
@@ -50,9 +50,13 @@ urlpatterns = [
 
 
     path('cocineros/', cargar_listado_cocineros, name='cocineros'),
-#    path('cocinero/<int:id>/', new_cocinero, name='new_cocinero'),
     path('cocinero/', crear_editar_cocinero, name='crear_cocinero'),
     path('cocinero/<int:id>/', crear_editar_cocinero, name='editar_cocinero'),
     path('eliminar_cocinero/<int:id>', eliminar_cocinero, name='eliminar_cocinero'),
+
+    path('mesa/<int:mesa_id>/seleccionar-cliente/', seleccionar_cliente, name='seleccionar_cliente'),
+    path('mesa/<int:mesa_id>/asignar-cliente/', asignar_cliente, name='asignar_cliente'),
+    path('mesa/<int:mesa_id>/liberar/', liberar_mesa, name='liberar_mesa'),
+
 
 ]

@@ -182,31 +182,54 @@
         <div class="content">
             <h2 style="color: white" class="mb-4">Gestión de Mesas</h2>
             <div class="row row-cols-1 row-cols-md-3 g-4">
+                {% for mesa in mesas %}
                 <div class="col">
                     <div class="mesa-card">
-                        <h5>Mesa 1</h5>
-                        <p class="estado text-success">Libre</p>
-                        <button class="btn btn-ver w-100">Asignar Cliente</button>
+                        <h5>Mesa {{ mesa.numero }}</h5>
+                    
+                        <p class="estado 
+                            {% if mesa.estado == 'LIBRE' %}text-success
+                            {% elif mesa.estado == 'OCUPADA' %}text-danger
+                            {% else %}text-warning{% endif %}">
+                            {{ mesa.get_estado_display }}
+                        </p>
+                    
+                        {% if mesa.cliente %}
+                        <div class="cliente-info mb-2">
+                            <small>
+                                <strong>Cliente:</strong><br>
+                                {{ mesa.cliente.nombre }} {{ mesa.cliente.apellidos }}
+                            </small>
+                        </div>
+                        {% endif %}
+
+                        <div class="d-grid gap-2">
+                            {% if mesa.estado == 'LIBRE' %}
+                                <a href="{% url 'asignar_cliente' mesa.id %}" 
+                                   class="btn btn-ver">
+                                    Asignar Cliente
+                                </a>
+                            {% else %}
+                                <div class="d-flex gap-2">
+                                    {% if mesa.estado == 'OCUPADA' %}
+                                        <a href="#" onclick="window.location.href='{% url 'ver_pedidos' %}'" class="btn btn-warning flex-grow-1">
+                                            Tomar Pedido
+                                        </a>
+                                    {% elif mesa.estado == 'ESPERANDO' %}
+                                        <a href="#" class="btn btn-info flex-grow-1">
+                                            Ver Pedido
+                                        </a>
+                                    {% endif %}
+                                    <a href="{% url 'liberar_mesa' mesa.id %}" 
+                                       class="btn btn-success">
+                                        Liberar
+                                    </a>
+                                </div>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
-                
-                <div class="col">
-                    <div class="mesa-card">
-                        <h5>Mesa 2</h5>
-                        <p class="estado text-warning">Esperando pedido</p>
-                        <button class="btn btn-ver w-100">Ver Pedido</button>
-                    </div>
-                </div>
-                
-                <div class="col">
-                    <div class="mesa-card">
-                        <h5>Mesa 3</h5>
-                        <p class="estado text-danger">Ocupada</p>
-                        <button class="btn btn-ver w-100">Ver Pedido</button>
-                    </div>
-                </div>
-                
-                
+                {% endfor %}
             </div>
         </div>
     </div>

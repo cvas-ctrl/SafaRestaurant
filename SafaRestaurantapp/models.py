@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
@@ -14,6 +15,13 @@ class Camarero(models.Model):
     dni = models.CharField(max_length=250)
     email = models.EmailField(max_length=250)
     fecha_nacimiento = models.DateField()
+    usuario = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name='camarero',
+        null=True,
+        blank=True
+    )
 
     def __str__(self):
         return self.nombre
@@ -25,6 +33,43 @@ class AuditoriaCamarero(models.Model):
 
     def __str__(self):
         return f"Auditoría {self.id} - {self.nombre_completo}"
+
+##################### MESAS
+
+class Cliente(models.Model):
+    nombre = models.CharField(max_length=100)
+    apellidos = models.CharField(max_length=100)
+    email = models.EmailField()
+    dni = models.CharField(max_length=50)
+
+    def __str__(self):
+        return f"{self.nombre} {self.apellidos}"
+
+class EstadoMesa(models.TextChoices):
+    LIBRE = 'LIBRE', 'Libre'
+    OCUPADA = 'OCUPADA', 'Ocupada'
+    ESPERANDO_PEDIDO = 'ESPERANDO', 'Esperando Pedido'
+
+class Mesa(models.Model):
+    numero = models.PositiveIntegerField(unique=True)
+    estado = models.CharField(
+        max_length=20,
+        choices=EstadoMesa.choices,
+        default=EstadoMesa.LIBRE
+    )
+    cliente = models.ForeignKey('Cliente', null=True, blank=True, on_delete=models.SET_NULL)
+    camarero = models.ForeignKey('Camarero', null=True, blank=True, on_delete=models.SET_NULL)
+    pedido = models.OneToOneField(
+        'Pedido',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='mesa'
+    )
+
+    def __str__(self):
+        return f"Mesa {self.numero} - {self.get_estado_display()}"
+
 
 ##################### PEDIDOS
 

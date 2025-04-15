@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from reportlab.pdfgen import canvas
 from SafaRestaurantapp.forms import *
 from SafaRestaurantapp.models import Camarero, Hamburguesa, Ingrediente, Cocinero, TareaCocina, TipoCocinero, \
-    DetallePedido, Pedido, IngredienteDetalle
+    DetallePedido, Pedido, IngredienteDetalle, Mesa, Cliente
 
 
 # ============================ PÁGINAS ESTÁTICAS ============================
@@ -25,8 +25,19 @@ def go_register(request):
 def go_cliente_view(request):
     return render(request, 'cliente.html')
 
+
 def go_camarero_view(request):
-    return render(request, 'camarero.html')
+    # Verifica si hay mesas, si no, crea algunas por defecto
+    if not Mesa.objects.exists():
+        for i in range(1, 6):  # Crea 5 mesas
+            Mesa.objects.create(numero=i)
+
+    mesas = Mesa.objects.select_related('cliente', 'camarero').all()
+    return render(request, 'camarero.html', {
+        'mesas': mesas,
+        'clientes': Cliente.objects.all(),
+        'camareros': Camarero.objects.all()
+    })
 
 def go_cocinero_view(request):
     return render(request, 'cocinero.html')
@@ -222,6 +233,63 @@ def eliminar_cocinero(request, id):
     cocinero.tareas.all().delete()
     cocinero.delete()
     return redirect('cocineros')
+
+
+# ============================ GESTION MESAS CLIENTES ============================
+
+
+def seleccionar_cliente(request, mesa_id):
+    mesa = get_object_or_404(Mesa, id=mesa_id)
+    clientes = Cliente.objects.all()
+    return render(request, 'seleccionar_cliente.html', {
+        'mesa': mesa,
+        'clientes': clientes
+    })
+
+def asignar_cliente(request, mesa_id, cliente_id=None):
+    mesa = get_object_or_404(Mesa, id=mesa_id)
+
+    if cliente_id or request.method == 'POST':
+        cliente_id = cliente_id or request.POST.get('cliente_id')
+        cliente = get_object_or_404(Cliente, id=cliente_id)
+
+        mesa.cliente = cliente
+        mesa.estado = 'OCUPADA'
+        mesa.save()
+        return redirect('camarero')
+
+    clientes = Cliente.objects.all()
+    return render(request, 'seleccionar_cliente.html', {
+        'mesa': mesa,
+        'clientes': clientes
+    })
+
+
+def liberar_mesa(request, mesa_id):
+    mesa = get_object_or_404(Mesa, id=mesa_id)
+    mesa.estado = 'LIBRE'
+    mesa.cliente = None
+    mesa.save()
+    return redirect('camarero')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -1,0 +1,113 @@
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.container h2 {
+    font-size: 32px;
+    font-weight: bold;
+    color: #28c112;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 30px;
+    position: relative;
+    padding-bottom: 15px;
+}
+
+.container h2::after {
+    content: '';
+    width: 180px;
+    height: 3px;
+    background: #000000;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 2px;
+}
+
+.list-group {
+    max-width: 600px;
+    margin: 0 auto 30px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.list-group-item {
+    padding: 16px 25px;
+    border: none;
+    border-bottom: 1px solid #e0e0e0;
+    background-color: white;
+    color: #333;
+    font-size: 18px;
+    text-align: left;
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.list-group-item:hover {
+    background: linear-gradient(135deg, #e3ffe7, #d9f5d5);
+    transform: translateX(5px);
+    box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.08);
+}
+
+.list-group-item small.text-muted {
+    font-size: 14px;
+    color: #666;
+}
+
+.btn-secondary {
+    background-color: #f8f9fa;
+    color: #28c112;
+    border: 2px solid #28c112;
+    padding: 10px 25px;
+    font-weight: bold;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background-color: #28c112;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0px 5px 15px rgba(40, 193, 18, 0.2);
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 20px;
+}
+
+.list-group-item:active {
+    background: linear-gradient(135deg, #28c112, #1fa10e);
+    color: white;
+}
+
+.list-group-item:active small.text-muted {
+    color: #e0e0e0 !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container {
+        padding: 30px 15px;
+    }
+
+    .container h2 {
+        font-size: 26px;
+    }
+
+    .list-group-item {
+        padding: 14px 20px;
+        font-size: 16px;
+    }
+}
