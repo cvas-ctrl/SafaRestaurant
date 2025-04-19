@@ -17,7 +17,7 @@
 
                 <form method="POST" action="{% url 'agregar_a_pedido' hamburguesa.id %}">
                     {% csrf_token %}
-                    <h5 class="mb-3">Ingredientes</h5>
+                    <h5 class="mb-3">Ingredientes extras</h5>
                     <div class="form-group mb-4">
                         {% for ingrediente in todos_ingredientes %}
                         <div class="form-check">

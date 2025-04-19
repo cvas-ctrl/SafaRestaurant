@@ -376,35 +376,32 @@
                 <p class="lead">Disfruta de las mejores hamburguesas artesanales de la ciudad, elaboradas con ingredientes frescos, locales y de la más alta calidad. ¡Una experiencia gastronómica que despertará tus sentidos!</p>
 
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-4" style="cursor: pointer">
                         <div class="card">
                             <img src="{% static 'img/Hamburguesa6.png' %}" class="card-img-top" alt="Hamburguesa">
                             <div class="card-body">
                                 <h5 class="card-title">Nuestra Especialidad</h5>
                                 <p class="card-text">Hamburguesas de carne 100% fresca, acompañadas de ingredientes seleccionados y pan artesanal recién horneado. ¡Una explosión de sabores en cada bocado!</p>
-                                <a href="#" class="btn btn-outline-success">Ver más</a>
                             </div>
                         </div>
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-4" style="cursor: pointer">
                         <div class="card">
                             <img src="{% static 'img/salsas.png' %}" class="card-img-top" alt="Comida">
                             <div class="card-body">
                                 <h5 class="card-title">Salsas Artesanales</h5>
                                 <p class="card-text">Nuestras salsas caseras son el secreto mejor guardado. Elaboradas con recetas exclusivas y los mejores ingredientes para complementar tu hamburguesa.</p>
-                                <a href="#" class="btn btn-outline-success">Ver más</a>
                             </div>
                         </div>
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-4" style="cursor: pointer">
                         <div class="card">
                             <img src="{% static 'img/Hamburguesa7.png' %}" class="card-img-top" alt="Logo">
                             <div class="card-body">
                                 <h5 class="card-title">Experiencias Únicas</h5>
                                 <p class="card-text">Más que una hamburguesa, ofrecemos una experiencia gastronómica memorable con eventos temáticos y promociones exclusivas.</p>
-                                <a href="#" class="btn btn-outline-success">Ver más</a>
                             </div>
                         </div>
                     </div>
@@ -416,71 +413,85 @@
             <div class="container">
                 <h2 class="text-center mb-5">Descubre lo que nos hace especiales</h2>
                 
-                <div class="collapsible-item">
-                    <div class="collapsible-header">
-                        <h3>Nuestros Ingredientes</h3>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="collapsible-content">
-                        <div class="collapsible-content-inner">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <h4>Carne de Primera Calidad</h4>
-                                    <p>Trabajamos con ganaderos locales que crían su ganado de forma ética y sostenible. Nuestra carne es 100% natural, sin hormonas ni aditivos, con un equilibrio perfecto de jugosidad y sabor.</p>
-                                    <p>Seleccionamos los mejores cortes para moler diariamente y garantizar la frescura en cada hamburguesa.</p>
-                                </div>
-                                <div class="col-md-6">
-                                    <h4>Productos Locales</h4>
-                                    <p>Colaboramos con productores de la región para obtener los vegetales más frescos. Nuestros tomates, lechugas y cebollas llegan directamente del campo a tu hamburguesa.</p>
-                                    <p>Los panes son elaborados artesanalmente por panaderías locales usando métodos tradicionales.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="collapsible-item">
-                    <div class="collapsible-header">
-                        <h3>Nuestro Proceso</h3>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="collapsible-content">
-                        <div class="collapsible-content-inner">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <h4><i class="fas fa-seedling me-2"></i> Selección</h4>
-                                    <p>Cada mañana nuestro chef selecciona personalmente los ingredientes que usarán durante el día, asegurando la máxima frescura y calidad.</p>
-                                </div>
-                                <div class="col-md-4">
-                                    <h4><i class="fas fa-utensils me-2"></i> Preparación</h4>
-                                    <p>Todas nuestras hamburguesas se preparan al momento, nunca pre-cocinadas. La carne se sazona con nuestra mezcla secreta de especias justo antes de cocinarse.</p>
-                                </div>
-                                <div class="col-md-4">
-                                    <h4><i class="fas fa-fire me-2"></i> Cocción</h4>
-                                    <p>Usamos parrillas especiales que sellan los jugos naturales de la carne a la temperatura perfecta, creando ese exterior crujiente e interior jugoso que nos caracteriza.</p>
+                <div class="accordion" id="chillAccordion">
+                    <div class="accordion-item mb-3 border-0">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed bg-white text-dark shadow-sm rounded" type="button" 
+                                    data-bs-toggle="collapse" data-bs-target="#collapseIngredientes" 
+                                    aria-expanded="false" aria-controls="collapseIngredientes">
+                                <h3 class="m-0 text-success">Nuestros Ingredientes</h3>
+                            </button>
+                        </h2>
+                        <div id="collapseIngredientes" class="accordion-collapse collapse" 
+                             aria-labelledby="headingOne" data-bs-parent="#chillAccordion">
+                            <div class="accordion-body p-4 bg-white rounded-bottom">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h4>Carne de Primera Calidad</h4>
+                                        <p>Trabajamos con ganaderos locales que crían su ganado de forma ética y sostenible. Nuestra carne es 100% natural, sin hormonas ni aditivos, con un equilibrio perfecto de jugosidad y sabor.</p>
+                                        <p>Seleccionamos los mejores cortes para moler diariamente y garantizar la frescura en cada hamburguesa.</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h4>Productos Locales</h4>
+                                        <p>Colaboramos con productores de la región para obtener los vegetales más frescos. Nuestros tomates, lechugas y cebollas llegan directamente del campo a tu hamburguesa.</p>
+                                        <p>Los panes son elaborados artesanalmente por panaderías locales usando métodos tradicionales.</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                
-                <div class="collapsible-item">
-                    <div class="collapsible-header">
-                        <h3>Compromiso con la Comunidad</h3>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="collapsible-content">
-                        <div class="collapsible-content-inner">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <h4>Sostenibilidad</h4>
-                                    <p>En Chill Burguer nos preocupamos por el medio ambiente. Usamos packaging 100% biodegradable y reciclamos el 90% de nuestros residuos.</p>
-                                    <p>Nuestros aceites usados son convertidos en biodiesel y las sobras de comida se compostan para huertos comunitarios.</p>
+                    
+                    <div class="accordion-item mb-3 border-0">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed bg-white text-dark shadow-sm rounded" type="button" 
+                                    data-bs-toggle="collapse" data-bs-target="#collapseProceso" 
+                                    aria-expanded="false" aria-controls="collapseProceso">
+                                <h3 class="m-0 text-success">Nuestro Proceso</h3>
+                            </button>
+                        </h2>
+                        <div id="collapseProceso" class="accordion-collapse collapse" 
+                             aria-labelledby="headingTwo" data-bs-parent="#chillAccordion">
+                            <div class="accordion-body p-4 bg-white rounded-bottom">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <h4><i class="fas fa-seedling me-2"></i> Selección</h4>
+                                        <p>Cada mañana nuestro chef selecciona personalmente los ingredientes que usarán durante el día, asegurando la máxima frescura y calidad.</p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <h4><i class="fas fa-utensils me-2"></i> Preparación</h4>
+                                        <p>Todas nuestras hamburguesas se preparan al momento, nunca pre-cocinadas. La carne se sazona con nuestra mezcla secreta de especias justo antes de cocinarse.</p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <h4><i class="fas fa-fire me-2"></i> Cocción</h4>
+                                        <p>Usamos parrillas especiales que sellan los jugos naturales de la carne a la temperatura perfecta, creando ese exterior crujiente e interior jugoso que nos caracteriza.</p>
+                                    </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <h4>Apoyo Local</h4>
-                                    <p>El 85% de nuestros proveedores son negocios locales. Organizamos eventos benéficos mensuales y donamos un porcentaje de nuestras ventas a causas sociales.</p>
-                                    <p>Hemos creado programas de capacitación para jóvenes interesados en la gastronomía.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item mb-3 border-0">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed bg-white text-dark shadow-sm rounded" type="button" 
+                                    data-bs-toggle="collapse" data-bs-target="#collapseCompromiso" 
+                                    aria-expanded="false" aria-controls="collapseCompromiso">
+                                <h3 class="m-0 text-success">Compromiso con la Comunidad</h3>
+                            </button>
+                        </h2>
+                        <div id="collapseCompromiso" class="accordion-collapse collapse" 
+                             aria-labelledby="headingThree" data-bs-parent="#chillAccordion">
+                            <div class="accordion-body p-4 bg-white rounded-bottom">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h4>Sostenibilidad</h4>
+                                        <p>En Chill Burguer nos preocupamos por el medio ambiente. Usamos packaging 100% biodegradable y reciclamos el 90% de nuestros residuos.</p>
+                                        <p>Nuestros aceites usados son convertidos en biodiesel y las sobras de comida se compostan para huertos comunitarios.</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h4>Apoyo Local</h4>
+                                        <p>El 85% de nuestros proveedores son negocios locales. Organizamos eventos benéficos mensuales y donamos un porcentaje de nuestras ventas a causas sociales.</p>
+                                        <p>Hemos creado programas de capacitación para jóvenes interesados en la gastronomía.</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
