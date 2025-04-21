@@ -96,6 +96,8 @@ class Pedido(models.Model):
     def __str__(self):
         return f"Pedido #{self.id} - {self.fecha.strftime('%Y-%m-%d %H:%M')}"
 
+
+
 class DetallePedido(models.Model):
     pedido = models.ForeignKey(Pedido, related_name='detalles', on_delete=models.CASCADE)
     hamburguesa = models.ForeignKey(Hamburguesa, on_delete=models.CASCADE)
