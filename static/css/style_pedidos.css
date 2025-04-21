@@ -1,20 +1,26 @@
-.card {
-    border: 2px solid #28c112;
-    transition: all 0.3s ease;
-    cursor: pointer;
+.ticket {
+    font-family: 'Courier New', Courier, monospace;
+    background: #fff;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    border-left: 6px dashed #28c112;
+    padding: 1rem;
 }
 
-.card:hover {
-    transform: scale(1.02);
-    background-color: #e8f5e9;
+.ticket-item {
+    background: #f9f9f9;
+    padding: 0.5rem;
+    border-radius: 8px;
 }
 
-#pedidoResumen {
-    min-height: 300px;
+.ticket-item hr {
+    border-top: 1px #ccc;
 }
 
-.btn-eliminar {
-        background: #e74c3c;
-        color: white;
-        border-radius: 6px;
-    }
+.ticket .btn-danger {
+    background: #d9534f;
+    border: none;
+}
+
+.ticket .btn-danger:hover {
+    background: #c9302c;
+}

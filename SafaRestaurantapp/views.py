@@ -27,9 +27,9 @@ def go_cliente_view(request):
 
 
 def go_camarero_view(request):
-    # Verifica si hay mesas, si no, crea algunas por defecto
+
     if not Mesa.objects.exists():
-        for i in range(1, 6):  # Crea 5 mesas
+        for i in range(1, 6):
             Mesa.objects.create(numero=i)
 
     mesas = Mesa.objects.select_related('cliente', 'camarero').all()
