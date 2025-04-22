@@ -96,7 +96,9 @@ class Pedido(models.Model):
     def __str__(self):
         return f"Pedido #{self.id} - {self.fecha.strftime('%Y-%m-%d %H:%M')}"
 
-
+    @property
+    def precio_total(self):
+        return sum(detalle.hamburguesa.precio * detalle.cantidad for detalle in self.detalles.all())
 
 class DetallePedido(models.Model):
     pedido = models.ForeignKey(Pedido, related_name='detalles', on_delete=models.CASCADE)

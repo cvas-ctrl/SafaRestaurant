@@ -271,25 +271,3 @@ def liberar_mesa(request, mesa_id):
     mesa.cliente = None
     mesa.save()
     return redirect('camarero')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
