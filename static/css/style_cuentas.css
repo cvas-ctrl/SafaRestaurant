@@ -10,6 +10,10 @@ body {
     padding: 1rem;
 }
 
+.sidebar-container .container {
+    padding-left: 220px;
+}
+
 .card {
     background-color: #1a1a1a;
     border: 1px solid #28c112;
@@ -78,8 +82,9 @@ body {
         flex-direction: column;
     }
 
-    .container {
+    .sidebar-container .container {
+        padding-left: 0;
         margin: 1rem;
-        padding: 1rem;
     }
 }
+
