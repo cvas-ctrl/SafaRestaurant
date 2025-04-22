@@ -64,7 +64,7 @@ class Mesa(models.Model):
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        related_name='mesa'
+        related_name='mesa_relacionada'
     )
 
     def __str__(self):
@@ -92,7 +92,8 @@ class Ingrediente(models.Model):
 class Pedido(models.Model):
     fecha = models.DateTimeField(auto_now_add=True)
     camarero = models.ForeignKey(Camarero, on_delete=models.SET_NULL, null=True, blank=True)
-
+    finalizado = models.BooleanField(default=False)
+    mesa = models.ForeignKey(Mesa, on_delete=models.SET_NULL, null=True, blank=True, related_name='pedidos')
     def __str__(self):
         return f"Pedido #{self.id} - {self.fecha.strftime('%Y-%m-%d %H:%M')}"
 
@@ -144,4 +145,22 @@ class TareaCocina(models.Model):
         related_name='tareas'
     )
 
+##################### CUENTA
+
+class EstadoCuenta(models.TextChoices):
+    PENDIENTE = 'PENDIENTE', 'Pendiente'
+    PAGADO = 'PAGADO', 'Pagado'
+
+class Cuenta(models.Model):
+    pedido = models.OneToOneField(Pedido, on_delete=models.CASCADE, related_name='cuenta')
+    fecha_emision = models.DateTimeField(auto_now_add=True)
+    estado_pago = models.CharField(
+        max_length=20,
+        choices=EstadoCuenta.choices,
+        default=EstadoCuenta.PENDIENTE
+    )
+    precio_total = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"Cuenta para el Pedido #{self.pedido.id}"
 

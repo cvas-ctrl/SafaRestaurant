@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from reportlab.pdfgen import canvas
 from SafaRestaurantapp.forms import *
 from SafaRestaurantapp.models import Camarero, Hamburguesa, Ingrediente, Cocinero, TareaCocina, TipoCocinero, \
-    DetallePedido, Pedido, IngredienteDetalle, Mesa, Cliente
+    DetallePedido, Pedido, IngredienteDetalle, Mesa, Cliente, Cuenta
 
 
 # ============================ PÁGINAS ESTÁTICAS ============================
@@ -151,7 +151,9 @@ def agregar_a_pedido(request, id):
         if pedido_id:
             pedido = get_object_or_404(Pedido, id=pedido_id)
         else:
-            pedido = Pedido.objects.create()
+            mesa_id = request.session.get('mesa_id')
+            mesa = Mesa.objects.get(id=mesa_id) if mesa_id else None
+            pedido = Pedido.objects.create(mesa=mesa)
             request.session['pedido_id'] = pedido.id
 
         detalle = DetallePedido.objects.create(pedido=pedido, hamburguesa=hamburguesa)
@@ -271,3 +273,35 @@ def liberar_mesa(request, mesa_id):
     mesa.cliente = None
     mesa.save()
     return redirect('camarero')
+
+# ============================ CUENTAS ============================
+
+def finalizar_pedido(request):
+    pedido_id = request.session.get('pedido_id')
+    if pedido_id:
+
+        pedido = get_object_or_404(Pedido, id=pedido_id)
+        pedido.finalizado = True
+        pedido.save()
+        if pedido.mesa:
+            mesa = pedido.mesa
+            mesa.estado = 'ESPERANDO'
+            mesa.save()
+
+        del request.session['pedido_id']
+
+    return redirect('ver_cuentas')
+
+def eliminar_pedido_finalizado(request, id):
+    pedido = get_object_or_404(Pedido, id=id, finalizado=True)
+    pedido.delete()
+    return redirect('ver_cuentas')
+
+def ver_cuentas(request):
+    pedidos = Pedido.objects.filter(finalizado=True).prefetch_related('detalles__hamburguesa','detalles__ingredientedetalle_set__ingrediente')
+    for pedido in pedidos:
+        if not hasattr(pedido, 'cuenta'):
+            Cuenta.objects.create(pedido=pedido, precio_total=pedido.precio_total)
+    return render(request, 'cuentas.html', {
+        'pedidos': pedidos
+    })

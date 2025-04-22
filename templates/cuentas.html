@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    {% block extra_css %}
+        <link rel="stylesheet" href="{% static 'css/style_cuentas.css' %}">
+    {% endblock %}
+<div class="sidebar-container">
+    {% include "sidebar.html" %}
+
+    <div class="container">
+        <h2 style="color: #28c112; margin-bottom: 2rem;text-align: center;font-size: 2rem;">Listado de Pedidos Finalizados</h2>
+        {% if pedidos %}
+            {% for pedido in pedidos %}
+                <div class="card">
+                    <div class="card-header">
+                        Pedido #{{ pedido.id }} - {{ pedido.fecha }} - 
+                        {% if pedido.mesa %}
+                            Mesa {{ pedido.mesa.numero }}
+                        {% else %}
+                            Sin mesa asignada
+                        {% endif %}
+                    </div>
+                    <div class="card-body">
+                        {% for detalle in pedido.detalles.all %}
+                            <p><strong>{{ detalle.hamburguesa.nombre }}</strong></p>
+                            <ul>
+                                {% for ing in detalle.ingredientedetalle_set.all %}
+                                    <li>{{ ing.ingrediente.nombre }} x{{ ing.cantidad }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endfor %}
+                    </div>
+                    <div class="card-footer">
+                        {% if pedido.cuenta %}
+                            <p><strong>Estado de la cuenta:</strong> {{ pedido.cuenta.estado_pago }}</p>
+                            <p><strong>Total a pagar:</strong> {{ pedido.cuenta.precio_total }} €</p>
+                        {% else %}
+                            <p>Cuenta pendiente</p>
+                        {% endif %}
+                        <a href="{% url 'eliminar_pedido_finalizado' pedido.id %}">Eliminar</a>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No hay pedidos.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

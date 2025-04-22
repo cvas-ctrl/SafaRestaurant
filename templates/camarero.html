@@ -186,14 +186,14 @@
                 <div class="col">
                     <div class="mesa-card">
                         <h5>Mesa {{ mesa.numero }}</h5>
-                    
-                        <p class="estado 
+
+                        <p class="estado
                             {% if mesa.estado == 'LIBRE' %}text-success
                             {% elif mesa.estado == 'OCUPADA' %}text-danger
                             {% else %}text-warning{% endif %}">
                             {{ mesa.get_estado_display }}
                         </p>
-                    
+
                         {% if mesa.cliente %}
                         <div class="cliente-info mb-2">
                             <small>
@@ -205,7 +205,7 @@
 
                         <div class="d-grid gap-2">
                             {% if mesa.estado == 'LIBRE' %}
-                                <a href="{% url 'asignar_cliente' mesa.id %}" 
+                                <a href="{% url 'asignar_cliente' mesa.id %}"
                                    class="btn btn-ver">
                                     Asignar Cliente
                                 </a>
@@ -220,7 +220,7 @@
                                             Ver Pedido
                                         </a>
                                     {% endif %}
-                                    <a href="{% url 'liberar_mesa' mesa.id %}" 
+                                    <a href="{% url 'liberar_mesa' mesa.id %}"
                                        class="btn btn-success">
                                         Liberar
                                     </a>

@@ -7,18 +7,18 @@ from SafaRestaurantapp.views import (
     cargar_listado_camareros, formulario_camarero, new_camarero, crear_editar, eliminar_camarero,
     generar_pdf, cargar_listado_cocineros,
     ver_pedidos, personalizar_hamburguesa, agregar_a_pedido, eliminar_pedido, formulario_cocinero,
-    crear_editar_cocinero, eliminar_cocinero, go_register, seleccionar_cliente, asignar_cliente, liberar_mesa
+    crear_editar_cocinero, eliminar_cocinero, go_register, seleccionar_cliente, asignar_cliente, liberar_mesa,
+    finalizar_pedido, ver_cuentas, eliminar_pedido_finalizado
 
 )
 
 urlpatterns = [
+
     # Página principal y estáticas
     path('home/', go_home_page, name='home_page'),
     path('aboutus/', go_about_us, name='about_us'),
     path('rol/', go_rol_page, name='rol_page'),
     path('register/', go_register, name='register_page'),
-
-
 
     # Roles
     path('cliente/', go_cliente_view, name='cliente'),
@@ -46,14 +46,19 @@ urlpatterns = [
     path('pedidos/<int:id>/agregar/', agregar_a_pedido, name='agregar_a_pedido'),
     path('eliminar_pedido/<int:id>/', eliminar_pedido, name='eliminar_pedido'),
 
+    # CUENTAS
+    path('pedidos/finalizar/', finalizar_pedido, name='finalizar_pedido'),
+    path('cuentas/', ver_cuentas, name='ver_cuentas'),
+    path('cuentas/eliminar/<int:id>/', eliminar_pedido_finalizado, name='eliminar_pedido_finalizado'),
 
 
-
+    #COCINERO
     path('cocineros/', cargar_listado_cocineros, name='cocineros'),
     path('cocinero/', crear_editar_cocinero, name='crear_cocinero'),
     path('cocinero/<int:id>/', crear_editar_cocinero, name='editar_cocinero'),
     path('eliminar_cocinero/<int:id>', eliminar_cocinero, name='eliminar_cocinero'),
 
+    # GESTION DE MESAS Y CLIENTES
     path('mesa/<int:mesa_id>/seleccionar-cliente/', seleccionar_cliente, name='seleccionar_cliente'),
     path('mesa/<int:mesa_id>/asignar-cliente/', asignar_cliente, name='asignar_cliente'),
     path('mesa/<int:mesa_id>/liberar/', liberar_mesa, name='liberar_mesa'),
