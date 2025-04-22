@@ -290,7 +290,7 @@ def finalizar_pedido(request):
 
         del request.session['pedido_id']
 
-    return redirect('ver_cuentas')
+    return redirect('camarero')
 
 def eliminar_pedido_finalizado(request, id):
     pedido = get_object_or_404(Pedido, id=id, finalizado=True)

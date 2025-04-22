@@ -59,13 +59,6 @@ class Mesa(models.Model):
     )
     cliente = models.ForeignKey('Cliente', null=True, blank=True, on_delete=models.SET_NULL)
     camarero = models.ForeignKey('Camarero', null=True, blank=True, on_delete=models.SET_NULL)
-    pedido = models.OneToOneField(
-        'Pedido',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='mesa_relacionada'
-    )
 
     def __str__(self):
         return f"Mesa {self.numero} - {self.get_estado_display()}"

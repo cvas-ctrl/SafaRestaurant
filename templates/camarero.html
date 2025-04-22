@@ -216,7 +216,7 @@
                                             Tomar Pedido
                                         </a>
                                     {% elif mesa.estado == 'ESPERANDO' %}
-                                        <a href="#" class="btn btn-info flex-grow-1">
+                                        <a href="#" onclick="window.location.href='{% url 'ver_cuentas' %}'" class="btn btn-info flex-grow-1">
                                             Ver Pedido
                                         </a>
                                     {% endif %}
