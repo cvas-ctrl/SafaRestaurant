@@ -264,8 +264,11 @@ def eliminar_cocinero(request, id):
     cocinero.delete()
     return redirect('cocineros')
 
+# ============================ GESTION MESAS CLIENTES(DENTRO DE ADMIN) ===========================
+# def gestion_mesas(request):
 
-# ============================ GESTION MESAS CLIENTES ============================
+# ============================ GESTION MESAS CLIENTES ===========================
+
 
 
 def seleccionar_cliente(request, mesa_id):
