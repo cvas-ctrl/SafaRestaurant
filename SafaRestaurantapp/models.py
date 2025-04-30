@@ -1,4 +1,5 @@
-from django.contrib.auth.models import User
+from django.contrib.auth.base_user import BaseUserManager, AbstractBaseUser
+from django.contrib.auth.models import User, PermissionsMixin
 from django.db import models
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
@@ -15,13 +16,6 @@ class Camarero(models.Model):
     dni = models.CharField(max_length=250)
     email = models.EmailField(max_length=250)
     fecha_nacimiento = models.DateField()
-    usuario = models.OneToOneField(
-        User,
-        on_delete=models.CASCADE,
-        related_name='camarero',
-        null=True,
-        blank=True
-    )
 
     def __str__(self):
         return self.nombre
@@ -157,3 +151,44 @@ class Cuenta(models.Model):
     def __str__(self):
         return f"Cuenta para el Pedido #{self.pedido.id}"
 
+##################### USUARIOS
+
+class UsuarioManager(BaseUserManager):
+
+   def create_user(self, email, nombre, rol, password=None):
+       if not email:
+           raise ValueError("El usuario debe tener un email")
+       email = self.normalize_email(email)
+       usuario = self.model(email=email, nombre=nombre, rol=rol)
+       usuario.set_password(password)
+       usuario.save(using=self._db)
+       return usuario
+
+   def create_superuser(self, email, nombre, rol='admin', password=None):
+       usuario = self.create_user(email, nombre, rol, password)
+       usuario.is_superuser = True
+       usuario.is_staff = True
+       usuario.save(using=self._db)
+       return usuario
+
+class Usuario(AbstractBaseUser, PermissionsMixin):
+   ROLES = (
+       ('admin','Administrador'),
+       ('cliente','Cliente'),
+       ('cocinero','Cocinero'),
+       ('camarero','Camarero')
+   )
+
+   email = models.EmailField(max_length=500, unique=True)
+   nombre = models.CharField(max_length=250)
+   rol = models.CharField(max_length=25, choices=ROLES)
+   is_active = models.BooleanField(default=True)
+   is_staff = models.BooleanField(default=False)
+
+   objects = UsuarioManager()
+
+   USERNAME_FIELD = 'email'
+   REQUIRED_FIELDS = ['nombre', 'rol']
+
+   def __str__(self):
+       return self.email + "-" + self.nombre + ":" + self.rol
