@@ -1,3 +1,4 @@
+from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from reportlab.pdfgen import canvas
@@ -18,8 +19,35 @@ def go_rol_page(request):
     return render(request, 'rol.html')
 
 def go_register(request):
-    return render(request, 'register.html')
+    form = RegistroForm()
+    if request.method == 'POST':
+        form = RegistroForm(request.POST)
 
+        if form.is_valid():
+            usuario_nuevo = form.save(commit=False)
+            usuario_nuevo.set_password(form.cleaned_data['password'])
+            usuario_nuevo.save()
+            return redirect('home_page')
+    else:
+        return render(request, "register.html", {'form': form})
+
+def go_login(request):
+    form = LoginForm()
+    if request.method == 'POST':
+        form = LoginForm(request, data=request.POST)
+        if form.is_valid():
+            email = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            usuario = authenticate(request, email=email, password=password)
+            if usuario is not None:
+                login(request, usuario)
+                return redirect('home_page')
+    else:
+        return render(request, "login.html", {'form': form})
+
+def go_logout(request):
+    logout(request)
+    return redirect('login_page')
 # ============================ VISTAS POR ROL ============================
 
 def go_cliente_view(request):

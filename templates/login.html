@@ -4,11 +4,11 @@
 <link rel="stylesheet" href="{% static 'css/style_register.css' %}">
 {% endblock %}
 {% block content %}
-    <h1 style="color: #28c112; text-align: center; margin-bottom: 2rem; font-size: 2rem;margin-top: 7rem;">Registro de Usuarios</h1>
+    <h1 style="color: #28c112; text-align: center; margin-bottom: 2rem; font-size: 2rem;margin-top: 9rem;">Login</h1>
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit" class="btn-amargura">Registrarse</button>
+        <button type="submit" class="btn-amargura">Iniciar Sesion</button>
     </form>
 
 {% endblock %}

@@ -75,12 +75,23 @@
                     <li class="nav-item">
                         <a href="{% static 'pdf/CartaSafa.pdf' %}" class="nav-link">Carta</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Iniciar</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'register_page' %}">Registrar</a>
-                    </li>
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <form action="{% url 'logout' %}" method="post" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="nav-link">
+                                    Cerrar Sesión
+                                </button>
+                            </form>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login_page' %}">Iniciar</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'register_page' %}">Registrar</a>
+                        </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>
