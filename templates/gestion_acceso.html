@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/style_seguridad.css' %}">
+{% endblock %}
+{% block content %}
+<div class="form-container">
+    <h2 class="form-title">
+        <i class="bi bi-shield-lock"></i> Acceso al Sistema de Empleados
+    </h2>
+    
+    <form method="post">
+        {% csrf_token %}
+        
+        {% if form.errors %}
+        <div class="alert alert-danger">
+            Credenciales incorrectas. Inténtalo de nuevo.
+        </div>
+        {% endif %}
+        
+        <div class="input-group">
+            <label for="id_rol" class="form-label">Rol</label>
+            <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-person-rolodex"></i></span>
+                {{ form.rol }}
+            </div>
+        </div>
+        
+        <div class="input-group">
+            <label for="id_pin" class="form-label">PIN de Seguridad</label>
+            <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                {{ form.pin }}
+            </div>
+        </div>
+     
+        <button type="submit" class="btn-amargura">
+            <i class="bi bi-box-arrow-in-right"></i> Ingresar
+        </button>
+    </form>
+</div>
+
+{% endblock %}

@@ -3,7 +3,7 @@ from django.urls import path
 from SafaRestaurantapp.views import (
     go_home_page, go_about_us, go_rol_page,
     go_cliente_view, go_camarero_view, go_cocinero_view, go_adminn_view,
-    go_seguridad_admin, go_seguridad_camarero,
+    gestion_acceso, iniciar_pedido,
     cargar_listado_camareros, formulario_camarero, new_camarero, crear_editar, eliminar_camarero,
     generar_pdf, cargar_listado_cocineros,
     ver_pedidos, personalizar_hamburguesa, agregar_a_pedido, eliminar_pedido, formulario_cocinero,
@@ -29,8 +29,7 @@ urlpatterns = [
     path('admin/', go_adminn_view, name='adminn'),
 
     # Seguridad
-    path('segadmin/', go_seguridad_admin, name='seguridad_admin'),
-    path('segcam/', go_seguridad_camarero, name='seguridad_camarero'),
+    path('seguridad/', gestion_acceso, name='gestion_acceso'),
 
     # Camareros
     path('camareros/', cargar_listado_camareros, name='admin'),
@@ -43,6 +42,8 @@ urlpatterns = [
     path('descargar_pdf/', generar_pdf, name='descargar_pdf'),
 
     # Pedidos
+    path('iniciar_pedido/<int:mesa_id>/', iniciar_pedido, name='iniciar_pedido'),
+
     path('pedidos/', ver_pedidos, name='ver_pedidos'),
     path('pedidos/<int:id>/personalizar/', personalizar_hamburguesa, name='personalizar_hamburguesa'),
     path('pedidos/<int:id>/agregar/', agregar_a_pedido, name='agregar_a_pedido'),

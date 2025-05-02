@@ -36,5 +36,37 @@ class RegistroForm(forms.ModelForm):
             })
         }
 
+    def save(self, commit=True):
+        email = self.cleaned_data['email']
+        nombre = self.cleaned_data['nombre']
+        rol = self.cleaned_data['rol']
+        password = self.cleaned_data['password']
+
+        user = Usuario.objects.create_user(
+            email=email,
+            nombre=nombre,
+            password=password,
+            rol=rol
+        )
+
+        return user
+
+class AccesoEmpleadoForm(forms.Form):
+    ROLES = (
+        ('admin', 'Administrador'),
+        ('cocinero', 'Cocinero'),
+        ('camarero', 'Camarero')
+    )
+
+    rol = forms.ChoiceField(choices=ROLES, widget=forms.Select(attrs={
+        'class': 'form-select',
+        'id': 'selectRol'
+    }))
+    pin = forms.CharField(max_length=6, widget=forms.PasswordInput(attrs={
+        'class': 'form-control',
+        'placeholder': 'PIN de Seguridad',
+        'id': 'inputPIN'
+    }))
+
 class LoginForm(AuthenticationForm):
     username = forms.EmailField(label="Correo Electrónico")

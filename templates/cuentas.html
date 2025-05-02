@@ -13,7 +13,7 @@
             {% for pedido in pedidos %}
                 <div class="card">
                     <div class="card-header">
-                        Pedido #{{ pedido.id }} - {{ pedido.fecha }} - 
+                        Pedido #{{ pedido.id }} - {{ pedido.fecha }} -
                         {% if pedido.mesa %}
                             Mesa {{ pedido.mesa.numero }}
                         {% else %}

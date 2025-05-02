@@ -212,7 +212,7 @@
                             {% else %}
                                 <div class="d-flex gap-2">
                                     {% if mesa.estado == 'OCUPADA' %}
-                                        <a href="#" onclick="window.location.href='{% url 'ver_pedidos' %}'" class="btn btn-warning flex-grow-1">
+                                        <a href="{% url 'iniciar_pedido' mesa.id %}" class="btn btn-warning flex-grow-1">
                                             Tomar Pedido
                                         </a>
                                     {% elif mesa.estado == 'ESPERANDO' %}

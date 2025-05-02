@@ -1,4 +1,8 @@
+from datetime import time
+
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from reportlab.pdfgen import canvas
@@ -48,12 +52,61 @@ def go_login(request):
 def go_logout(request):
     logout(request)
     return redirect('login_page')
+
+# ============================ SEGURIDAD DE GESTIONES ============================
+
+def gestion_acceso(request):
+    rol_seleccionado = request.GET.get('rol')
+
+    if request.method == 'POST':
+        form = AccesoEmpleadoForm(request.POST)
+        if form.is_valid():
+            rol = form.cleaned_data['rol']
+            pin = form.cleaned_data['pin']
+
+            try:
+                usuario = Usuario.objects.get(rol=rol, pin_empleado=pin)
+                login(request, usuario)
+
+                if rol == 'admin':
+                    return redirect('adminn')
+                elif rol == 'cocinero':
+                    return redirect('cocinero')
+                elif rol == 'camarero':
+                    return redirect('camarero')
+
+            except Usuario.DoesNotExist:
+                form.add_error(None, "PIN incorrecto o rol inválido.")
+    else:
+        form = AccesoEmpleadoForm(initial={'rol': rol_seleccionado})
+
+    return render(request, "gestion_acceso.html", {'form': form})
+
+
+# ============================ BLOQUE DE URLS ============================
+
+def es_admin(user):
+    if not user.is_authenticated or not user.rol == 'admin':
+        raise PermissionDenied
+    return True
+
+def es_cocinero(user):
+    if not user.is_authenticated or not user.rol == 'cocinero':
+        raise PermissionDenied
+    return True
+
+def es_camarero(user):
+    if not user.is_authenticated or not user.rol == 'camarero':
+        raise PermissionDenied
+    return True
+
+
 # ============================ VISTAS POR ROL ============================
 
 def go_cliente_view(request):
     return render(request, 'cliente.html')
 
-
+@user_passes_test(es_camarero)
 def go_camarero_view(request):
 
     if not Mesa.objects.exists():
@@ -66,23 +119,15 @@ def go_camarero_view(request):
         'clientes': Cliente.objects.all(),
         'camareros': Camarero.objects.all()
     })
-
+@user_passes_test(es_cocinero)
 def go_cocinero_view(request):
     return render(request, 'cocinero.html')
-
+@user_passes_test(es_admin)
 def go_adminn_view(request):
     return render(request, 'adminn.html')
 
-# ============================ SEGURIDAD ============================
-
-def go_seguridad_admin(request):
-    return render(request, 'seguridad_admin.html')
-
-def go_seguridad_camarero(request):
-    return render(request, 'seguridad_camarero.html')
-
 # ============================ CAMAREROS ============================
-
+@user_passes_test(es_admin)
 def formulario_camarero(request):
     return render(request, 'formulario_camarero.html')
 
@@ -107,7 +152,7 @@ def new_camarero(request, id):
     else:
         return render(request, 'formulario_camarero.html', {'camarero': camarero_nuevo})
 
-
+@user_passes_test(es_admin)
 def cargar_listado_camareros(request):
     lista_camareros = Camarero.objects.all()
     return render(request, 'admin.html', {'camareros': lista_camareros})
@@ -131,7 +176,6 @@ def eliminar_camarero(request, id):
     return redirect('admin')
 
 # ============================ PDF ============================
-
 def generar_pdf(request):
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="reporte.pdf"'
@@ -143,6 +187,13 @@ def generar_pdf(request):
     return response
 
 # ============================ PEDIDOS (LO TOMA EL CAMARERO) ============================
+
+def iniciar_pedido(request, mesa_id):
+    request.session['mesa_id'] = mesa_id
+    if 'pedido_id' in request.session:
+        del request.session['pedido_id']
+    return redirect('ver_pedidos')
+
 
 def ver_pedidos(request):
     pedido_id = request.session.get('pedido_id')
@@ -215,7 +266,7 @@ def eliminar_pedido(request, id):
 
 
 # ============================ COCINEROS(ADMIN) ============================
-
+@user_passes_test(es_admin)
 def cargar_listado_cocineros(request):
     cocineros = Cocinero.objects.prefetch_related('tareas').all()
 
@@ -226,7 +277,7 @@ def cargar_listado_cocineros(request):
 def formulario_cocinero(request):
     return render(request, 'formulario_cocinero.html')
 
-
+@user_passes_test(es_admin)
 def crear_editar_cocinero(request, id=None):
     if id:
         cocinero = Cocinero.objects.get(id=id)

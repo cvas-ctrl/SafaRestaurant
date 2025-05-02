@@ -154,41 +154,51 @@ class Cuenta(models.Model):
 ##################### USUARIOS
 
 class UsuarioManager(BaseUserManager):
+    def create_user(self, email, nombre, password=None, rol='cliente'):
+        if not email:
+            raise ValueError("El usuario debe tener un email")
+        email = self.normalize_email(email)
+        usuario = self.model(email=email, nombre=nombre, rol=rol)
 
-   def create_user(self, email, nombre, rol, password=None):
-       if not email:
-           raise ValueError("El usuario debe tener un email")
-       email = self.normalize_email(email)
-       usuario = self.model(email=email, nombre=nombre, rol=rol)
-       usuario.set_password(password)
-       usuario.save(using=self._db)
-       return usuario
+        if rol == 'admin':
+            usuario.pin_empleado = '9999'
+        elif rol == 'cocinero':
+            usuario.pin_empleado = '1234'
+        elif rol == 'camarero':
+            usuario.pin_empleado = '5678'
+        elif rol == 'cliente':
+            usuario.pin_empleado = '0000'
 
-   def create_superuser(self, email, nombre, rol='admin', password=None):
-       usuario = self.create_user(email, nombre, rol, password)
-       usuario.is_superuser = True
-       usuario.is_staff = True
-       usuario.save(using=self._db)
-       return usuario
+        usuario.set_password(password)
+        usuario.save(using=self._db)
+        return usuario
+
+    def create_superuser(self, email, nombre, password=None):
+        usuario = self.create_user(email, nombre, password, rol='admin')
+        usuario.is_superuser = True
+        usuario.is_staff = True
+        usuario.save(using=self._db)
+        return usuario
 
 class Usuario(AbstractBaseUser, PermissionsMixin):
-   ROLES = (
-       ('admin','Administrador'),
-       ('cliente','Cliente'),
-       ('cocinero','Cocinero'),
-       ('camarero','Camarero')
-   )
+    ROLES = (
+        ('admin', 'Administrador'),
+        ('cliente', 'Cliente'),
+        ('cocinero', 'Cocinero'),
+        ('camarero', 'Camarero')
+    )
 
-   email = models.EmailField(max_length=500, unique=True)
-   nombre = models.CharField(max_length=250)
-   rol = models.CharField(max_length=25, choices=ROLES)
-   is_active = models.BooleanField(default=True)
-   is_staff = models.BooleanField(default=False)
+    email = models.EmailField(max_length=500, unique=True)
+    nombre = models.CharField(max_length=250)
+    rol = models.CharField(max_length=25, choices=ROLES)
+    pin_empleado = models.CharField(max_length=6, blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
 
-   objects = UsuarioManager()
+    objects = UsuarioManager()
 
-   USERNAME_FIELD = 'email'
-   REQUIRED_FIELDS = ['nombre', 'rol']
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['nombre', 'rol']
 
-   def __str__(self):
-       return self.email + "-" + self.nombre + ":" + self.rol
+    def __str__(self):
+        return f"{self.email} - {self.nombre} ({self.rol})"
