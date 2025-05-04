@@ -1,10 +1,45 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2 style="color: #1e9b0f">Pedidos Pendientes</h2>
+    <div class="row">
+        {% for pedido in pedidos %}
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <strong>Mesa {{ pedido.mesa.numero }}</strong>
+                </div>
+                <div class="card-body">
+                    {% with alguno_en_espera=False %}
+                        {% for item in pedido.detalles.all %}
+                            <div class="mb-2">
+                                {{ item.cantidad }}x {{ item.hamburguesa.nombre }} -
+                                <span class="badge {% if item.estado == 'PREPARADO' %}bg-success{% else %}bg-secondary{% endif %}">
+                                    {{ item.get_estado_display }}
+                                </span>
+                            </div>
+                            {% if item.estado == 'EN_ESPERA' %}
+                                {% with True as alguno_en_espera %}
+                                {% endwith %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endwith %}
+                </div>
+                <div class="card-footer text-muted">
+                    Pedido #{{ pedido.id }} - {{ pedido.fecha|date:"d/m/Y H:i" }}
 
-</body>
-</html>
+                    {% if pedido.detalles.all|dictsort:"estado"|yesno:"True,False" %}
+                        <form method="post" action="{% url 'marcar_pedido_preparado' pedido.id %}">
+                            {% csrf_token %}
+                            <button class="btn btn-sm btn-success mt-2">Marcar todo el pedido como preparado</button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p style="color: #1e9b0f">No hay pedidos pendientes.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

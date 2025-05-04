@@ -8,7 +8,8 @@ from SafaRestaurantapp.views import (
     generar_pdf, cargar_listado_cocineros,
     ver_pedidos, personalizar_hamburguesa, agregar_a_pedido, eliminar_pedido, formulario_cocinero,
     crear_editar_cocinero, eliminar_cocinero, go_register, seleccionar_cliente, asignar_cliente, liberar_mesa,
-    finalizar_pedido, ver_cuentas, eliminar_pedido_finalizado, go_login, go_logout
+    finalizar_pedido, ver_cuentas, eliminar_pedido_finalizado, go_login, go_logout, pedidos_pendientes_cocina,
+    marcar_pedido_preparado
 
 )
 
@@ -60,6 +61,9 @@ urlpatterns = [
     path('cocinero/', crear_editar_cocinero, name='crear_cocinero'),
     path('cocinero/<int:id>/', crear_editar_cocinero, name='editar_cocinero'),
     path('eliminar_cocinero/<int:id>', eliminar_cocinero, name='eliminar_cocinero'),
+    path('cocina/pedidos/', pedidos_pendientes_cocina, name='pedidos_pendientes_cocina'),
+    path('cocina/marcar/<int:pedido_id>/', marcar_pedido_preparado, name='marcar_pedido_preparado'),
+
 
     # GESTION DE MESAS Y CLIENTES
     path('mesa/<int:mesa_id>/seleccionar-cliente/', seleccionar_cliente, name='seleccionar_cliente'),

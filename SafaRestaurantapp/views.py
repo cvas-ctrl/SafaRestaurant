@@ -8,7 +8,7 @@ from django.http import HttpResponse
 from reportlab.pdfgen import canvas
 from SafaRestaurantapp.forms import *
 from SafaRestaurantapp.models import Camarero, Hamburguesa, Ingrediente, Cocinero, TareaCocina, TipoCocinero, \
-    DetallePedido, Pedido, IngredienteDetalle, Mesa, Cliente, Cuenta
+    DetallePedido, Pedido, IngredienteDetalle, Mesa, Cliente, Cuenta, EstadoProducto, EstadoPedido
 
 
 # ============================ PÁGINAS ESTÁTICAS ============================
@@ -62,21 +62,13 @@ def gestion_acceso(request):
         form = AccesoEmpleadoForm(request.POST)
         if form.is_valid():
             rol = form.cleaned_data['rol']
-            pin = form.cleaned_data['pin']
 
-            try:
-                usuario = Usuario.objects.get(rol=rol, pin_empleado=pin)
-                login(request, usuario)
-
-                if rol == 'admin':
-                    return redirect('adminn')
-                elif rol == 'cocinero':
-                    return redirect('cocinero')
-                elif rol == 'camarero':
-                    return redirect('camarero')
-
-            except Usuario.DoesNotExist:
-                form.add_error(None, "PIN incorrecto o rol inválido.")
+            if rol == 'admin':
+                return redirect('adminn')
+            elif rol == 'cocinero':
+                return redirect('cocinero')
+            elif rol == 'camarero':
+                return redirect('camarero')
     else:
         form = AccesoEmpleadoForm(initial={'rol': rol_seleccionado})
 
@@ -121,12 +113,19 @@ def go_camarero_view(request):
     })
 @user_passes_test(es_cocinero)
 def go_cocinero_view(request):
-    return render(request, 'cocinero.html')
+    pedidos = Pedido.objects.filter(
+        estado=EstadoPedido.EN_COCINA,
+        detalles__estado='EN_ESPERA'
+    ).distinct().select_related('mesa').prefetch_related('detalles__hamburguesa')
+
+    return render(request, 'cocinero.html', {
+        'pedidos': pedidos
+    })
 @user_passes_test(es_admin)
 def go_adminn_view(request):
     return render(request, 'adminn.html')
 
-# ============================ CAMAREROS ============================
+# ============================ CAMAREROS(admin) ============================
 @user_passes_test(es_admin)
 def formulario_camarero(request):
     return render(request, 'formulario_camarero.html')
@@ -358,10 +357,18 @@ def liberar_mesa(request, mesa_id):
 def finalizar_pedido(request):
     pedido_id = request.session.get('pedido_id')
     if pedido_id:
-
         pedido = get_object_or_404(Pedido, id=pedido_id)
-        pedido.finalizado = True
+
+        pedido.estado = EstadoPedido.EN_COCINA
         pedido.save()
+
+        for detalle in pedido.detalles.all():
+            detalle.estado = 'EN_ESPERA'
+            detalle.save()
+
+        if not hasattr(pedido, 'cuenta'):
+            Cuenta.objects.create(pedido=pedido, precio_total=pedido.precio_total)
+
         if pedido.mesa:
             mesa = pedido.mesa
             mesa.estado = 'ESPERANDO'
@@ -371,16 +378,46 @@ def finalizar_pedido(request):
 
     return redirect('camarero')
 
+
+
+
 def eliminar_pedido_finalizado(request, id):
-    pedido = get_object_or_404(Pedido, id=id, finalizado=True)
+    pedido = get_object_or_404(Pedido, id=id)
     pedido.delete()
     return redirect('ver_cuentas')
 
 def ver_cuentas(request):
-    pedidos = Pedido.objects.filter(finalizado=True).prefetch_related('detalles__hamburguesa','detalles__ingredientedetalle_set__ingrediente')
+    pedidos = Pedido.objects.filter(estado__in=[EstadoPedido.EN_COCINA, EstadoPedido.FINALIZADO])
     for pedido in pedidos:
         if not hasattr(pedido, 'cuenta'):
             Cuenta.objects.create(pedido=pedido, precio_total=pedido.precio_total)
     return render(request, 'cuentas.html', {
         'pedidos': pedidos
     })
+
+# ============================ COCINA ============================
+
+def pedidos_pendientes_cocina(request):
+    pedidos = Pedido.objects.filter(
+        estado=EstadoPedido.EN_COCINA,
+        detalles__estado='EN_ESPERA'
+    ).distinct().prefetch_related('detalles__hamburguesa', 'mesa')
+
+    return render(request, 'cocinero.html', {'pedidos': pedidos})
+
+
+
+def marcar_pedido_preparado(request, pedido_id):
+    pedido = get_object_or_404(Pedido, id=pedido_id)
+
+    if request.method == 'POST':
+        pedido.detalles.filter(estado='EN_ESPERA').update(estado='PREPARADO')
+
+        if pedido.mesa:
+            pedido.mesa.estado = 'OCUPADA'
+            pedido.mesa.save()
+
+    return redirect('pedidos_pendientes_cocina')
+
+
+

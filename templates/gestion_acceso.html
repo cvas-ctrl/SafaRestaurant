@@ -8,16 +8,16 @@
     <h2 class="form-title">
         <i class="bi bi-shield-lock"></i> Acceso al Sistema de Empleados
     </h2>
-    
+
     <form method="post">
         {% csrf_token %}
-        
+
         {% if form.errors %}
         <div class="alert alert-danger">
             Credenciales incorrectas. Inténtalo de nuevo.
         </div>
         {% endif %}
-        
+
         <div class="input-group">
             <label for="id_rol" class="form-label">Rol</label>
             <div class="input-group">
@@ -25,7 +25,7 @@
                 {{ form.rol }}
             </div>
         </div>
-        
+
         <div class="input-group">
             <label for="id_pin" class="form-label">PIN de Seguridad</label>
             <div class="input-group">
@@ -33,7 +33,7 @@
                 {{ form.pin }}
             </div>
         </div>
-     
+
         <button type="submit" class="btn-amargura">
             <i class="bi bi-box-arrow-in-right"></i> Ingresar
         </button>
