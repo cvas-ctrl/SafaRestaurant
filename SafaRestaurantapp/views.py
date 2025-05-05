@@ -419,5 +419,7 @@ def marcar_pedido_preparado(request, pedido_id):
 
     return redirect('pedidos_pendientes_cocina')
 
+# ============================ ERRORES ============================
 
-
+def error_403(request, exception=None):
+    return render(request, '403.html', status=403)
