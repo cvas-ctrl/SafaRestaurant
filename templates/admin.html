@@ -45,7 +45,6 @@
         flex-wrap: wrap;
         gap: 2rem;
         justify-content: center;
-        padding-top: 30px;
     }
     
     .tarjeta-empleado {
@@ -55,6 +54,7 @@
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
         transition: transform 0.3s ease, box-shadow 0.3s ease;
         border: 3px solid #28c112; 
+        margin-top: 2rem;
     }
     
     .tarjeta-empleado:hover {
@@ -165,6 +165,9 @@
     <h1 class="titulo-admin">Camareros</h1>
     <a href="{% url 'form_camarero' %}">
         <button class="btn-anadir" >Añadir un camarero</button>
+    </a>
+    <a href="{% url 'adminn' %}" class="btn p-0 border-0 bg-transparent position-relative " style="transition: all 0.3s; margin-top: 1.5rem">
+        <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-success bg-opacity-10 " style="width: 40px; height: 40px; border: 1px solid #1e9b0f;"><span style="color: #1e9b0f; font-size: 1.2rem;">←</span></span>
     </a>
     <div class="grid-empleados">
         {% for c in camareros %}

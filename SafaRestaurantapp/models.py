@@ -5,6 +5,8 @@ from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 from django.utils import timezone
 
+from SafaRestaurant import settings
+
 
 # Create your models here.
 
@@ -35,6 +37,7 @@ class Cliente(models.Model):
     apellidos = models.CharField(max_length=100)
     email = models.EmailField()
     dni = models.CharField(max_length=50)
+    usuario = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='cliente')
 
     def __str__(self):
         return f"{self.nombre} {self.apellidos}"
@@ -84,8 +87,9 @@ class EstadoPedido(models.TextChoices):
 
 
 class Pedido(models.Model):
+    codigo = models.CharField(max_length=50)
     fecha = models.DateTimeField(auto_now_add=True)
-    camarero = models.ForeignKey(Camarero, on_delete=models.SET_NULL, null=True, blank=True)
+    cliente = models.ForeignKey('Cliente', on_delete=models.SET_NULL, null=True, blank=True)
     mesa = models.ForeignKey(Mesa, on_delete=models.SET_NULL, null=True, blank=True, related_name='pedidos')
 
     estado = models.CharField(
@@ -112,6 +116,7 @@ class DetallePedido(models.Model):
     hamburguesa = models.ForeignKey(Hamburguesa, on_delete=models.CASCADE)
     ingredientes = models.ManyToManyField(Ingrediente, through='IngredienteDetalle')
     cantidad = models.PositiveIntegerField(default=1)
+    precio = models.FloatField()
 
     estado = models.CharField(
         max_length=20,
@@ -196,6 +201,15 @@ class UsuarioManager(BaseUserManager):
 
         usuario.set_password(password)
         usuario.save(using=self._db)
+
+        if rol == 'cliente':
+            Cliente.objects.create(
+                usuario=usuario,
+                nombre=nombre,
+                email=email,
+                dni=''
+            )
+
         return usuario
 
     def create_superuser(self, email, nombre, password=None):

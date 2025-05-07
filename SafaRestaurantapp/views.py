@@ -1,4 +1,5 @@
-from datetime import time
+from datetime import time, datetime
+from decimal import Decimal
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -234,7 +235,12 @@ def agregar_a_pedido(request, id):
             pedido = Pedido.objects.create(mesa=mesa)
             request.session['pedido_id'] = pedido.id
 
-        detalle = DetallePedido.objects.create(pedido=pedido, hamburguesa=hamburguesa)
+        detalle = DetallePedido.objects.create(
+            pedido=pedido,
+            hamburguesa=hamburguesa,
+            precio=hamburguesa.precio,
+            cantidad=1
+        )
 
         for key, value in request.POST.items():
             if key.startswith('ingredientes_') and int(value) > 0:
@@ -378,9 +384,6 @@ def finalizar_pedido(request):
 
     return redirect('camarero')
 
-
-
-
 def eliminar_pedido_finalizado(request, id):
     pedido = get_object_or_404(Pedido, id=id)
     pedido.delete()
@@ -423,3 +426,91 @@ def marcar_pedido_preparado(request, pedido_id):
 
 def error_403(request, exception=None):
     return render(request, '403.html', status=403)
+
+# ============================ CLIENTE ============================
+
+def ir_carta(request):
+    listado_hamburguesas = Hamburguesa.objects.all()
+    return render(request, 'carta.html', {'hamburguesas': listado_hamburguesas})
+
+def personalizar_carta(request, id):
+    hamburguesa = get_object_or_404(Hamburguesa, id=id)
+    ingredientes = Ingrediente.objects.all()
+    return render(request, 'personalizar_carta.html', {
+        'hamburguesa': hamburguesa,
+        'todos_ingredientes': ingredientes
+    })
+
+def add_carrito(request, id):
+    carrito = request.session.get('carrito', {})
+    producto_en_carrito = carrito.get(str(id),0)
+
+    if producto_en_carrito == 0:
+
+        carrito[str(id)] = 1
+
+    else:
+
+        carrito[str(id)] += 1
+
+    request.session['carrito'] = carrito
+
+    return redirect('ir_carta')
+
+
+def eliminar_del_carrito(request, id):
+    if request.method == 'POST':
+        carrito = request.session.get('carrito', {})
+
+        hamburguesa_id = str(id)
+
+        if hamburguesa_id in carrito:
+            del carrito[hamburguesa_id]
+            request.session['carrito'] = carrito
+
+            if not carrito:
+                del request.session['carrito']
+
+    return redirect('ver_carrito')
+
+
+def ver_carrito(request):
+    carrito = {}
+    total = Decimal('0.0')
+
+    carrito_session = request.session.get('carrito', {})
+
+    for k, v in carrito_session.items():
+        hamburguesa = Hamburguesa.objects.get(id=k)
+        carrito[hamburguesa] = v
+        total += Decimal(str(hamburguesa.precio)) * Decimal(v)
+
+    return render(request, 'carrito.html', {
+        'carrito': carrito,
+        'total': float(total)
+    })
+
+def comprar(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+
+    nuevo_pedido = Pedido.objects.create(
+        codigo=f'PED-{datetime.now().strftime("%H%M%S")}',
+        fecha=datetime.now(),
+        cliente=request.user.cliente
+    )
+
+    carrito_session = request.session.get('carrito', {})
+    for hamburguesa_id, cantidad in carrito_session.items():
+        DetallePedido.objects.create(
+            pedido=nuevo_pedido,
+            hamburguesa_id=hamburguesa_id,
+            precio=Hamburguesa.objects.get(id=hamburguesa_id).precio,
+            cantidad=cantidad
+        )
+
+    request.session['carrito'] = {}
+    return redirect(' confirmacion')
+
+def confirmacion(request):
+    return render(request, 'confirmacion.html')
