@@ -28,7 +28,7 @@
                 <div class="card-footer text-muted">
                     Pedido #{{ pedido.id }} - {{ pedido.fecha|date:"d/m/Y H:i" }}
 
-                    {% if pedido.detalles.all|dictsort:"estado"|yesno:"True,False" %}
+                    {% if pedido.detalles.all %}
                         <form method="post" action="{% url 'marcar_pedido_preparado' pedido.id %}">
                             {% csrf_token %}
                             <button class="btn btn-sm btn-success mt-2">Marcar todo el pedido como preparado</button>

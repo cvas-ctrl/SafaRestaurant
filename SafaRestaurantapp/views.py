@@ -101,17 +101,22 @@ def go_cliente_view(request):
 
 @user_passes_test(es_camarero)
 def go_camarero_view(request):
-
     if not Mesa.objects.exists():
         for i in range(1, 6):
             Mesa.objects.create(numero=i)
 
     mesas = Mesa.objects.select_related('cliente', 'camarero').all()
+
+    for mesa in mesas:
+        pedido_activo = mesa.pedidos.filter(estado__in=['EN_COCINA', 'EN_PROCESO']).last()
+        mesa.pedido_activo = pedido_activo
+
     return render(request, 'camarero.html', {
         'mesas': mesas,
         'clientes': Cliente.objects.all(),
         'camareros': Camarero.objects.all()
     })
+
 @user_passes_test(es_cocinero)
 def go_cocinero_view(request):
     pedidos = Pedido.objects.filter(
@@ -189,10 +194,24 @@ def generar_pdf(request):
 # ============================ PEDIDOS (LO TOMA EL CAMARERO) ============================
 
 def iniciar_pedido(request, mesa_id):
+    mesa = get_object_or_404(Mesa, id=mesa_id)
+
+    pedido = Pedido.objects.filter(
+        mesa=mesa,
+        estado=EstadoPedido.EN_PROCESO
+    ).first()
+
+    if not pedido:
+        pedido = Pedido.objects.create(
+            mesa=mesa,
+            estado=EstadoPedido.EN_PROCESO
+        )
+
     request.session['mesa_id'] = mesa_id
-    if 'pedido_id' in request.session:
-        del request.session['pedido_id']
+    request.session['pedido_id'] = pedido.id
+
     return redirect('ver_pedidos')
+
 
 
 def ver_pedidos(request):
