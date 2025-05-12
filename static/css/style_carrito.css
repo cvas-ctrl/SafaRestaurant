@@ -1,0 +1,193 @@
+.cart-container {
+    max-width: 800px;
+    margin: 4rem auto;
+    padding: 2rem;
+    background-color: black;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(40, 193, 18, 0.2);
+    border: 1px solid #28c112;
+}
+
+.cart-header {
+    border-bottom: 2px solid #28c112;
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+}
+
+.cart-title {
+    color: #28c112;
+    text-align: center;
+    margin-bottom: 0.5rem;
+    font-size: 1.8rem;
+}
+
+.cart-subtitle {
+    color: #28c112;
+    text-align: center;
+    opacity: 0.8;
+    font-size: 0.9rem;
+}
+
+.ticket-item {
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid #28c112;
+    transition: all 0.3s ease;
+}
+
+.ticket-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(40, 193, 18, 0.3);
+}
+
+.item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.8rem;
+}
+
+.item-name {
+    font-weight: 600;
+    color: #28c112;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+}
+
+.item-price {
+    font-weight: 700;
+    color: #28c112;
+    font-size: 1.1rem;
+}
+
+.ingredients-list {
+    font-size: 0.9rem;
+    color: #28c112;
+    margin-bottom: 1rem;
+    opacity: 0.9;
+}
+
+.quantity-badge {
+    background-color: rgba(40, 193, 18, 0.2);
+    color: #28c112;
+    padding: 0.25rem 0.75rem;
+    border-radius: 50px;
+    font-size: 0.8rem;
+}
+
+.btn-remove {
+    background: transparent;
+    color: #ff4d4d;
+    border: 1px solid #ff4d4d;
+    padding: 0.3rem 1rem;
+    border-radius: 5px;
+    font-size: 0.8rem;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.btn-remove:hover {
+    background: #ff4d4d;
+    color: black;
+    transform: scale(1.05);
+}
+
+.total-section {
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-top: 2rem;
+    border: 1px solid #28c112;
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    color: #28c112;
+}
+
+.total-final {
+    border-top: 1px solid #28c112;
+    padding-top: 1rem;
+    margin-top: 1rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.btn-checkout {
+    display: block;
+    width: 100%;
+    background-color: black;
+    color: #28c112;
+    border: 1px solid #28c112;
+    padding: 0.8rem;
+    border-radius: 5px;
+    transition: all 0.3s;
+    text-align: center;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    margin-top: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-checkout:hover {
+    background-color: #28c112;
+    color: black;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(40, 193, 18, 0.4);
+}
+
+.empty-cart {
+    text-align: center;
+    padding: 3rem;
+    color: #28c112;
+}
+
+.empty-cart-icon {
+    font-size: 3rem;
+    color: rgba(40, 193, 18, 0.3);
+    margin-bottom: 1rem;
+}
+
+.empty-cart h4 {
+    margin-bottom: 1rem;
+}
+
+.btn-menu {
+    background-color: black;
+    color: #28c112;
+    border: 1px solid #28c112;
+    padding: 0.6rem 1.5rem;
+    border-radius: 5px;
+    transition: all 0.3s;
+    display: inline-block;
+    margin-top: 1rem;
+}
+
+.btn-menu:hover {
+    background-color: #28c112;
+    color: black;
+    transform: translateY(-2px);
+}
+
+
+
+@media (max-width: 768px) {
+    .cart-container {
+        padding: 1.5rem;
+        margin: 1rem;
+    }
+
+    .cart-title {
+        font-size: 1.5rem;
+    }
+
+    .ticket-item {
+        padding: 1rem;
+    }
+}

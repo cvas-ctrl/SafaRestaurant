@@ -65,24 +65,45 @@
             <button class="navbar-toggler text-white" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-
         
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto nav-menu">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'rol_page' %}">Gestionar</a>
-                    </li>
+            
+                    {% if user.is_authenticated and user.rol != 'cliente' %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'rol_page' %}">Gestionar</a>
+                        </li>
+                    {% endif %}
+            
                     <li class="nav-item">
                         <a href="{% static 'pdf/CartaSafa.pdf' %}" class="nav-link">Carta</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Iniciar</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'register_page' %}">Registrar</a>
-                    </li>
+            
+                    {% if user.is_authenticated and user.rol == 'cliente' %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'ir_carta' %}">Pedir</a>
+                        </li>
+                    {% endif %}
+            
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <form action="{% url 'logout' %}" method="post" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="nav-link">Cerrar Sesión</button>
+                            </form>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login_page' %}">Iniciar</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'register_page' %}">Registrar</a>
+                        </li>
+                    {% endif %}
+            
                 </ul>
             </div>
+
         </div>
     </nav>
 </body>

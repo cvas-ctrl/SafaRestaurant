@@ -3,12 +3,14 @@ from django.urls import path
 from SafaRestaurantapp.views import (
     go_home_page, go_about_us, go_rol_page,
     go_cliente_view, go_camarero_view, go_cocinero_view, go_adminn_view,
-    go_seguridad_admin, go_seguridad_camarero,
+    gestion_acceso, iniciar_pedido,
     cargar_listado_camareros, formulario_camarero, new_camarero, crear_editar, eliminar_camarero,
     generar_pdf, cargar_listado_cocineros,
     ver_pedidos, personalizar_hamburguesa, agregar_a_pedido, eliminar_pedido, formulario_cocinero,
     crear_editar_cocinero, eliminar_cocinero, go_register, seleccionar_cliente, asignar_cliente, liberar_mesa,
-    finalizar_pedido, ver_cuentas, eliminar_pedido_finalizado
+    finalizar_pedido, ver_cuentas, eliminar_pedido_finalizado, go_login, go_logout, pedidos_pendientes_cocina,
+    marcar_pedido_preparado, ir_carta, personalizar_carta, add_carrito, ver_carrito, comprar, confirmacion,
+    eliminar_del_carrito
 
 )
 
@@ -19,6 +21,8 @@ urlpatterns = [
     path('aboutus/', go_about_us, name='about_us'),
     path('rol/', go_rol_page, name='rol_page'),
     path('register/', go_register, name='register_page'),
+    path('login/', go_login, name='login_page'),
+    path('logout/', go_logout, name='logout'),
 
     # Roles
     path('cliente/', go_cliente_view, name='cliente'),
@@ -27,8 +31,7 @@ urlpatterns = [
     path('admin/', go_adminn_view, name='adminn'),
 
     # Seguridad
-    path('segadmin/', go_seguridad_admin, name='seguridad_admin'),
-    path('segcam/', go_seguridad_camarero, name='seguridad_camarero'),
+    path('seguridad/', gestion_acceso, name='gestion_acceso'),
 
     # Camareros
     path('camareros/', cargar_listado_camareros, name='admin'),
@@ -41,6 +44,8 @@ urlpatterns = [
     path('descargar_pdf/', generar_pdf, name='descargar_pdf'),
 
     # Pedidos
+    path('iniciar_pedido/<int:mesa_id>/', iniciar_pedido, name='iniciar_pedido'),
+
     path('pedidos/', ver_pedidos, name='ver_pedidos'),
     path('pedidos/<int:id>/personalizar/', personalizar_hamburguesa, name='personalizar_hamburguesa'),
     path('pedidos/<int:id>/agregar/', agregar_a_pedido, name='agregar_a_pedido'),
@@ -57,11 +62,22 @@ urlpatterns = [
     path('cocinero/', crear_editar_cocinero, name='crear_cocinero'),
     path('cocinero/<int:id>/', crear_editar_cocinero, name='editar_cocinero'),
     path('eliminar_cocinero/<int:id>', eliminar_cocinero, name='eliminar_cocinero'),
+    path('cocina/pedidos/', pedidos_pendientes_cocina, name='pedidos_pendientes_cocina'),
+    path('cocina/marcar/<int:pedido_id>/', marcar_pedido_preparado, name='marcar_pedido_preparado'),
+
 
     # GESTION DE MESAS Y CLIENTES
     path('mesa/<int:mesa_id>/seleccionar-cliente/', seleccionar_cliente, name='seleccionar_cliente'),
     path('mesa/<int:mesa_id>/asignar-cliente/', asignar_cliente, name='asignar_cliente'),
     path('mesa/<int:mesa_id>/liberar/', liberar_mesa, name='liberar_mesa'),
 
+    # CLIENTE
+    path('carta/', ir_carta, name='ir_carta'),
+    path('carta/<int:id>/personalizar/', personalizar_carta, name='personalizar_carta'),
+    path('carrito/add/<int:id>/', add_carrito, name='add_carrito'),
+    path('eliminar_del_carrito/<int:id>/', eliminar_del_carrito, name='eliminar_del_carrito'),
+    path('ver_carrito/', ver_carrito, name='ver_carrito'),
+    path('completar_compra/', comprar, name='comprar'),
+    path('confirmacion/', confirmacion, name=' confirmacion'),
 
 ]
