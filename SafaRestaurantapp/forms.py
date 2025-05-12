@@ -1,13 +1,25 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 
-from .models import Camarero, Usuario
+from .models import Camarero, Usuario, Mesa, Hamburguesa
 
 
 class CamareroForm(forms.ModelForm):
     class Meta:
         model = Camarero
         fields = ['nombre', 'apellidos', 'dni', 'email', 'fecha_nacimiento']
+
+
+class MesaForm(forms.ModelForm):
+   class Meta:
+       model = Mesa
+       fields = ['numero', 'estado', 'cliente', 'camarero']
+
+class HamburguesaForm(forms.ModelForm):
+   class Meta:
+       model = Hamburguesa
+       fields = ['nombre', 'descripcion', 'precio']
+
 
 class RegistroForm(forms.ModelForm):
     class Meta:

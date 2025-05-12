@@ -26,14 +26,11 @@
             <img src="{% static 'img/cocinero.png' %}" alt="Cocineros">
             <h2>Cocineros</h2>
         </div>
-        <div class="box" onclick="window.location.href='{% url 'cocineros' %}'">
-            <img src="{% static 'img/mesagestion.png' %}" alt="Cocineros">
-            <h2>Gestion Mesas</h2>
+        <div class="box" onclick="window.location.href='{% url 'camarero' %}'">
+           <img src="{% static 'img/gestion_mesas' %}" alt="Cocineros">
+           <h2>Gestion Mesas y Productos</h2>
         </div>
-        <div class="box" onclick="window.location.href='{% url 'cocineros' %}'">
-            <img src="{% static 'img/gestionmesas.png' %}" alt="Cocineros">
-            <h2>Gestion Productos</h2>
-        </div>
+
     </div>
 </div>
 {% endblock %}
