@@ -23,13 +23,24 @@
     </style>
 {% endblock %}
 {% block content %}
-    <h1 style="color: #28c112; text-align: center; margin-bottom: 2rem; font-size: 2rem;margin-top: 9rem;">Login</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn-amargura">Iniciar Sesion</button>
-        <p class="cuenta">¿No tienes una cuenta? <a href="{% url 'register_page' %}">Haz clic aquí para registrarte</a></p>
+   <h1 style="color: #28c112; text-align: center; margin-bottom: 2rem; font-size: 2rem;margin-top: 9rem;">Login</h1>
+   <form method="post">
+       {% csrf_token %}
+      
+       {% if form.non_field_errors %}
+           <div class="alert alert-danger">
+               {% for error in form.non_field_errors %}
+                   <p>{{ error }}</p>
+               {% endfor %}
+           </div>
+       {% endif %}
+  
+       {{ form.as_p }}
+       <button type="submit" class="btn-amargura">Iniciar Sesion</button>
+       <p class="cuenta">¿No tienes una cuenta? <a href="{% url 'register_page' %}">Haz clic aquí para registrarte</a></p>
 
-    </form>
+
+   </form>
+
 
 {% endblock %}

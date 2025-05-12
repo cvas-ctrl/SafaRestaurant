@@ -10,7 +10,8 @@ from SafaRestaurantapp.views import (
     crear_editar_cocinero, eliminar_cocinero, go_register, seleccionar_cliente, asignar_cliente, liberar_mesa,
     finalizar_pedido, ver_cuentas, eliminar_pedido_finalizado, go_login, go_logout, pedidos_pendientes_cocina,
     marcar_pedido_preparado, ir_carta, personalizar_carta, add_carrito, ver_carrito, comprar, confirmacion,
-    eliminar_del_carrito
+    eliminar_del_carrito, nueva_mesa, editar_mesa, eliminar_mesa, nueva_hamburguesa, editar_hamburguesa,
+    eliminar_hamburguesa
 
 )
 
@@ -79,5 +80,11 @@ urlpatterns = [
     path('ver_carrito/', ver_carrito, name='ver_carrito'),
     path('completar_compra/', comprar, name='comprar'),
     path('confirmacion/', confirmacion, name=' confirmacion'),
+    path('mesa/nueva/', nueva_mesa, name='nueva_mesa'),
+    path('mesa/editar/<int:id>/', editar_mesa, name='editar_mesa'),
+    path('mesa/eliminar/<int:id>/', eliminar_mesa, name='eliminar_mesa'),
+    path('hamburguesa/nueva/', nueva_hamburguesa, name='nueva_hamburguesa'),
+    path('hamburguesa/editar/<int:id>/', editar_hamburguesa, name='editar_hamburguesa'),
+    path('hamburguesa/eliminar/<int:id>/', eliminar_hamburguesa, name='eliminar_hamburguesa'),
 
 ]

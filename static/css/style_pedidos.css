@@ -24,3 +24,13 @@
 .ticket .btn-danger:hover {
     background: #c9302c;
 }
+
+.card-body img{
+    width: 10%;
+}
+
+.card-body{
+    display: flex;
+    justify-content: center;
+    background-color: #c9302c;
+}

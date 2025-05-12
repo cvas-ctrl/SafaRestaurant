@@ -37,18 +37,19 @@ def go_register(request):
         return render(request, "register.html", {'form': form})
 
 def go_login(request):
-    form = LoginForm()
-    if request.method == 'POST':
-        form = LoginForm(request, data=request.POST)
-        if form.is_valid():
-            email = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
-            usuario = authenticate(request, email=email, password=password)
-            if usuario is not None:
-                login(request, usuario)
-                return redirect('home_page')
-    else:
-        return render(request, "login.html", {'form': form})
+   form = LoginForm()
+   if request.method == 'POST':
+       form = LoginForm(request, data=request.POST)
+       if form.is_valid():
+           email = form.cleaned_data.get('username')
+           password = form.cleaned_data.get('password')
+           usuario = authenticate(request, email=email, password=password)
+           if usuario is not None:
+               login(request, usuario)
+               return redirect('home_page')
+       return render(request, "login.html", {'form': form})
+   else:
+       return render(request, "login.html", {'form': form})
 
 def go_logout(request):
     logout(request)
@@ -57,26 +58,42 @@ def go_logout(request):
 # ============================ SEGURIDAD DE GESTIONES ============================
 
 def gestion_acceso(request):
-    rol_seleccionado = request.GET.get('rol')
+   rol_seleccionado = request.GET.get('rol')
 
-    if request.method == 'POST':
-        form = AccesoEmpleadoForm(request.POST)
-        if form.is_valid():
-            rol = form.cleaned_data['rol']
 
-            if rol == 'admin':
-                return redirect('adminn')
-            elif rol == 'cocinero':
-                return redirect('cocinero')
-            elif rol == 'camarero':
-                return redirect('camarero')
-    else:
-        form = AccesoEmpleadoForm(initial={'rol': rol_seleccionado})
+   if request.method == 'POST':
+       form = AccesoEmpleadoForm(request.POST)
+       if form.is_valid():
+           rol = form.cleaned_data['rol']
 
-    return render(request, "gestion_acceso.html", {'form': form})
+
+           if request.user.rol != rol:
+               form.add_error(None, "No puedes acceder con un rol diferente al tuyo.")
+           else:
+               if rol == 'admin':
+                   return redirect('adminn')
+               elif rol == 'cocinero':
+                   return redirect('cocinero')
+               elif rol == 'camarero':
+                   return redirect('camarero')
+   else:
+       form = AccesoEmpleadoForm(initial={'rol': rol_seleccionado})
+
+
+   return render(request, "gestion_acceso.html", {'form': form})
 
 
 # ============================ BLOQUE DE URLS ============================
+
+def es_admin_o_cliente(user):
+   if not user.is_authenticated or user.rol not in ['admin', 'cliente']:
+       raise PermissionDenied
+   return True
+
+def es_admin_o_camarero(user):
+   if not user.is_authenticated or user.rol not in ['admin', 'camarero']:
+       raise PermissionDenied
+   return True
 
 def es_admin(user):
     if not user.is_authenticated or not user.rol == 'admin':
@@ -99,7 +116,7 @@ def es_camarero(user):
 def go_cliente_view(request):
     return render(request, 'cliente.html')
 
-@user_passes_test(es_camarero)
+@user_passes_test(es_admin_o_camarero)
 def go_camarero_view(request):
     if not Mesa.objects.exists():
         for i in range(1, 6):
@@ -339,8 +356,11 @@ def eliminar_cocinero(request, id):
     cocinero.delete()
     return redirect('cocineros')
 
+# ============================ GESTION MESAS CLIENTES(DENTRO DE ADMIN) ===========================
+# def gestion_mesas(request):
 
-# ============================ GESTION MESAS CLIENTES ============================
+# ============================ GESTION MESAS CLIENTES ===========================
+
 
 
 def seleccionar_cliente(request, mesa_id):
@@ -447,7 +467,7 @@ def error_403(request, exception=None):
     return render(request, '403.html', status=403)
 
 # ============================ CLIENTE ============================
-
+@user_passes_test(es_admin_o_cliente)
 def ir_carta(request):
     listado_hamburguesas = Hamburguesa.objects.all()
     return render(request, 'carta.html', {'hamburguesas': listado_hamburguesas})
@@ -533,3 +553,89 @@ def comprar(request):
 
 def confirmacion(request):
     return render(request, 'confirmacion.html')
+
+@user_passes_test(es_admin)
+def nueva_mesa(request):
+   if request.method == 'POST':
+       form = MesaForm(request.POST)
+       if form.is_valid():
+           form.save()
+           return redirect('camarero')
+   else:
+       form = MesaForm()
+
+
+   return render(request, 'form_mesa.html', {'form': form})
+
+
+@user_passes_test(es_admin)
+def editar_mesa(request, id):
+   mesa = get_object_or_404(Mesa, id=id)
+
+
+   if request.method == 'POST':
+       form = MesaForm(request.POST, instance=mesa)
+       if form.is_valid():
+           form.save()
+           return redirect('camarero')
+   else:
+       form = MesaForm(instance=mesa)
+
+
+   return render(request, 'form_mesa.html', {'form': form})
+
+
+@user_passes_test(es_admin)
+def eliminar_mesa(request, id):
+   mesa = get_object_or_404(Mesa, id=id)
+   mesa.delete()
+   return redirect('camarero')
+
+@user_passes_test(es_admin)
+def nueva_hamburguesa(request):
+   if request.method == 'POST':
+       form = HamburguesaForm(request.POST)
+       if form.is_valid():
+           form.save()
+           return redirect('ir_carta')
+   else:
+       form = HamburguesaForm()
+
+
+   return render(request, 'form_hamburguesa.html', {'form': form})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@user_passes_test(es_admin)
+def editar_hamburguesa(request, id):
+   hamburguesa = get_object_or_404(Hamburguesa, id=id)
+
+
+   if request.method == 'POST':
+       form = HamburguesaForm(request.POST, instance=hamburguesa)
+       if form.is_valid():
+           form.save()
+           return redirect('ir_carta')
+   else:
+       form = HamburguesaForm(instance=hamburguesa)
+
+
+   return render(request, 'form_hamburguesa.html', {'form': form})
+
+
+@user_passes_test(es_admin)
+def eliminar_hamburguesa(request, id):
+   hamburguesa = get_object_or_404(Hamburguesa, id=id)
+   hamburguesa.delete()
+   return redirect('ir_carta')
