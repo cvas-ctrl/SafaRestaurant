@@ -11,7 +11,12 @@
 
 {% block content %}
 <div class="container">
-    <h1>Gestiona a los empleados</h1>
+    <div class="d-flex flex-column">
+        <h1>Gestiona a los empleados</h1>
+        <a href="{% url 'rol_page' %}" class="btn p-0 border-0 bg-transparent position-relative " style="transition: all 0.3s; margin-top: 1.5rem">
+            <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-success bg-opacity-10 " style="width: 40px; height: 40px; border: 1px solid #1e9b0f;"><span style="color: #1e9b0f; font-size: 1.2rem;">←</span></span>
+        </a>
+    </div>
     <div class="options">
         <div class="box" onclick="window.location.href='{% url 'admin' %}'">
             <img src="{% static 'img/camarero.png' %}" alt="Camareros">

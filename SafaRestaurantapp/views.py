@@ -1,10 +1,15 @@
+from datetime import time, datetime
+from decimal import Decimal
+
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from reportlab.pdfgen import canvas
 from SafaRestaurantapp.forms import *
 from SafaRestaurantapp.models import Camarero, Hamburguesa, Ingrediente, Cocinero, TareaCocina, TipoCocinero, \
-    DetallePedido, Pedido, IngredienteDetalle, Mesa, Cliente, Cuenta
+    DetallePedido, Pedido, IngredienteDetalle, Mesa, Cliente, Cuenta, EstadoProducto, EstadoPedido
 
 
 # ============================ PÁGINAS ESTÁTICAS ============================
@@ -48,41 +53,86 @@ def go_login(request):
 def go_logout(request):
     logout(request)
     return redirect('login_page')
+
+# ============================ SEGURIDAD DE GESTIONES ============================
+
+def gestion_acceso(request):
+    rol_seleccionado = request.GET.get('rol')
+
+    if request.method == 'POST':
+        form = AccesoEmpleadoForm(request.POST)
+        if form.is_valid():
+            rol = form.cleaned_data['rol']
+
+            if rol == 'admin':
+                return redirect('adminn')
+            elif rol == 'cocinero':
+                return redirect('cocinero')
+            elif rol == 'camarero':
+                return redirect('camarero')
+    else:
+        form = AccesoEmpleadoForm(initial={'rol': rol_seleccionado})
+
+    return render(request, "gestion_acceso.html", {'form': form})
+
+
+# ============================ BLOQUE DE URLS ============================
+
+def es_admin(user):
+    if not user.is_authenticated or not user.rol == 'admin':
+        raise PermissionDenied
+    return True
+
+def es_cocinero(user):
+    if not user.is_authenticated or not user.rol == 'cocinero':
+        raise PermissionDenied
+    return True
+
+def es_camarero(user):
+    if not user.is_authenticated or not user.rol == 'camarero':
+        raise PermissionDenied
+    return True
+
+
 # ============================ VISTAS POR ROL ============================
 
 def go_cliente_view(request):
     return render(request, 'cliente.html')
 
-
+@user_passes_test(es_camarero)
 def go_camarero_view(request):
-
     if not Mesa.objects.exists():
         for i in range(1, 6):
             Mesa.objects.create(numero=i)
 
     mesas = Mesa.objects.select_related('cliente', 'camarero').all()
+
+    for mesa in mesas:
+        pedido_activo = mesa.pedidos.filter(estado__in=['EN_COCINA', 'EN_PROCESO']).last()
+        mesa.pedido_activo = pedido_activo
+
     return render(request, 'camarero.html', {
         'mesas': mesas,
         'clientes': Cliente.objects.all(),
         'camareros': Camarero.objects.all()
     })
 
+@user_passes_test(es_cocinero)
 def go_cocinero_view(request):
-    return render(request, 'cocinero.html')
+    pedidos = Pedido.objects.filter(
+        estado=EstadoPedido.EN_COCINA,
+        detalles__estado='EN_ESPERA'
+    ).distinct().select_related('mesa').prefetch_related('detalles__hamburguesa')
 
+    return render(request, 'cocinero.html', {
+        'pedidos': pedidos
+    })
+@user_passes_test(es_admin)
 def go_adminn_view(request):
     return render(request, 'adminn.html')
 
-# ============================ SEGURIDAD ============================
-
-def go_seguridad_admin(request):
-    return render(request, 'seguridad_admin.html')
-
-def go_seguridad_camarero(request):
-    return render(request, 'seguridad_camarero.html')
-
-# ============================ CAMAREROS ============================
-
+# ============================ CAMAREROS(admin) ============================
+@user_passes_test(es_admin)
 def formulario_camarero(request):
     return render(request, 'formulario_camarero.html')
 
@@ -107,7 +157,7 @@ def new_camarero(request, id):
     else:
         return render(request, 'formulario_camarero.html', {'camarero': camarero_nuevo})
 
-
+@user_passes_test(es_admin)
 def cargar_listado_camareros(request):
     lista_camareros = Camarero.objects.all()
     return render(request, 'admin.html', {'camareros': lista_camareros})
@@ -131,7 +181,6 @@ def eliminar_camarero(request, id):
     return redirect('admin')
 
 # ============================ PDF ============================
-
 def generar_pdf(request):
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="reporte.pdf"'
@@ -143,6 +192,27 @@ def generar_pdf(request):
     return response
 
 # ============================ PEDIDOS (LO TOMA EL CAMARERO) ============================
+
+def iniciar_pedido(request, mesa_id):
+    mesa = get_object_or_404(Mesa, id=mesa_id)
+
+    pedido = Pedido.objects.filter(
+        mesa=mesa,
+        estado=EstadoPedido.EN_PROCESO
+    ).first()
+
+    if not pedido:
+        pedido = Pedido.objects.create(
+            mesa=mesa,
+            estado=EstadoPedido.EN_PROCESO
+        )
+
+    request.session['mesa_id'] = mesa_id
+    request.session['pedido_id'] = pedido.id
+
+    return redirect('ver_pedidos')
+
+
 
 def ver_pedidos(request):
     pedido_id = request.session.get('pedido_id')
@@ -184,7 +254,12 @@ def agregar_a_pedido(request, id):
             pedido = Pedido.objects.create(mesa=mesa)
             request.session['pedido_id'] = pedido.id
 
-        detalle = DetallePedido.objects.create(pedido=pedido, hamburguesa=hamburguesa)
+        detalle = DetallePedido.objects.create(
+            pedido=pedido,
+            hamburguesa=hamburguesa,
+            precio=hamburguesa.precio,
+            cantidad=1
+        )
 
         for key, value in request.POST.items():
             if key.startswith('ingredientes_') and int(value) > 0:
@@ -215,7 +290,7 @@ def eliminar_pedido(request, id):
 
 
 # ============================ COCINEROS(ADMIN) ============================
-
+@user_passes_test(es_admin)
 def cargar_listado_cocineros(request):
     cocineros = Cocinero.objects.prefetch_related('tareas').all()
 
@@ -226,7 +301,7 @@ def cargar_listado_cocineros(request):
 def formulario_cocinero(request):
     return render(request, 'formulario_cocinero.html')
 
-
+@user_passes_test(es_admin)
 def crear_editar_cocinero(request, id=None):
     if id:
         cocinero = Cocinero.objects.get(id=id)
@@ -310,10 +385,18 @@ def liberar_mesa(request, mesa_id):
 def finalizar_pedido(request):
     pedido_id = request.session.get('pedido_id')
     if pedido_id:
-
         pedido = get_object_or_404(Pedido, id=pedido_id)
-        pedido.finalizado = True
+
+        pedido.estado = EstadoPedido.EN_COCINA
         pedido.save()
+
+        for detalle in pedido.detalles.all():
+            detalle.estado = 'EN_ESPERA'
+            detalle.save()
+
+        if not hasattr(pedido, 'cuenta'):
+            Cuenta.objects.create(pedido=pedido, precio_total=pedido.precio_total)
+
         if pedido.mesa:
             mesa = pedido.mesa
             mesa.estado = 'ESPERANDO'
@@ -324,15 +407,132 @@ def finalizar_pedido(request):
     return redirect('camarero')
 
 def eliminar_pedido_finalizado(request, id):
-    pedido = get_object_or_404(Pedido, id=id, finalizado=True)
+    pedido = get_object_or_404(Pedido, id=id)
     pedido.delete()
     return redirect('ver_cuentas')
 
 def ver_cuentas(request):
-    pedidos = Pedido.objects.filter(finalizado=True).prefetch_related('detalles__hamburguesa','detalles__ingredientedetalle_set__ingrediente')
+    pedidos = Pedido.objects.filter(estado__in=[EstadoPedido.EN_COCINA, EstadoPedido.FINALIZADO])
     for pedido in pedidos:
         if not hasattr(pedido, 'cuenta'):
             Cuenta.objects.create(pedido=pedido, precio_total=pedido.precio_total)
     return render(request, 'cuentas.html', {
         'pedidos': pedidos
     })
+
+# ============================ COCINA ============================
+
+def pedidos_pendientes_cocina(request):
+    pedidos = Pedido.objects.filter(
+        estado=EstadoPedido.EN_COCINA,
+        detalles__estado='EN_ESPERA'
+    ).distinct().prefetch_related('detalles__hamburguesa', 'mesa')
+
+    return render(request, 'cocinero.html', {'pedidos': pedidos})
+
+
+
+def marcar_pedido_preparado(request, pedido_id):
+    pedido = get_object_or_404(Pedido, id=pedido_id)
+
+    if request.method == 'POST':
+        pedido.detalles.filter(estado='EN_ESPERA').update(estado='PREPARADO')
+
+        if pedido.mesa:
+            pedido.mesa.estado = 'OCUPADA'
+            pedido.mesa.save()
+
+    return redirect('pedidos_pendientes_cocina')
+
+# ============================ ERRORES ============================
+
+def error_403(request, exception=None):
+    return render(request, '403.html', status=403)
+
+# ============================ CLIENTE ============================
+
+def ir_carta(request):
+    listado_hamburguesas = Hamburguesa.objects.all()
+    return render(request, 'carta.html', {'hamburguesas': listado_hamburguesas})
+
+def personalizar_carta(request, id):
+    hamburguesa = get_object_or_404(Hamburguesa, id=id)
+    ingredientes = Ingrediente.objects.all()
+    return render(request, 'personalizar_carta.html', {
+        'hamburguesa': hamburguesa,
+        'todos_ingredientes': ingredientes
+    })
+
+def add_carrito(request, id):
+    carrito = request.session.get('carrito', {})
+    producto_en_carrito = carrito.get(str(id),0)
+
+    if producto_en_carrito == 0:
+
+        carrito[str(id)] = 1
+
+    else:
+
+        carrito[str(id)] += 1
+
+    request.session['carrito'] = carrito
+
+    return redirect('ir_carta')
+
+
+def eliminar_del_carrito(request, id):
+    if request.method == 'POST':
+        carrito = request.session.get('carrito', {})
+
+        hamburguesa_id = str(id)
+
+        if hamburguesa_id in carrito:
+            del carrito[hamburguesa_id]
+            request.session['carrito'] = carrito
+
+            if not carrito:
+                del request.session['carrito']
+
+    return redirect('ver_carrito')
+
+
+def ver_carrito(request):
+    carrito = {}
+    total = Decimal('0.0')
+
+    carrito_session = request.session.get('carrito', {})
+
+    for k, v in carrito_session.items():
+        hamburguesa = Hamburguesa.objects.get(id=k)
+        carrito[hamburguesa] = v
+        total += Decimal(str(hamburguesa.precio)) * Decimal(v)
+
+    return render(request, 'carrito.html', {
+        'carrito': carrito,
+        'total': float(total)
+    })
+
+def comprar(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+
+    nuevo_pedido = Pedido.objects.create(
+        codigo=f'PED-{datetime.now().strftime("%H%M%S")}',
+        fecha=datetime.now(),
+        cliente=request.user.cliente
+    )
+
+    carrito_session = request.session.get('carrito', {})
+    for hamburguesa_id, cantidad in carrito_session.items():
+        DetallePedido.objects.create(
+            pedido=nuevo_pedido,
+            hamburguesa_id=hamburguesa_id,
+            precio=Hamburguesa.objects.get(id=hamburguesa_id).precio,
+            cantidad=cantidad
+        )
+
+    request.session['carrito'] = {}
+    return redirect(' confirmacion')
+
+def confirmacion(request):
+    return render(request, 'confirmacion.html')

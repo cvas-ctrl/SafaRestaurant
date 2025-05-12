@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 
+from django.conf.urls import handler403
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -132,3 +134,9 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'SafaRestaurantapp.Usuario'
+
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/home_page/'
+
+#PAGINAS DE ERROR
+handler403 = 'SafaRestaurant.views.error_403'

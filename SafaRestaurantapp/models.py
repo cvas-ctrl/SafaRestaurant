@@ -5,6 +5,8 @@ from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 from django.utils import timezone
 
+from SafaRestaurant import settings
+
 
 # Create your models here.
 
@@ -35,6 +37,7 @@ class Cliente(models.Model):
     apellidos = models.CharField(max_length=100)
     email = models.EmailField()
     dni = models.CharField(max_length=50)
+    usuario = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='cliente')
 
     def __str__(self):
         return f"{self.nombre} {self.apellidos}"
@@ -76,11 +79,25 @@ class Ingrediente(models.Model):
     def __str__(self):
         return self.nombre
 
+
+class EstadoPedido(models.TextChoices):
+    EN_PROCESO = 'EN_PROCESO', 'En Proceso'
+    EN_COCINA = 'EN_COCINA', 'En Cocina'
+    FINALIZADO = 'FINALIZADO', 'Finalizado'
+
+
 class Pedido(models.Model):
+    codigo = models.CharField(max_length=50)
     fecha = models.DateTimeField(auto_now_add=True)
-    camarero = models.ForeignKey(Camarero, on_delete=models.SET_NULL, null=True, blank=True)
-    finalizado = models.BooleanField(default=False)
+    cliente = models.ForeignKey('Cliente', on_delete=models.SET_NULL, null=True, blank=True)
     mesa = models.ForeignKey(Mesa, on_delete=models.SET_NULL, null=True, blank=True, related_name='pedidos')
+
+    estado = models.CharField(
+        max_length=20,
+        choices=EstadoPedido.choices,
+        default=EstadoPedido.EN_PROCESO
+    )
+
     def __str__(self):
         return f"Pedido #{self.id} - {self.fecha.strftime('%Y-%m-%d %H:%M')}"
 
@@ -88,11 +105,24 @@ class Pedido(models.Model):
     def precio_total(self):
         return sum(detalle.hamburguesa.precio * detalle.cantidad for detalle in self.detalles.all())
 
+
+class EstadoProducto(models.TextChoices):
+    EN_ESPERA = 'EN_ESPERA', 'En espera'
+    PREPARADO = 'PREPARADO', 'Preparado'
+
+
 class DetallePedido(models.Model):
     pedido = models.ForeignKey(Pedido, related_name='detalles', on_delete=models.CASCADE)
     hamburguesa = models.ForeignKey(Hamburguesa, on_delete=models.CASCADE)
     ingredientes = models.ManyToManyField(Ingrediente, through='IngredienteDetalle')
     cantidad = models.PositiveIntegerField(default=1)
+    precio = models.FloatField()
+
+    estado = models.CharField(
+        max_length=20,
+        choices=EstadoProducto.choices,
+        default=EstadoProducto.EN_ESPERA
+    )
 
 class IngredienteDetalle(models.Model):
     detalle = models.ForeignKey(DetallePedido, on_delete=models.CASCADE)
@@ -154,41 +184,60 @@ class Cuenta(models.Model):
 ##################### USUARIOS
 
 class UsuarioManager(BaseUserManager):
+    def create_user(self, email, nombre, password=None, rol='cliente'):
+        if not email:
+            raise ValueError("El usuario debe tener un email")
+        email = self.normalize_email(email)
+        usuario = self.model(email=email, nombre=nombre, rol=rol)
 
-   def create_user(self, email, nombre, rol, password=None):
-       if not email:
-           raise ValueError("El usuario debe tener un email")
-       email = self.normalize_email(email)
-       usuario = self.model(email=email, nombre=nombre, rol=rol)
-       usuario.set_password(password)
-       usuario.save(using=self._db)
-       return usuario
+        if rol == 'admin':
+            usuario.pin_empleado = '9999'
+        elif rol == 'cocinero':
+            usuario.pin_empleado = '1234'
+        elif rol == 'camarero':
+            usuario.pin_empleado = '5678'
+        elif rol == 'cliente':
+            usuario.pin_empleado = '0000'
 
-   def create_superuser(self, email, nombre, rol='admin', password=None):
-       usuario = self.create_user(email, nombre, rol, password)
-       usuario.is_superuser = True
-       usuario.is_staff = True
-       usuario.save(using=self._db)
-       return usuario
+        usuario.set_password(password)
+        usuario.save(using=self._db)
+
+        if rol == 'cliente':
+            Cliente.objects.create(
+                usuario=usuario,
+                nombre=nombre,
+                email=email,
+                dni=''
+            )
+
+        return usuario
+
+    def create_superuser(self, email, nombre, password=None):
+        usuario = self.create_user(email, nombre, password, rol='admin')
+        usuario.is_superuser = True
+        usuario.is_staff = True
+        usuario.save(using=self._db)
+        return usuario
 
 class Usuario(AbstractBaseUser, PermissionsMixin):
-   ROLES = (
-       ('admin','Administrador'),
-       ('cliente','Cliente'),
-       ('cocinero','Cocinero'),
-       ('camarero','Camarero')
-   )
+    ROLES = (
+        ('admin', 'Administrador'),
+        ('cliente', 'Cliente'),
+        ('cocinero', 'Cocinero'),
+        ('camarero', 'Camarero')
+    )
 
-   email = models.EmailField(max_length=500, unique=True)
-   nombre = models.CharField(max_length=250)
-   rol = models.CharField(max_length=25, choices=ROLES)
-   is_active = models.BooleanField(default=True)
-   is_staff = models.BooleanField(default=False)
+    email = models.EmailField(max_length=500, unique=True)
+    nombre = models.CharField(max_length=250)
+    rol = models.CharField(max_length=25, choices=ROLES)
+    pin_empleado = models.CharField(max_length=6, blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
 
-   objects = UsuarioManager()
+    objects = UsuarioManager()
 
-   USERNAME_FIELD = 'email'
-   REQUIRED_FIELDS = ['nombre', 'rol']
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['nombre', 'rol']
 
-   def __str__(self):
-       return self.email + "-" + self.nombre + ":" + self.rol
+    def __str__(self):
+        return f"{self.email} - {self.nombre} ({self.rol})"

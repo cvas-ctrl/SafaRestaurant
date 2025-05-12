@@ -29,23 +29,27 @@
     
     <div class="container-roles">
         
-        <!-- Camarero -->
-        <div class="cards-rol" onclick="window.location.href='{% url 'seguridad_camarero' %}'" style="cursor: pointer;">
+        <div class="cards-rol" 
+             onclick="window.location.href='{% url 'gestion_acceso' %}?rol=camarero'" 
+             style="cursor: pointer;">
             <h2 class="titulo-rol">Camarero</h2>
             <p class="descripcion-rol">Gestiona mesas y atiende pedidos</p>
         </div>
         
-        <!-- Cocinero -->
-        <div class="cards-rol" onclick="window.location.href='{% url 'cocinero' %}'" style="cursor: pointer;">
+        <div class="cards-rol" 
+             onclick="window.location.href='{% url 'gestion_acceso' %}?rol=cocinero'" 
+             style="cursor: pointer;">
             <h2 class="titulo-rol">Cocinero</h2>
             <p class="descripcion-rol">Prepara los pedidos y gestiona la cocina</p>
         </div>
         
-        <!-- Administrador -->
-        <div class="cards-rol" onclick="window.location.href='{% url 'seguridad_admin' %}'" style="cursor: pointer;">
+        <div class="cards-rol" 
+             onclick="window.location.href='{% url 'gestion_acceso' %}?rol=admin'" 
+             style="cursor: pointer;">
             <h2 class="titulo-rol">Administrador</h2>
             <p class="descripcion-rol">Gestiona el restaurante y empleados</p>
         </div>
+        
     </div>
 </section>
 

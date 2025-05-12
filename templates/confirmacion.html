@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="container d-flex justify-content-center align-items-center vh-100">
+        <div class="text-center bg-black border border-success shadow-lg rounded p-5" style="max-width: 600px;">
+            <h1 class="text-success mb-4">¡PEDIDO CONFIRMADO!</h1>
+            <img src="{% static 'img/tick.png' %}" alt="Pedido Confirmado" class="img-fluid mb-4" style="width: 100px;">
+            <p class="fs-4 text-light mb-3">Tu pedido ha sido registrado con éxito</p>
+            <p class="fs-5 text-white">Recibirás una confirmación por correo electrónico. Gracias por tu compra.</p>
+            <a href="{% url 'ir_carta' %}" class="btn btn-success mt-4">Volver a la Carta</a>
+        </div>
+    </div>
+{% endblock %}

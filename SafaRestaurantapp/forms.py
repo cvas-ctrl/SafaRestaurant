@@ -36,5 +36,55 @@ class RegistroForm(forms.ModelForm):
             })
         }
 
+    def save(self, commit=True):
+        email = self.cleaned_data['email']
+        nombre = self.cleaned_data['nombre']
+        rol = self.cleaned_data['rol']
+        password = self.cleaned_data['password']
+
+        user = Usuario.objects.create_user(
+            email=email,
+            nombre=nombre,
+            password=password,
+            rol=rol
+        )
+
+        return user
+
+
+class AccesoEmpleadoForm(forms.Form):
+    ROLES = (
+        ('admin', 'Administrador'),
+        ('cocinero', 'Cocinero'),
+        ('camarero', 'Camarero')
+    )
+
+    rol = forms.ChoiceField(choices=ROLES, widget=forms.Select(attrs={
+        'class': 'form-select',
+        'id': 'selectRol'
+    }))
+
+    pin = forms.CharField(max_length=6, widget=forms.PasswordInput(attrs={
+        'class': 'form-control',
+        'placeholder': 'PIN de Seguridad',
+        'id': 'inputPIN'
+    }))
+
+    def clean(self):
+        cleaned_data = super().clean()
+        rol = cleaned_data.get('rol')
+        pin = cleaned_data.get('pin')
+
+        PINES = {
+            'admin': '9999',
+            'cocinero': '1234',
+            'camarero': '5678'
+        }
+
+        if pin != PINES.get(rol):
+            raise forms.ValidationError("PIN incorrecto para este rol")
+
+        return cleaned_data
+
 class LoginForm(AuthenticationForm):
     username = forms.EmailField(label="Correo Electrónico")
