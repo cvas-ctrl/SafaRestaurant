@@ -21,9 +21,13 @@
                                 <h5 class="card-title" style="color: #1e9b0f">{{ h.nombre }}</h5>
                                 <p class="card-text">{{ h.descripcion }}</p>
                                 <p class="fw-bold">{{ h.precio }} €</p>
-                                <a href="{% url 'personalizar_hamburguesa' h.id %}" class="btn btn-dark">Personalizar</a>
-                                <img src="{% static 'img/Hamburguesa5.png' %}" alt="Cocineros">
-
+                                <div class="d-flex">
+                                    <a href="{% url 'personalizar_hamburguesa' h.id %}" class="btn btn-dark">Personalizar</a>
+                                    <form method="POST" action="{% url 'agregar_a_pedido' h.id %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-success">Añadir al pedido</button>
+                                    </form>
+                                </div>  
                             </div>
                         </div>
                     </div>

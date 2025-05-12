@@ -36,7 +36,7 @@
                        </div>
                    {% endif %}
                </div>
-          
+
                <div class="row row-cols-1 row-cols-md-2 g-4">
                    {% for h in hamburguesas %}
                    <div class="col">
@@ -46,12 +46,12 @@
                                <p class="card-text">{{ h.descripcion }}</p>
                                <p class="fw-bold">{{ h.precio }} €</p>
                                {% if request.user.rol == 'admin' %}
-                                   <div class="d-flex justify-content-between">
+                                   <div class="d-flex">
                                        <a href="{% url 'editar_hamburguesa' h.id %}" class="btn btn-primary">Editar</a>
                                        <a href="{% url 'eliminar_hamburguesa' h.id %}" class="btn btn-danger">Eliminar</a>
                                    </div>
                                {% else %}
-                                   <div class="d-flex justify-content-between">
+                                   <div class="d-flex">
                                        <a href="{% url 'personalizar_carta' h.id %}" class="btn btn-primary">Personalizar</a>
                                        <a href="{% url 'add_carrito' h.id %}" class="btn btn-success">Añadir al carrito</a>
                                    </div>
