@@ -536,14 +536,17 @@ def comprar(request):
     nuevo_pedido = Pedido.objects.create(
         codigo=f'PED-{datetime.now().strftime("%H%M%S")}',
         fecha=datetime.now(),
+        estado=EstadoPedido.EN_COCINA,
         cliente=request.user.cliente
     )
+
 
     carrito_session = request.session.get('carrito', {})
     for hamburguesa_id, cantidad in carrito_session.items():
         DetallePedido.objects.create(
             pedido=nuevo_pedido,
             hamburguesa_id=hamburguesa_id,
+            estado=EstadoProducto.EN_ESPERA,
             precio=Hamburguesa.objects.get(id=hamburguesa_id).precio,
             cantidad=cantidad
         )
@@ -639,3 +642,7 @@ def eliminar_hamburguesa(request, id):
    hamburguesa = get_object_or_404(Hamburguesa, id=id)
    hamburguesa.delete()
    return redirect('ir_carta')
+
+@login_required
+def perfil_usuario(request):
+   return render(request, 'perfil.html')

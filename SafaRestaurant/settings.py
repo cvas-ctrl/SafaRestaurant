@@ -140,3 +140,6 @@ LOGIN_REDIRECT_URL = '/home_page/'
 
 #PAGINAS DE ERROR
 handler403 = 'SafaRestaurant.views.error_403'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'

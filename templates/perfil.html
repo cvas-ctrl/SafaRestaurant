@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="container mt-5">
+   <h2 class="mb-4" style="color: #1e9b0f;">Mi Perfil</h2>
+   <div class="row">
+       <div class="col-md-4 text-center">
+           <img src="{% static 'img/silla.png' %}" alt="Foto de perfil" class="img-fluid rounded-circle perfil-img mb-3">
+           <p class="fw-bold">{{ user.rol|title }}</p>
+       </div>
+       <div class="col-md-8">
+           <div class="card shadow-sm">
+               <div class="card-body">
+                   <h5 class="card-title mb-3">Información del Usuario</h5>
+                   <ul class="list-group list-group-flush">
+                       <li class="list-group-item"><strong>Nombre:</strong> {{ user.nombre }}</li>
+                       <li class="list-group-item"><strong>Email:</strong> {{ user.email }}</li>
+                       <li class="list-group-item"><strong>Rol:</strong> {{ user.get_rol_display }}</li>
+                       {% if user.pin_empleado %}
+                       <li class="list-group-item"><strong>PIN de seguridad:</strong> {{ user.pin_empleado }}</li>
+                       {% endif %}
+                   </ul>
+               </div>
+           </div>
+       </div>
+   </div>
+</div>
+{% endblock %}
