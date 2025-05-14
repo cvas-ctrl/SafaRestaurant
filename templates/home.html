@@ -8,40 +8,78 @@
     <link rel="stylesheet" href="{% static 'css/style_base.css' %}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="{% static 'js/navbar.js' %}"></script>
     {% block extra_css %}
         <style>
+            /* Variables CSS para temas */
             :root {
                 --primary-color: #28c112;
                 --secondary-color: #1a5c1b;
                 --dark-color: #333;
                 --light-color: #f8f9fa;
                 --text-color: #555;
+                --bg-color: #ffffff;
+                --card-bg: #ffffff;
+                --nav-bg: #ffffff;
+                --text-on-light: #333;
             }
-            
+
+            body[data-bs-theme="dark"] {
+                --primary-color: #3dd126;
+                --secondary-color: #2a8a2c;
+                --dark-color: #f8f9fa;
+                --light-color: #212529;
+                --text-color: #adb5bd;
+                --bg-color: #121212;
+                --card-bg: #1e1e1e;
+                --nav-bg: #1a1a1a;
+                --text-on-light: #f8f9fa;
+            }
+
             body {
                 color: var(--dark-color);
+                background-color: var(--bg-color);
                 font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
                 line-height: 1.6;
                 margin: 0;
                 padding: 0;
                 padding-top: 80px;
+                transition: background-color 0.3s ease, color 0.3s ease;
             }
-            
+
             .navbar {
                 position: fixed;
                 top: 0;
                 width: 100%;
                 z-index: 1000;
-                background-color: white;
+                background-color: var(--nav-bg);
                 box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
                 transition: all 0.3s ease;
             }
-            
+
             .navbar.scrolled {
                 background-color: rgba(255, 255, 255, 0.95);
                 box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             }
-            
+
+            .main-nav {
+                background-color: var(--nav-bg);
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                border-bottom: solid var(--dark-color);
+            }
+
+            .nav-link {
+                color: var(--primary-color) !important;
+                font-weight: bold;
+                transition: 0.3s;
+            }
+
+            .nav-link:hover {
+                background-color: var(--primary-color);
+                color: var(--text-on-light) !important;
+                border-radius: 5px;
+            }
+
             .video-container {
                 position: relative;
                 margin-top: 0;
@@ -50,6 +88,7 @@
                 min-height: 500px;
             }
 
+            /* Resto de tus estilos existentes... */
             .video-container video {
                 width: 100%;
                 height: 100%;
@@ -71,15 +110,15 @@
                 text-align: center;
                 animation: fadeIn 1.5s ease-in-out;
             }
-            
+
             @keyframes fadeIn {
                 from { opacity: 0; transform: translate(-50%, -40%); }
                 to { opacity: 1; transform: translate(-50%, -50%); }
             }
-            
+
             .informacion-main {
                 padding: 80px 0;
-                background-color: white;
+                background-color: var(--bg-color);
             }
 
             .informacion-main h2 {
@@ -90,7 +129,7 @@
                 margin-bottom: 40px;
                 position: relative;
             }
-            
+
             .informacion-main h2:after {
                 content: "";
                 display: block;
@@ -110,8 +149,9 @@
                 margin-left: auto;
                 margin-right: auto;
             }
-            
+
             .card {
+                background-color: var(--card-bg);
                 border-radius: 15px;
                 box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
                 transition: all 0.4s ease;
@@ -125,13 +165,13 @@
                 transform: translateY(-10px);
                 box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
             }
-            
+
             .card-img-top {
                 height: 220px;
                 object-fit: cover;
                 transition: transform 0.5s ease;
             }
-            
+
             .card:hover .card-img-top {
                 transform: scale(1.05);
             }
@@ -148,18 +188,19 @@
                 font-size: 1rem;
                 margin-bottom: 20px;
             }
-            
+
             .card-body {
                 padding: 25px;
             }
-            
+
             .collapsible-section {
-                background-color: #f9f9f9;
+                background-color: var(--light-color);
                 padding: 80px 0;
             }
- 
+
             .collapsible-header {
-                background-color: white;
+                background-color: var(--card-bg);
+                color: var(--dark-color);
                 padding: 20px;
                 border-radius: 10px;
                 box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
@@ -170,101 +211,106 @@
                 justify-content: space-between;
                 align-items: center;
             }
-            
+
             .collapsible-header:hover {
                 box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
             }
-            
+
             .collapsible-header h3 {
                 margin: 0;
                 font-size: 1.5rem;
                 color: var(--secondary-color);
             }
-            
+
             .collapsible-header i {
                 transition: transform 0.3s ease;
             }
-            
+
             .collapsible-header.active i {
                 transform: rotate(180deg);
             }
-            
+
             .collapsible-content {
                 max-height: 0;
                 overflow: hidden;
                 transition: max-height 0.3s ease-out;
-                background-color: white;
+                background-color: var(--card-bg);
                 border-radius: 0 0 10px 10px;
                 box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
             }
-            
+
             .collapsible-content-inner {
                 padding: 30px;
+                color: var(--text-color);
             }
-            
+
             .testimonials-section {
                 background-color: var(--secondary-color);
                 color: white;
                 padding: 80px 0;
                 text-align: center;
             }
-            
+
             .testimonial-card {
-                background-color: white;
+                background-color: var(--card-bg);
                 color: var(--dark-color);
                 border-radius: 15px;
                 padding: 30px;
                 margin: 15px;
                 box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             }
-            
+
             .testimonial-text {
                 font-style: italic;
                 margin-bottom: 20px;
+                color: var(--text-color);
             }
-            
+
             .testimonial-author {
                 font-weight: bold;
                 color: var(--primary-color);
             }
-            
+
             .newsletter-section {
                 background-color: var(--light-color);
                 padding: 60px 0;
                 text-align: center;
             }
-            
+
             .newsletter-form {
                 max-width: 600px;
                 margin: 0 auto;
             }
-            
+
             .newsletter-form .form-control {
                 height: 50px;
                 border-radius: 25px;
                 border: 1px solid #ddd;
                 padding-left: 20px;
+                background-color: var(--card-bg);
+                color: var(--text-color);
             }
-            
+
             .newsletter-form .btn {
                 border-radius: 25px;
                 padding: 10px 30px;
                 background-color: var(--primary-color);
                 border: none;
                 font-weight: bold;
+                color: var(--text-on-light);
             }
-            
+
             .social-icons a {
                 color: white;
                 font-size: 1.5rem;
                 margin: 0 10px;
                 transition: color 0.3s;
             }
-            
+
             .social-icons a:hover {
                 color: var(--primary-color);
             }
-            
+
             .back-to-top {
                 position: fixed;
                 bottom: 30px;
@@ -285,17 +331,18 @@
                 z-index: 999;
                 box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
             }
-            
+
             .back-to-top.active {
                 opacity: 1;
                 visibility: visible;
             }
-            
+
             .back-to-top:hover {
                 background-color: var(--secondary-color);
                 transform: translateY(-3px);
             }
 
+            /* Tus media queries existentes... */
             @media (max-width: 992px) {
                 .video-container {
                     height: 60vh;
@@ -356,7 +403,7 @@
         </style>
     {% endblock %}
 </head>
-<body class="fondo-con-detalleg">
+<body data-bs-theme="light" class="fondo-con-detalleg">
     {% include "navbar.html" %}
     
     <main class="contenedor-principal">
