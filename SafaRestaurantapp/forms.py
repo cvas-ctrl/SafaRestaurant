@@ -51,7 +51,6 @@ class RegistroForm(forms.ModelForm):
                 'placeholder': '----',
                 'id': 'rol'
             }),
-
         }
 
     def save(self, commit=True):

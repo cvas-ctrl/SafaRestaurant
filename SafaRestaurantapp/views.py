@@ -51,6 +51,22 @@ def go_login(request):
    else:
        return render(request, "login.html", {'form': form})
 
+@login_required
+def editar_nombre_usuario(request):
+    if request.method == 'POST':
+        nuevo_nombre = request.POST.get('nombre')
+        if nuevo_nombre:
+            usuario = request.user
+            usuario.nombre = nuevo_nombre
+            usuario.save()
+            messages.success(request, 'Te has cambiado el nombre con exito')
+            return redirect('editar_nombre_usuario')
+        else:
+            return render(request, 'editar_nombre_usuario.html', {'error': 'El nombre de usuario no puede estar vacío.'})
+    else:
+        return render(request, 'editar_nombre_usuario.html')
+
+
 def go_logout(request):
     logout(request)
     return redirect('login_page')
@@ -534,7 +550,6 @@ def eliminar_del_carrito(request, id):
 
     return redirect('ver_carrito')
 
-
 def ver_carrito(request):
     carrito = {}
     total = Decimal('0.0')
@@ -556,20 +571,15 @@ def comprar(request):
    if not request.user.is_authenticated:
        return redirect('login')
 
-
    nuevo_pedido = Pedido.objects.create(
        codigo=f'PED-{datetime.now().strftime("%H%M%S")}',
        fecha=datetime.now(),
        estado=EstadoPedido.EN_PROCESO,
        cliente=request.user.cliente
    )
-
-
    Cuenta.objects.create(pedido=nuevo_pedido, precio_total=0)
 
-
    total_pedido = Decimal('0.0')
-
 
    carrito_session = request.session.get('carrito', {})
    for hamburguesa_id, cantidad in carrito_session.items():
@@ -584,11 +594,9 @@ def comprar(request):
        )
        total_pedido += Decimal(str(precio_hamburguesa)) * Decimal(cantidad)
 
-
    nuevo_pedido.cuenta.precio_total = total_pedido
    nuevo_pedido.cuenta.save()
    request.session['carrito'] = {}
-
 
    return redirect('confirmacion')
 

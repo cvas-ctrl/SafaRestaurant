@@ -37,7 +37,7 @@
                         {% else %}
                             <p>Cuenta pendiente</p>
                         {% endif %}
-                        <a href="{% url 'eliminar_pedido_finalizado' pedido.id %}">Eliminar</a>
+                        <a class="btn btn-danger" href="{% url 'eliminar_pedido_finalizado' pedido.id %}">Eliminar</a>
                     </div>
                 </div>
             {% endfor %}
