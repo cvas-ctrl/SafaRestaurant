@@ -61,6 +61,41 @@
                    </div>
                    {% endfor %}
                </div>
+           
+                <div aria-live="polite" aria-atomic="true" class="position-relative">
+                  <div class="toast-container position-fixed bottom-0 end-0 p-3">
+                    {% if messages %}
+                      {% for message in messages %}
+                        <div class="toast fade-in show bg-white border-0 shadow-sm"
+                             role="alert"
+                             aria-live="assertive"
+                             aria-atomic="true"
+                             style="opacity: 0; transition: opacity 0.5s ease-in-out;">
+                          <div class="toast-header rounded-top" style="background-color: #e9ecef;">
+                            <i class="bi bi-check-circle-fill me-2 text-success"></i>
+                            <strong class="me-auto text-secondary">Éxito</strong>
+                            <button type="button" class="btn-close ms-2" data-bs-dismiss="toast" aria-label="Close"></button>
+                          </div>
+                          <div class="toast-body text-secondary">
+                            {{ message }}
+                          </div>
+                        </div>
+                      {% endfor %}
+                    {% endif %}
+                  </div>
+                </div>
+                
+                <style>
+                  .toast.fade-in {
+                    opacity: 0;
+                    transition: opacity 0.5s ease-in-out;
+                  }
+                
+                  .toast.show {
+                    opacity: 1 !important;
+                  }
+                </style>
+           
            </div>
        </div>
    </div>

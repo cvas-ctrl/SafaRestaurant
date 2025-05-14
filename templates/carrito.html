@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load bootstrap_icons %}
 {% load static %}
 
 {% block extra_css %}
@@ -39,13 +40,24 @@
             </div>
             
             <div class="d-flex justify-content-between align-items-center">
+                
+                <a href="{% url 'restar_carrito' hamburguesa.id %}">
+                    <button class="btn btn-primary">{% bs_icon 'dash-circle' %}</button>
+                </a>
+                
                 <span class="small text-white">Cantidad: {{ cantidad }}</span>
+                
+                <a href="{% url 'sumar_carrito' hamburguesa.id %}">
+                    <button class="btn btn-primary">{% bs_icon 'plus-circle' %}</button>
+                </a>
+                
                 <form method="post" action="{% url 'eliminar_del_carrito' hamburguesa.id %}">
                     {% csrf_token %}
                     <button type="submit" class="btn-remove">
                         <i class="fas fa-trash-alt"></i> Eliminar
                     </button>
                 </form>
+                
             </div>
         </div>
         {% endfor %}

@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <div class="container">
+        <h2 style="color: #28c112; margin-bottom: 2rem;text-align: center;font-size: 2rem;">Todos los Pedidos</h2>
+        {% if pedidos %}
+            {% for pedido in pedidos %}
+                <div class="card mb-4">
+                    <div class="card-header">
+                        Pedido #{{ pedido.id }} - {{ pedido.fecha }}
+                        {% if pedido.cliente %}
+                            - Cliente: {{ pedido.cliente.user.username }}
+                        {% else %}
+                            - Pedido de Camarero
+                        {% endif %}
+                        {% if pedido.mesa %}
+                            - Mesa {{ pedido.mesa.numero }}
+                        {% else %}
+                            - Sin mesa
+                        {% endif %}
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Detalles del Pedido:</h5>
+                        <ul class="list-group list-group-flush">
+                            {% for detalle in pedido.detalles.all %}
+                                <li class="list-group-item">
+                                    {{ detalle.cantidad }} x {{ detalle.hamburguesa.nombre }}
+                                    <ul class="list-inline">
+                                        {% for ing in detalle.ingredientedetalle_set.all %}
+                                            <li class="list-inline-item">
+                                                {{ ing.ingrediente.nombre }} x{{ ing.cantidad }}
+                                            </li>
+                                        {% empty %}
+                                            <li class="list-inline-item">Sin ingredientes</li>
+                                        {% endfor %}
+                                    </ul>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="card-footer">
+                        <p><strong>Estado:</strong> {{ pedido.get_estado_display }}</p>
+                        {% if pedido.cuenta %}
+                            <p><strong>Estado de la cuenta:</strong> {{ pedido.cuenta.estado_pago }}</p>
+                            <p><strong>Total a pagar:</strong> {{ pedido.cuenta.precio_total }} €</p>
+                        {% else %}
+                            <p>Cuenta pendiente</p>
+                        {% endif %}
+                    </div>
+                    <form method="post" action="{% url 'eliminar_pedido_admin' pedido.id %}" style="display: inline;">
+                        {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de que quieres eliminar este pedido?')">
+                                Eliminar
+                            </button>
+                    </form>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No hay pedidos.</p>
+        {% endif %}
+    </div>
+{% endblock %}

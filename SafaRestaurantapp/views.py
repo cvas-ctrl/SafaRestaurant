@@ -1,6 +1,6 @@
 from datetime import time, datetime
 from decimal import Decimal
-
+from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.exceptions import PermissionDenied
@@ -480,6 +480,28 @@ def personalizar_carta(request, id):
         'todos_ingredientes': ingredientes
     })
 
+def restar_carrito(request, id):
+    carrito = request.session.get('carrito', {})
+    producto_id = str(id)
+
+    if producto_id in carrito:
+        if carrito[producto_id] > 1:
+            carrito[producto_id] -= 1
+        else:
+            del carrito[producto_id]
+
+    request.session['carrito'] = carrito
+    return redirect('ver_carrito')
+
+def sumar_carrito(request, id):
+    carrito = request.session.get('carrito', {})
+    producto_id = str(id)
+
+    carrito[producto_id] = carrito.get(producto_id, 0) + 1
+
+    request.session['carrito'] = carrito
+    return redirect('ver_carrito')
+
 def add_carrito(request, id):
     carrito = request.session.get('carrito', {})
     producto_en_carrito = carrito.get(str(id),0)
@@ -493,7 +515,7 @@ def add_carrito(request, id):
         carrito[str(id)] += 1
 
     request.session['carrito'] = carrito
-
+    messages.success(request, "Producto añadido correctamente al carrito.")
     return redirect('ir_carta')
 
 
@@ -540,19 +562,28 @@ def comprar(request):
         cliente=request.user.cliente
     )
 
+    Cuenta.objects.create(pedido=nuevo_pedido, precio_total=0)
+
+    total_pedido = Decimal('0.0')
 
     carrito_session = request.session.get('carrito', {})
     for hamburguesa_id, cantidad in carrito_session.items():
-        DetallePedido.objects.create(
+        hamburguesa = get_object_or_404(Hamburguesa, id=hamburguesa_id)
+        precio_hamburguesa = hamburguesa.precio
+        detalle_pedido = DetallePedido.objects.create(
             pedido=nuevo_pedido,
             hamburguesa_id=hamburguesa_id,
             estado=EstadoProducto.EN_ESPERA,
-            precio=Hamburguesa.objects.get(id=hamburguesa_id).precio,
+            precio=precio_hamburguesa,
             cantidad=cantidad
         )
+        total_pedido += Decimal(str(precio_hamburguesa)) * Decimal(cantidad)
+
+    nuevo_pedido.cuenta.precio_total = total_pedido
+    nuevo_pedido.cuenta.save()
 
     request.session['carrito'] = {}
-    return redirect(' confirmacion')
+    return redirect('confirmacion')
 
 def confirmacion(request):
     return render(request, 'confirmacion.html')
@@ -607,19 +638,6 @@ def nueva_hamburguesa(request):
 
    return render(request, 'form_hamburguesa.html', {'form': form})
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 @user_passes_test(es_admin)
 def editar_hamburguesa(request, id):
    hamburguesa = get_object_or_404(Hamburguesa, id=id)
@@ -646,3 +664,26 @@ def eliminar_hamburguesa(request, id):
 @login_required
 def perfil_usuario(request):
    return render(request, 'perfil.html')
+
+
+def pedidos_admin(request):
+    pedidos = Pedido.objects.all().prefetch_related(
+        'detalles__hamburguesa',
+        'detalles__ingredientedetalle_set__ingrediente',
+        'cliente',
+        'mesa'
+    ).order_by('-fecha')
+
+    context = {
+        'pedidos': pedidos,
+    }
+    return render(request, 'pedidos_admin.html', context)
+
+def eliminar_pedido_admin(request, pedido_id):
+
+    if request.method == 'POST':
+        pedido = get_object_or_404(Pedido, id=pedido_id)
+        pedido.delete()
+        return redirect('pedidos_admin')
+
+    return redirect('pedidos_admin')

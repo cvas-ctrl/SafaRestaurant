@@ -11,7 +11,7 @@ from SafaRestaurantapp.views import (
     finalizar_pedido, ver_cuentas, eliminar_pedido_finalizado, go_login, go_logout, pedidos_pendientes_cocina,
     marcar_pedido_preparado, ir_carta, personalizar_carta, add_carrito, ver_carrito, comprar, confirmacion,
     eliminar_del_carrito, nueva_mesa, editar_mesa, eliminar_mesa, nueva_hamburguesa, editar_hamburguesa,
-    eliminar_hamburguesa, perfil_usuario
+    eliminar_hamburguesa, perfil_usuario, sumar_carrito, restar_carrito, pedidos_admin, eliminar_pedido_admin
 
 )
 
@@ -24,6 +24,7 @@ urlpatterns = [
     path('register/', go_register, name='register_page'),
     path('login/', go_login, name='login_page'),
     path('logout/', go_logout, name='logout'),
+    path('perfil/', perfil_usuario, name='perfil'),
 
     # Roles
     path('cliente/', go_cliente_view, name='cliente'),
@@ -78,16 +79,20 @@ urlpatterns = [
     path('carrito/add/<int:id>/', add_carrito, name='add_carrito'),
     path('eliminar_del_carrito/<int:id>/', eliminar_del_carrito, name='eliminar_del_carrito'),
     path('ver_carrito/', ver_carrito, name='ver_carrito'),
+    path('carrito/sumar/<int:id>/', sumar_carrito, name='sumar_carrito'),
+    path('carrito/restar/<int:id>/', restar_carrito, name='restar_carrito'),
     path('completar_compra/', comprar, name='comprar'),
-    path('confirmacion/', confirmacion, name=' confirmacion'),
+    path('confirmacion/', confirmacion, name='confirmacion'),
+
+    # ADMIN
     path('mesa/nueva/', nueva_mesa, name='nueva_mesa'),
     path('mesa/editar/<int:id>/', editar_mesa, name='editar_mesa'),
     path('mesa/eliminar/<int:id>/', eliminar_mesa, name='eliminar_mesa'),
     path('hamburguesa/nueva/', nueva_hamburguesa, name='nueva_hamburguesa'),
     path('hamburguesa/editar/<int:id>/', editar_hamburguesa, name='editar_hamburguesa'),
     path('hamburguesa/eliminar/<int:id>/', eliminar_hamburguesa, name='eliminar_hamburguesa'),
-    path('perfil/', perfil_usuario, name='perfil'),
-
+    path('pedidos/admin/', pedidos_admin, name='pedidos_admin'),
+    path('admin/pedidos/eliminar/<int:pedido_id>/', eliminar_pedido_admin, name='eliminar_pedido_admin'),
 
 ]
 

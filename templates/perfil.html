@@ -1,28 +1,61 @@
 {% extends "base.html" %}
 {% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/style_perfil.css' %}">
+{% endblock %}
 {% block content %}
-<div class="container mt-5">
-   <h2 class="mb-4" style="color: #1e9b0f;">Mi Perfil</h2>
-   <div class="row">
-       <div class="col-md-4 text-center">
-           <img src="{% static 'img/silla.png' %}" alt="Foto de perfil" class="img-fluid rounded-circle perfil-img mb-3">
-           <p class="fw-bold">{{ user.rol|title }}</p>
-       </div>
-       <div class="col-md-8">
-           <div class="card shadow-sm">
-               <div class="card-body">
-                   <h5 class="card-title mb-3">Información del Usuario</h5>
-                   <ul class="list-group list-group-flush">
-                       <li class="list-group-item"><strong>Nombre:</strong> {{ user.nombre }}</li>
-                       <li class="list-group-item"><strong>Email:</strong> {{ user.email }}</li>
-                       <li class="list-group-item"><strong>Rol:</strong> {{ user.get_rol_display }}</li>
-                       {% if user.pin_empleado %}
-                       <li class="list-group-item"><strong>PIN de seguridad:</strong> {{ user.pin_empleado }}</li>
-                       {% endif %}
-                   </ul>
-               </div>
-           </div>
-       </div>
-   </div>
-</div>
+<body>
+    <div class="contenedor-pagina py-5">
+        <h2 class="titulo-pagina centrado mb-4" style="color: #1e9b0f;">Mi Perfil</h2>
+        <div class="fila justify-contenido-centrado">
+            <div class="columna-grande-8">
+                <div class="tarjeta sombra-lg">
+                    <div class="tarjeta-cuerpo">
+                        <div class="fila">
+                            <div class="columna-mediana-4 texto-centrado">
+                                {% if user.rol == 'cliente' %}
+                                    <img src="{% static 'img/clientev.png' %}" alt="Foto de perfil" class="imagen-fluida redonda mb-3" style="max-width: 150px; height: auto;">
+                                {% elif user.rol == 'admin' %}
+                                    <img src="{% static 'img/admin.png' %}" alt="Foto de perfil" class="imagen-fluida redonda mb-3" style="max-width: 150px; height: auto;">
+                                {% elif user.rol == 'camarero' %}
+                                    <img src="{% static 'img/camarero.png' %}" alt="Foto de perfil" class="imagen-fluida redonda mb-3" style="max-width: 150px; height: auto;">
+                                {% elif user.rol == 'cocinero' %}
+                                    <img src="{% static 'img/cocinero.png' %}" alt="Foto de perfil" class="imagen-fluida redonda mb-3" style="max-width: 150px; height: auto;">
+                                {% endif %}
+                                <p class="texto texto-mayuscula">{{ user.rol|title }}</p>
+                            </div>
+                            <div class="columna-mediana-8">
+                                <h3 class="titulo-tarjeta mb-4">Información del Usuario</h3>
+                                <ul class="lista-grupo lista-sin-bordes">
+                                    <li class="elemento-lista">
+                                        <i class="bi bi-person me-2"></i>
+                                        <strong>Nombre:</strong> {{ user.nombre }}
+                                    </li>
+                                    <li class="elemento-lista">
+                                        <i class="bi bi-envelope me-2"></i>
+                                        <strong>Email:</strong> {{ user.email }}
+                                    </li>
+                                    <li class="elemento-lista">
+                                        <i class="bi bi-tag me-2"></i>
+                                        <strong>Rol:</strong> {{ user.get_rol_display }}
+                                    </li>
+                                    {% if user.pin_empleado %}
+                                        <li class="elemento-lista">
+                                            <i class="bi bi-key me-2"></i>
+                                            <strong>PIN de seguridad:</strong> {{ user.pin_empleado }}
+                                        </li>
+                                    {% endif %}
+                                    <li class="elemento-lista">
+                                        <i class="bi bi-clock me-2"></i>
+                                        <strong>Último Login:</strong> {{ user.last_login|date:"d/m/Y H:i" }}
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
 {% endblock %}

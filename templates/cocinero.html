@@ -17,6 +17,13 @@
                                 <span class="badge {% if item.estado == 'PREPARADO' %}bg-success{% else %}bg-secondary{% endif %}">
                                     {{ item.get_estado_display }}
                                 </span>
+                                <div class="small text-muted">
+                                    {% for ingrediente_detalle in item.ingredientedetalle_set.all %}
+                                        + {{ ingrediente_detalle.ingrediente.nombre }} x{{ ingrediente_detalle.cantidad }}{% if not forloop.last %}, {% endif %}
+                                    {% empty %}
+                                        Sin ingredientes adicionales
+                                    {% endfor %}
+                                </div>
                             </div>
                             {% if item.estado == 'EN_ESPERA' %}
                                 {% with True as alguno_en_espera %}
