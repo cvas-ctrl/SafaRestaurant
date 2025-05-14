@@ -19,6 +19,7 @@
                    {% endif %}
                    {% if request.user.rol == 'cliente' %}
                        <h2 class="mb-0" style="color: #1e9b0f">Selecciona una hamburguesa</h2>
+                       <a class="btn btn-success" href="{% url 'pedidos_cliente' %}">Mis pedidos</a>
                        <a href="{% url 'ver_carrito' %}" class="btn p-0 border-0 bg-transparent position-relative">
                            <img src="{% static 'img/carrito.png' %}"
                                 alt="Ver Carrito"

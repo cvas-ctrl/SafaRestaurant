@@ -551,39 +551,46 @@ def ver_carrito(request):
         'total': float(total)
     })
 
+@login_required
 def comprar(request):
-    if not request.user.is_authenticated:
-        return redirect('login')
+   if not request.user.is_authenticated:
+       return redirect('login')
 
-    nuevo_pedido = Pedido.objects.create(
-        codigo=f'PED-{datetime.now().strftime("%H%M%S")}',
-        fecha=datetime.now(),
-        estado=EstadoPedido.EN_COCINA,
-        cliente=request.user.cliente
-    )
 
-    Cuenta.objects.create(pedido=nuevo_pedido, precio_total=0)
+   nuevo_pedido = Pedido.objects.create(
+       codigo=f'PED-{datetime.now().strftime("%H%M%S")}',
+       fecha=datetime.now(),
+       estado=EstadoPedido.EN_PROCESO,
+       cliente=request.user.cliente
+   )
 
-    total_pedido = Decimal('0.0')
 
-    carrito_session = request.session.get('carrito', {})
-    for hamburguesa_id, cantidad in carrito_session.items():
-        hamburguesa = get_object_or_404(Hamburguesa, id=hamburguesa_id)
-        precio_hamburguesa = hamburguesa.precio
-        detalle_pedido = DetallePedido.objects.create(
-            pedido=nuevo_pedido,
-            hamburguesa_id=hamburguesa_id,
-            estado=EstadoProducto.EN_ESPERA,
-            precio=precio_hamburguesa,
-            cantidad=cantidad
-        )
-        total_pedido += Decimal(str(precio_hamburguesa)) * Decimal(cantidad)
+   Cuenta.objects.create(pedido=nuevo_pedido, precio_total=0)
 
-    nuevo_pedido.cuenta.precio_total = total_pedido
-    nuevo_pedido.cuenta.save()
 
-    request.session['carrito'] = {}
-    return redirect('confirmacion')
+   total_pedido = Decimal('0.0')
+
+
+   carrito_session = request.session.get('carrito', {})
+   for hamburguesa_id, cantidad in carrito_session.items():
+       hamburguesa = get_object_or_404(Hamburguesa, id=hamburguesa_id)
+       precio_hamburguesa = hamburguesa.precio
+       detalle_pedido = DetallePedido.objects.create(
+           pedido=nuevo_pedido,
+           hamburguesa_id=hamburguesa_id,
+           estado=EstadoProducto.EN_ESPERA,
+           precio=precio_hamburguesa,
+           cantidad=cantidad
+       )
+       total_pedido += Decimal(str(precio_hamburguesa)) * Decimal(cantidad)
+
+
+   nuevo_pedido.cuenta.precio_total = total_pedido
+   nuevo_pedido.cuenta.save()
+   request.session['carrito'] = {}
+
+
+   return redirect('confirmacion')
 
 def confirmacion(request):
     return render(request, 'confirmacion.html')
@@ -687,3 +694,9 @@ def eliminar_pedido_admin(request, pedido_id):
         return redirect('pedidos_admin')
 
     return redirect('pedidos_admin')
+
+@login_required
+def pedidos_cliente(request):
+   cliente = request.user.cliente
+   pedidos = Pedido.objects.filter(cliente=cliente)
+   return render(request, 'pedidos_cliente.html', {'pedidos': pedidos})
