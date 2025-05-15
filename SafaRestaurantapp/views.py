@@ -574,7 +574,7 @@ def comprar(request):
    nuevo_pedido = Pedido.objects.create(
        codigo=f'PED-{datetime.now().strftime("%H%M%S")}',
        fecha=datetime.now(),
-       estado=EstadoPedido.EN_PROCESO,
+       estado=EstadoPedido.EN_COCINA,
        cliente=request.user.cliente
    )
    Cuenta.objects.create(pedido=nuevo_pedido, precio_total=0)
