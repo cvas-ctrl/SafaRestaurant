@@ -1,7 +1,7 @@
 from datetime import time, datetime
 from decimal import Decimal
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect, get_object_or_404
@@ -23,18 +23,17 @@ def go_about_us(request):
 def go_rol_page(request):
     return render(request, 'rol.html')
 
-def go_register(request):
-    form = RegistroForm()
-    if request.method == 'POST':
-        form = RegistroForm(request.POST)
+Usuario = get_user_model()
 
+def go_register(request):
+
+    form = RegistroForm(request.POST or None)
+    if request.method == 'POST':
         if form.is_valid():
-            usuario_nuevo = form.save(commit=False)
-            usuario_nuevo.set_password(form.cleaned_data['password'])
-            usuario_nuevo.save()
+            usuario_nuevo = form.save()
             return redirect('home_page')
-    else:
-        return render(request, "register.html", {'form': form})
+
+    return render(request, "register.html", {'form': form})
 
 def go_login(request):
    form = LoginForm()
