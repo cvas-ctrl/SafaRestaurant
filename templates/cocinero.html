@@ -6,9 +6,13 @@
         {% for pedido in pedidos %}
         <div class="col-md-4">
             <div class="card mb-4">
-                <div class="card-header">
-                    <strong>Mesa {{ pedido.mesa.numero }}</strong>
-                </div>
+               <div class="card-header">
+                   {% if pedido.mesa %}
+                       <strong>Mesa {{ pedido.mesa.numero }}</strong>
+                   {% else %}
+                       <strong>Cliente online</strong>
+                   {% endif %}
+               </div>
                 <div class="card-body">
                     {% with alguno_en_espera=False %}
                         {% for item in pedido.detalles.all %}

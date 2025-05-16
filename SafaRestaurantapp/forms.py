@@ -15,11 +15,6 @@ class MesaForm(forms.ModelForm):
        model = Mesa
        fields = ['numero', 'estado', 'cliente', 'camarero']
 
-# class EditarForm(forms.ModelForm):
-#    class Meta:
-#        model = Usuario
-#        fields = ['nombre', 'email']
-
 class HamburguesaForm(forms.ModelForm):
    class Meta:
        model = Hamburguesa

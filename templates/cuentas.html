@@ -17,7 +17,7 @@
                         {% if pedido.mesa %}
                             Mesa {{ pedido.mesa.numero }}
                         {% else %}
-                            Sin mesa asignada
+                            <div class="text text-danger">Cliente online ( NO HACER PEDIDO )</div>
                         {% endif %}
                     </div>
                     <div class="card-body">
@@ -42,7 +42,7 @@
                 </div>
             {% endfor %}
         {% else %}
-            <p>No hay pedidos.</p>
+            <p class="alert alert-warning text-uppercase">No hay pedidos.</p>
         {% endif %}
     </div>
 </div>

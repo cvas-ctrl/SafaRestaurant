@@ -9,7 +9,7 @@ from django.http import HttpResponse
 from reportlab.pdfgen import canvas
 from SafaRestaurantapp.forms import *
 from SafaRestaurantapp.models import Camarero, Hamburguesa, Ingrediente, Cocinero, TareaCocina, TipoCocinero, \
-    DetallePedido, Pedido, IngredienteDetalle, Mesa, Cliente, Cuenta, EstadoProducto, EstadoPedido
+    DetallePedido, Pedido, IngredienteDetalle, Mesa, Cliente, Cuenta, EstadoProducto, EstadoPedido, EstadoCuenta
 
 
 # ============================ PÁGINAS ESTÁTICAS ============================
@@ -140,7 +140,12 @@ def go_camarero_view(request):
     mesas = Mesa.objects.select_related('cliente', 'camarero').all()
 
     for mesa in mesas:
-        pedido_activo = mesa.pedidos.filter(estado__in=['EN_COCINA', 'EN_PROCESO']).last()
+        pedido_activo = mesa.pedidos.filter(estado__in=[
+            EstadoPedido.EN_COCINA,
+            EstadoPedido.EN_PROCESO,
+            EstadoPedido.FINALIZADO
+        ])
+
         mesa.pedido_activo = pedido_activo
 
     return render(request, 'camarero.html', {
@@ -469,6 +474,8 @@ def marcar_pedido_preparado(request, pedido_id):
 
     if request.method == 'POST':
         pedido.detalles.filter(estado='EN_ESPERA').update(estado='PREPARADO')
+        pedido.estado = EstadoPedido.FINALIZADO
+        pedido.save()
 
         if pedido.mesa:
             pedido.mesa.estado = 'OCUPADA'
@@ -593,6 +600,7 @@ def comprar(request):
        )
        total_pedido += Decimal(str(precio_hamburguesa)) * Decimal(cantidad)
 
+   nuevo_pedido.cuenta.estado_pago = EstadoCuenta.PAGADO
    nuevo_pedido.cuenta.precio_total = total_pedido
    nuevo_pedido.cuenta.save()
    request.session['carrito'] = {}

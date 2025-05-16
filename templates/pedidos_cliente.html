@@ -2,22 +2,12 @@
 {% load static %}
 {% block content %}
    <div class="container">
-       <h2 style="color: #28c112; margin-top: 3rem;margin-bottom: 2rem;text-align: center;font-size: 2rem;">Todos los Pedidos</h2>
+       <h2 style="color: #28c112; margin-top: 3rem;margin-bottom: 2rem;text-align: center;font-size: 2rem;">Todos mis Pedidos</h2>
        {% if pedidos %}
            {% for pedido in pedidos %}
                <div class="card mb-4">
                    <div class="card-header">
                        Pedido #{{ pedido.id }} - {{ pedido.fecha }}
-                       {% if pedido.cliente %}
-                           - Cliente: {{ pedido.cliente.user.username }}
-                       {% else %}
-                           - Pedido de Camarero
-                       {% endif %}
-                       {% if pedido.mesa %}
-                           - Mesa {{ pedido.mesa.numero }}
-                       {% else %}
-                           - Sin mesa
-                       {% endif %}
                    </div>
                    <div class="card-body">
                        <h5 class="card-title">Detalles del Pedido:</h5>
@@ -39,10 +29,25 @@
                        </ul>
                    </div>
                    <div class="card-footer">
-                       <p><strong>Estado:</strong> {{ pedido.get_estado_display }}</p>
+                       <p>
+                           <strong>Estado:</strong> {{ pedido.get_estado_display }}
+                           {% if pedido.estado == 'FINALIZADO' %}
+                                <span class="text-bg-warning">
+                                    El repartidor esta en camino
+                                </span>
+                           {% elif pedido.estado == 'PREPARADO' %}
+                                <span class="estado-preparado">
+                                    Pedido listo para enviar/recoger
+                                </span>
+                           {% elif pedido.estado == 'EN_COCINA' %} 
+                                <span class="text-bg-primary">
+                                    En preparación
+                                </span>
+                           {% endif %}
+                       </p>
                        {% if pedido.cuenta %}
-                           <p><strong>Estado de la cuenta:</strong> {{ pedido.cuenta.estado_pago }}</p>
-                           <p><strong>Total a pagar:</strong> {{ pedido.cuenta.precio_total }} €</p>
+                           <p><strong>Estado de la cuenta:</strong> {{ pedido.cuenta.estado_pago }}</p> <span></span>
+                           <p><strong>Total pagado:</strong> {{ pedido.cuenta.precio_total }} €</p>
                        {% else %}
                            <p>Cuenta pendiente</p>
                        {% endif %}
