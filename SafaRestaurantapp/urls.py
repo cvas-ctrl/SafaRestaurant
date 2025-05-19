@@ -31,7 +31,7 @@ urlpatterns = [
     # Roles
     path('cliente/', go_cliente_view, name='cliente'),
     path('camarero/', go_camarero_view, name='camarero'),
-    path('cocinero//', go_cocinero_view, name='cocinero'),
+    path('cocina/', go_cocinero_view, name='cocinero'),
     path('admin/', go_adminn_view, name='adminn'),
 
     # Seguridad

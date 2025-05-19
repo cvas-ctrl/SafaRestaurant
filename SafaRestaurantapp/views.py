@@ -19,7 +19,7 @@ def go_home_page(request):
 
 def go_about_us(request):
     return render(request, 'about_us.html')
-
+@login_required
 def go_rol_page(request):
     return render(request, 'rol.html')
 
@@ -71,7 +71,7 @@ def go_logout(request):
     return redirect('login_page')
 
 # ============================ SEGURIDAD DE GESTIONES ============================
-
+@login_required
 def gestion_acceso(request):
    rol_seleccionado = request.GET.get('rol')
 
@@ -125,6 +125,10 @@ def es_camarero(user):
         raise PermissionDenied
     return True
 
+def es_cliente(user):
+    if not user.is_authenticated or not user.rol == 'cliente':
+        raise PermissionDenied
+    return True
 
 # ============================ VISTAS POR ROL ============================
 
@@ -173,6 +177,7 @@ def go_adminn_view(request):
 def formulario_camarero(request):
     return render(request, 'formulario_camarero.html')
 
+@user_passes_test(es_admin)
 def new_camarero(request, id):
     camarero = Camarero.objects.filter(id=id)
 
@@ -199,6 +204,7 @@ def cargar_listado_camareros(request):
     lista_camareros = Camarero.objects.all()
     return render(request, 'admin.html', {'camareros': lista_camareros})
 
+@user_passes_test(es_admin)
 def crear_editar(request, id):
     camarero = get_object_or_404(Camarero, id=id) if id != 0 else None
 
@@ -250,7 +256,7 @@ def iniciar_pedido(request, mesa_id):
     return redirect('ver_pedidos')
 
 
-
+@user_passes_test(es_camarero)
 def ver_pedidos(request):
     pedido_id = request.session.get('pedido_id')
     pedido = None
@@ -270,6 +276,7 @@ def ver_pedidos(request):
         'pedido': pedido
     })
 
+@user_passes_test(es_camarero)
 def personalizar_hamburguesa(request, id):
     hamburguesa = get_object_or_404(Hamburguesa, id=id)
     ingredientes = Ingrediente.objects.all()
@@ -335,6 +342,7 @@ def cargar_listado_cocineros(request):
         'cocineros': cocineros
     })
 
+@user_passes_test(es_admin)
 def formulario_cocinero(request):
     return render(request, 'formulario_cocinero.html')
 
@@ -382,7 +390,7 @@ def eliminar_cocinero(request, id):
 # ============================ GESTION MESAS CLIENTES ===========================
 
 
-
+@user_passes_test(es_camarero)
 def seleccionar_cliente(request, mesa_id):
     mesa = get_object_or_404(Mesa, id=mesa_id)
     clientes = Cliente.objects.all()
@@ -391,6 +399,7 @@ def seleccionar_cliente(request, mesa_id):
         'clientes': clientes
     })
 
+@user_passes_test(es_camarero)
 def asignar_cliente(request, mesa_id, cliente_id=None):
     mesa = get_object_or_404(Mesa, id=mesa_id)
 
@@ -448,6 +457,7 @@ def eliminar_pedido_finalizado(request, id):
     pedido.delete()
     return redirect('ver_cuentas')
 
+@user_passes_test(es_camarero)
 def ver_cuentas(request):
     pedidos = Pedido.objects.filter(estado__in=[EstadoPedido.EN_COCINA, EstadoPedido.FINALIZADO])
     for pedido in pedidos:
@@ -494,6 +504,7 @@ def ir_carta(request):
     listado_hamburguesas = Hamburguesa.objects.all()
     return render(request, 'carta.html', {'hamburguesas': listado_hamburguesas})
 
+@user_passes_test(es_cliente)
 def personalizar_carta(request, id):
     hamburguesa = get_object_or_404(Hamburguesa, id=id)
     ingredientes = Ingrediente.objects.all()
@@ -556,6 +567,7 @@ def eliminar_del_carrito(request, id):
 
     return redirect('ver_carrito')
 
+@user_passes_test(es_cliente)
 def ver_carrito(request):
     carrito = {}
     total = Decimal('0.0')
@@ -572,6 +584,7 @@ def ver_carrito(request):
         'total': float(total)
     })
 
+@user_passes_test(es_cliente)
 @login_required
 def comprar(request):
    if not request.user.is_authenticated:
@@ -607,6 +620,7 @@ def comprar(request):
 
    return redirect('confirmacion')
 
+@user_passes_test(es_cliente)
 def confirmacion(request):
     return render(request, 'confirmacion.html')
 
@@ -687,7 +701,7 @@ def eliminar_hamburguesa(request, id):
 def perfil_usuario(request):
    return render(request, 'perfil.html')
 
-
+@user_passes_test(es_admin)
 def pedidos_admin(request):
     pedidos = Pedido.objects.all().prefetch_related(
         'detalles__hamburguesa',
@@ -710,7 +724,7 @@ def eliminar_pedido_admin(request, pedido_id):
 
     return redirect('pedidos_admin')
 
-@login_required
+@user_passes_test(es_cliente)
 def pedidos_cliente(request):
    cliente = request.user.cliente
    pedidos = Pedido.objects.filter(cliente=cliente)
