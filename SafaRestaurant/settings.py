@@ -81,7 +81,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.oracle',
         'NAME': 'xe',
-        'USER': 'C##SEBAS',
+        'USER': 'C##BOLA3',
         'PASSWORD': '1234',
         'HOST': 'localhost',
         'PORT': '1521',
@@ -144,3 +144,5 @@ handler403 = 'SafaRestaurant.views.error_403'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+

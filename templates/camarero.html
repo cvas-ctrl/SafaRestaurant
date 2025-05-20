@@ -128,47 +128,47 @@
                 border-radius: 5px;
                 transition: all 0.3s;
             }
-            
+
             .btn-ver:hover {
                 background-color: #1e9b0f;
                 color: white;
             }
-            
+
             @media (max-width: 768px) {
                 .sidebar-container {
                     flex-direction: column;
                 }
-            
+
                 .sidebar {
                     width: 100%;
                     position: relative;
                     padding-top: 1rem;
                     height: auto;
                 }
-            
+
                 .content {
                     margin-left: 0;
                     padding: 1rem;
                 }
-            
+
                 .sidebar-menu {
                     display: flex;
                     flex-wrap: wrap;
                     justify-content: center;
                 }
-            
+
                 .sidebar-menu a {
                     flex-direction: column;
                     padding: 0.5rem;
                     text-align: center;
                     width: 80px;
                 }
-            
+
                 .menu-icon {
                     margin-right: 0;
                     margin-bottom: 5px;
                 }
-            
+
                 .sidebar-menu a span {
                     margin-left: 0;
                     font-size: 0.8rem;
@@ -197,14 +197,14 @@
                    <div class="col">
                        <div class="mesa-card">
                            <h5>Mesa {{ mesa.numero }}</h5>
-                  
+
                            <p class="estado
                                {% if mesa.estado == 'LIBRE' %}text-success
                                {% elif mesa.estado == 'OCUPADA' %}text-danger
                                {% else %}text-warning{% endif %}">
                                {{ mesa.get_estado_display }}
                            </p>
-                  
+
                            {% if mesa.cliente %}
                            <div class="cliente-info mb-2">
                                <small>
@@ -213,7 +213,7 @@
                                </small>
                            </div>
                            {% endif %}
-                  
+
                            <div class="d-grid gap-2">
                            {% if request.user.rol == 'admin' %}
                                <div class="d-flex gap-2">
@@ -221,7 +221,7 @@
                                        <i class="fas fa-edit"></i> Editar
                                    </a>
                                    <a href="{% url 'eliminar_mesa' mesa.id %}" class="btn btn-danger">
-                                       <img style="width: 20px" src="{% static 'img/papelera.png' %}" alt="Cocineros">                                   
+                                       <img style="width: 20px" src="{% static 'img/papelera.png' %}" alt="Cocineros">
                                    </a>
                                </div>
                            {% else %}

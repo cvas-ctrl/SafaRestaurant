@@ -12,7 +12,7 @@ from SafaRestaurantapp.views import (
     marcar_pedido_preparado, ir_carta, personalizar_carta, add_carrito, ver_carrito, comprar, confirmacion,
     eliminar_del_carrito, nueva_mesa, editar_mesa, eliminar_mesa, nueva_hamburguesa, editar_hamburguesa,
     eliminar_hamburguesa, perfil_usuario, sumar_carrito, restar_carrito, pedidos_admin, eliminar_pedido_admin,
-    pedidos_cliente, editar_nombre_usuario
+    pedidos_cliente, editar_nombre_usuario, anaisis_mensual
 
 )
 
@@ -32,6 +32,7 @@ urlpatterns = [
     path('cliente/', go_cliente_view, name='cliente'),
     path('camarero/', go_camarero_view, name='camarero'),
     path('cocina/', go_cocinero_view, name='cocinero'),
+    path('admin/', go_adminn_view, name='adminn'),
     path('admin/', go_adminn_view, name='adminn'),
 
     # Seguridad
@@ -96,6 +97,8 @@ urlpatterns = [
     path('pedidos/admin/', pedidos_admin, name='pedidos_admin'),
     path('admin/pedidos/eliminar/<int:pedido_id>/', eliminar_pedido_admin, name='eliminar_pedido_admin'),
     path('pedidos/cliente/', pedidos_cliente, name='pedidos_cliente'),
+    path('admin/analisismensual',anaisis_mensual, name='anaisis_mensual'),
+
 
 ]
 

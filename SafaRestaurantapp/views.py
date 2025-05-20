@@ -17,6 +17,9 @@ from SafaRestaurantapp.models import Camarero, Hamburguesa, Ingrediente, Cociner
 def go_home_page(request):
     return render(request, 'home.html')
 
+def anaisis_mensual(request):
+    return render(request,'analisismensuaal.html')
+
 def go_about_us(request):
     return render(request, 'about_us.html')
 @login_required
