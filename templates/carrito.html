@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load bootstrap_icons %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/style_carrito.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="cart-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0 text-white">Tu Carrito</h2>
+        <a href="{% url 'ir_carta' %}" class="btn p-0 border-0 bg-transparent position-relative"
+           style="transition: all 0.3s;">
+           <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-success bg-opacity-10"
+                 style="width: 40px; height: 40px; border: 1px solid #1e9b0f;">
+              <span style="color: #1e9b0f; font-size: 1.2rem;">←</span>
+           </span>
+        </a>
+    </div>
+
+    {% if carrito %}
+        {% for hamburguesa, cantidad in carrito.items %}
+        <div class="ticket-item">
+            <div class="item-header">
+                <span class="item-name">{{ hamburguesa.nombre }}</span>
+                <span class="item-price">{{ hamburguesa.precio }} €</span>
+            </div>
+            
+            <div class="ingredients-list">
+                {% if hamburguesa.ingredientes.all %}
+                    <strong>Ingredientes:</strong>
+                    {% for ingrediente in hamburguesa.ingredientes.all %}
+                        <span>{{ ingrediente.nombre }}</span>
+                        {% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                {% else %}
+                    <span>Sin ingredientes extras</span>
+                {% endif %}
+            </div>
+            
+            <div class="d-flex justify-content-between align-items-center">
+                
+                <a href="{% url 'restar_carrito' hamburguesa.id %}">
+                    <button class="btn btn-primary">{% bs_icon 'dash-circle' %}</button>
+                </a>
+                
+                <span class="small text-white">Cantidad: {{ cantidad }}</span>
+                
+                <a href="{% url 'sumar_carrito' hamburguesa.id %}">
+                    <button class="btn btn-primary">{% bs_icon 'plus-circle' %}</button>
+                </a>
+                
+                <form method="post" action="{% url 'eliminar_del_carrito' hamburguesa.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-remove">
+                        <i class="fas fa-trash-alt"></i> Eliminar
+                    </button>
+                </form>
+                
+            </div>
+        </div>
+        {% endfor %}
+        
+        <div class="total-section">
+            <div class="d-flex justify-content-between">
+                <strong class="text-white" >Subtotal:</strong>
+                <strong class="text-white" >{{ subtotal|floatformat:2 }} €</strong>
+            </div>
+            <div class="d-flex justify-content-between mt-3 pt-2 border-top">
+                <strong class="h5 text-white">Total:</strong>
+                <strong class="h5 text-white">{{ total|floatformat:2 }} €</strong>
+            </div>
+            
+            <a href="{% url 'comprar' %}" class="btn-checkout">
+                <i class="fas fa-credit-card"></i> Confirmar Pedido
+            </a>
+        </div>
+    {% else %}
+        <div class="empty-cart">
+            <i class="fas fa-shopping-cart"></i>
+            <h4>Tu carrito está vacío</h4>
+            <p class="mt-5">Añade algunas hamburguesas para comenzar</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

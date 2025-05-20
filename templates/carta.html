@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/style_pedidos.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container px-0">
+   <div class="row mx-0">
+       <div class="col-12 px-4">
+           <div class="content py-4">
+           {% if request.user.rol == 'admin' %}
+               {% include "sb_admin.html" %}
+           {% endif %}
+               <div class="d-flex justify-content-between align-items-center mb-4">
+                   {% if request.user.rol == 'admin' %}
+                       <h2 class="mb-0" style="color: #1e9b0f">Gestion de Hamburguesas</h2>
+                   {% endif %}
+                   {% if request.user.rol == 'cliente' %}
+                       <h2 class="mb-0" style="color: #1e9b0f">Selecciona una hamburguesa</h2>
+                       <a class="btn btn-success" href="{% url 'pedidos_cliente' %}">Mis pedidos</a>
+                       <a href="{% url 'ver_carrito' %}" class="btn p-0 border-0 bg-transparent position-relative">
+                           <img src="{% static 'img/carrito.png' %}"
+                                alt="Ver Carrito"
+                                class="img-fluid rounded-circle p-2 border border-2 border-success"
+                                style="height: 45px; background-color: #f8f9fa;">
+                           <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                               {{ request.session.carrito|length }}
+                           </span>
+                       </a>
+                   {% else %}
+                       <div class="mb-4 text-end">
+                           <a href="{% url 'nueva_hamburguesa' %}" class="btn btn-success">
+                               <i class="fas fa-plus"></i> Añadir Hamburguesa
+                           </a>
+                       </div>
+                   {% endif %}
+               </div>
+
+               <div class="row row-cols-1 row-cols-md-2 g-4">
+                   {% for h in hamburguesas %}
+                   <div class="col">
+                       <div class="card h-100 shadow">
+                           <div class="card-body">
+                               <h5 class="card-title" style="color: #1e9b0f">{{ h.nombre }}</h5>
+                               <p class="card-text">{{ h.descripcion }}</p>
+                               <p class="fw-bold">{{ h.precio }} €</p>
+                               {% if request.user.rol == 'admin' %}
+                                   <div class="d-flex">
+                                       <a href="{% url 'editar_hamburguesa' h.id %}" class="btn btn-primary">Editar</a>
+                                       <a href="{% url 'eliminar_hamburguesa' h.id %}" class="btn btn-danger">Eliminar</a>
+                                   </div>
+                               {% else %}
+                                   <div class="d-flex">
+                                       <a href="{% url 'personalizar_carta' h.id %}" class="btn btn-primary">Personalizar</a>
+                                       <a href="{% url 'add_carrito' h.id %}" class="btn btn-success">Añadir al carrito</a>
+                                   </div>
+                               {% endif %}
+                           </div>
+                       </div>
+                   </div>
+                   {% endfor %}
+               </div>
+           
+                <div aria-live="polite" aria-atomic="true" class="position-relative">
+                  <div class="toast-container position-fixed bottom-0 end-0 p-3">
+                    {% if messages %}
+                      {% for message in messages %}
+                        <div class="toast fade-in show bg-white border-0 shadow-sm"
+                             role="alert"
+                             aria-live="assertive"
+                             aria-atomic="true"
+                             style="opacity: 0; transition: opacity 0.5s ease-in-out;">
+                          <div class="toast-header rounded-top" style="background-color: #e9ecef;">
+                            <i class="bi bi-check-circle-fill me-2 text-success"></i>
+                            <strong class="me-auto text-secondary">Éxito</strong>
+                            <button type="button" class="btn-close ms-2" data-bs-dismiss="toast" aria-label="Close"></button>
+                          </div>
+                          <div class="toast-body text-secondary">
+                            {{ message }}
+                          </div>
+                        </div>
+                      {% endfor %}
+                    {% endif %}
+                  </div>
+                </div>
+                
+                <style>
+                  .toast.fade-in {
+                    opacity: 0;
+                    transition: opacity 0.5s ease-in-out;
+                  }
+                
+                  .toast.show {
+                    opacity: 1 !important;
+                  }
+                </style>
+           
+           </div>
+       </div>
+   </div>
+</div>
+{% endblock %}
+

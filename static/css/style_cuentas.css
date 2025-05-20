@@ -1,0 +1,90 @@
+body {
+    background-color: #111;
+    color: #e3ffe7;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 1rem;
+}
+
+.sidebar-container .container {
+    padding-left: 220px;
+}
+
+.card {
+    background-color: #1a1a1a;
+    border: 1px solid #28c112;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(40, 193, 18, 0.1);
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+}
+
+.card-header {
+    background-color: #28c112;
+    color: black;
+    padding: 1rem;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.card-body {
+    padding: 1.2rem;
+    color: #e3ffe7;
+}
+
+.card-body p {
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.card-body ul {
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.card-body li {
+    font-size: 0.95rem;
+}
+
+.card-body strong {
+    display: block;
+    margin-top: 1rem;
+    font-size: 1.1rem;
+    color: #28c112;
+}
+
+.container p {
+    text-align: center;
+    color: #888;
+    font-style: italic;
+}
+
+.sidebar-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.sidebar-container .container {
+    flex: 1;
+}
+
+@media (max-width: 768px) {
+    .sidebar-container {
+        flex-direction: column;
+    }
+
+    .sidebar-container .container {
+        padding-left: 0;
+        margin: 1rem;
+    }
+}
+

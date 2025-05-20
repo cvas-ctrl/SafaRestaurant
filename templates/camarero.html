@@ -128,47 +128,47 @@
                 border-radius: 5px;
                 transition: all 0.3s;
             }
-            
+
             .btn-ver:hover {
                 background-color: #1e9b0f;
                 color: white;
             }
-            
+
             @media (max-width: 768px) {
                 .sidebar-container {
                     flex-direction: column;
                 }
-            
+
                 .sidebar {
                     width: 100%;
                     position: relative;
                     padding-top: 1rem;
                     height: auto;
                 }
-            
+
                 .content {
                     margin-left: 0;
                     padding: 1rem;
                 }
-            
+
                 .sidebar-menu {
                     display: flex;
                     flex-wrap: wrap;
                     justify-content: center;
                 }
-            
+
                 .sidebar-menu a {
                     flex-direction: column;
                     padding: 0.5rem;
                     text-align: center;
                     width: 80px;
                 }
-            
+
                 .menu-icon {
                     margin-right: 0;
                     margin-bottom: 5px;
                 }
-            
+
                 .sidebar-menu a span {
                     margin-left: 0;
                     font-size: 0.8rem;
@@ -178,59 +178,76 @@
     {% endblock %}
 
     <div class="sidebar-container">
-        {% include "sidebar.html" %}
-        <div class="content">
-            <h2 style="color: white" class="mb-4">Gestión de Mesas</h2>
-            <div class="row row-cols-1 row-cols-md-3 g-4">
-                {% for mesa in mesas %}
-                <div class="col">
-                    <div class="mesa-card">
-                        <h5>Mesa {{ mesa.numero }}</h5>
-                    
-                        <p class="estado 
-                            {% if mesa.estado == 'LIBRE' %}text-success
-                            {% elif mesa.estado == 'OCUPADA' %}text-danger
-                            {% else %}text-warning{% endif %}">
-                            {{ mesa.get_estado_display }}
-                        </p>
-                    
-                        {% if mesa.cliente %}
-                        <div class="cliente-info mb-2">
-                            <small>
-                                <strong>Cliente:</strong><br>
-                                {{ mesa.cliente.nombre }} {{ mesa.cliente.apellidos }}
-                            </small>
-                        </div>
-                        {% endif %}
+       {% if request.user.rol == 'admin' %}
+           {% include "sb_admin.html" %}
+       {% else %}
+           {% include "sidebar.html" %}
+       {% endif %}
+       <div class="content">
+           <h2 style="color: white" class="mb-4">Gestión de Mesas</h2>
+           {% if request.user.rol == 'admin' %}
+               <div class="mb-4 text-end">
+                   <a href="{% url 'nueva_mesa' %}" class="btn btn-success">
+                       <i class="fas fa-plus"></i> Añadir Mesa
+                   </a>
+               </div>
+           {% endif %}
+           <div class="row row-cols-1 row-cols-md-3 g-4">
+               {% for mesa in mesas %}
+                   <div class="col">
+                       <div class="mesa-card">
+                           <h5>Mesa {{ mesa.numero }}</h5>
 
-                        <div class="d-grid gap-2">
-                            {% if mesa.estado == 'LIBRE' %}
-                                <a href="{% url 'asignar_cliente' mesa.id %}" 
-                                   class="btn btn-ver">
-                                    Asignar Cliente
-                                </a>
-                            {% else %}
-                                <div class="d-flex gap-2">
-                                    {% if mesa.estado == 'OCUPADA' %}
-                                        <a href="#" onclick="window.location.href='{% url 'ver_pedidos' %}'" class="btn btn-warning flex-grow-1">
-                                            Tomar Pedido
-                                        </a>
-                                    {% elif mesa.estado == 'ESPERANDO' %}
-                                        <a href="#" class="btn btn-info flex-grow-1">
-                                            Ver Pedido
-                                        </a>
-                                    {% endif %}
-                                    <a href="{% url 'liberar_mesa' mesa.id %}" 
-                                       class="btn btn-success">
-                                        Liberar
-                                    </a>
-                                </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
+                           <p class="estado
+                               {% if mesa.estado == 'LIBRE' %}text-success
+                               {% elif mesa.estado == 'OCUPADA' %}text-danger
+                               {% else %}text-warning{% endif %}">
+                               {{ mesa.get_estado_display }}
+                           </p>
+
+                           {% if mesa.cliente %}
+                           <div class="cliente-info mb-2">
+                               <small>
+                                   <strong>Cliente:</strong><br>
+                                   {{ mesa.cliente.nombre }} {{ mesa.cliente.apellidos }}
+                               </small>
+                           </div>
+                           {% endif %}
+
+                           <div class="d-grid gap-2">
+                           {% if request.user.rol == 'admin' %}
+                               <div class="d-flex gap-2">
+                                   <a href="{% url 'editar_mesa' mesa.id %}" class="btn btn-primary flex-grow-1">
+                                       <i class="fas fa-edit"></i> Editar
+                                   </a>
+                                   <a href="{% url 'eliminar_mesa' mesa.id %}" class="btn btn-danger">
+                                       <img style="width: 20px" src="{% static 'img/papelera.png' %}" alt="Cocineros">
+                                   </a>
+                               </div>
+                           {% else %}
+                               {% if mesa.estado == 'LIBRE' %}
+                                   <a href="{% url 'asignar_cliente' mesa.id %}" class="btn btn-ver">Asignar Cliente</a>
+                               {% else %}
+                                   <div class="d-flex gap-2">
+                                       {% if mesa.estado == 'OCUPADA' %}
+                                           {% if mesa.pedido_activo %}
+                                               <a href="{% url 'ver_cuentas' %}" class="btn btn-info flex-grow-1">Ver Pedido</a>
+                                           {% else %}
+                                               <a href="{% url 'iniciar_pedido' mesa.id %}" class="btn btn-warning flex-grow-1">Tomar Pedido</a>
+                                           {% endif %}
+                                       {% elif mesa.estado == 'ESPERANDO' %}
+                                           <a href="{% url 'ver_cuentas' %}" class="btn btn-info flex-grow-1">Ver Pedido</a>
+                                       {% endif %}
+                                       <a href="{% url 'liberar_mesa' mesa.id %}" class="btn btn-success">Liberar</a>
+                                   </div>
+                               {% endif %}
+                           {% endif %}
+                           </div>
+                       </div>
+                   </div>
+                   {% endfor %}
+           </div>
+       </div>
     </div>
+
 {% endblock %}

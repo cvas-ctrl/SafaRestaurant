@@ -21,7 +21,13 @@
                                 <h5 class="card-title" style="color: #1e9b0f">{{ h.nombre }}</h5>
                                 <p class="card-text">{{ h.descripcion }}</p>
                                 <p class="fw-bold">{{ h.precio }} €</p>
-                                <a href="{% url 'personalizar_hamburguesa' h.id %}" class="btn btn-dark">Personalizar</a>
+                                <div class="d-flex">
+                                    <a href="{% url 'personalizar_hamburguesa' h.id %}" class="btn btn-dark">Personalizar</a>
+                                    <form method="POST" action="{% url 'agregar_a_pedido' h.id %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-success">Añadir al pedido</button>
+                                    </form>
+                                </div>  
                             </div>
                         </div>
                     </div>
@@ -66,6 +72,10 @@
                                 {{ pedido.precio_total }} €
                             </strong>
                         </div>
+                        <form method="post" action="{% url 'finalizar_pedido' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success w-100 mt-3">Finalizar Pedido</button>
+                        </form>
                     {% else %}
                         <h4 class="text-center mb-3" style="color: #1e9b0f">Tu pedido</h4>
                         <p class="text-muted">Aún no has añadido hamburguesas.</p>

@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 
+from django.conf.urls import handler403
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -37,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_bootstrap_icons',
     'SafaRestaurantapp',
 ]
 
@@ -78,7 +81,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.oracle',
         'NAME': 'xe',
-        'USER': 'C##SEBAS',
+        'USER': 'C##BOLA3',
         'PASSWORD': '1234',
         'HOST': 'localhost',
         'PORT': '1521',
@@ -130,3 +133,16 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'SafaRestaurantapp.Usuario'
+
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/home_page/'
+
+#PAGINAS DE ERROR
+handler403 = 'SafaRestaurant.views.error_403'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+
