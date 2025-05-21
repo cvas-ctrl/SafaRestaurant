@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="d-flex justify-content-center align-items-center min-vh-100 p-4">
+  <div class="container bg-white border border-4 border-dark rounded-4 shadow-lg p-5" style="max-width: 1000px;">
+    <h1 class="text-center display-5 fw-bold fst-italic text-success mb-5">Reporte Mensual de Ventas</h1>
+
+    <div class="table-responsive">
+      <table class="table table-bordered border-success table-hover align-middle text-center">
+        <thead class="table-success text-white" style="background-color: #166534 !important;">
+          <tr>
+            <th>Mes</th>
+            <th>Año</th>
+            <th>Total Ventas (€)</th>
+            <th>Fecha de Generación</th>
+          </tr>
+        </thead>
+        <tbody class="text-success fw-semibold">
+          {% for r in reportes %}
+          <tr>
+            <td>{{ r.mes }}</td>
+            <td>{{ r.anio }}</td>
+            <td>€{{ r.total_ventas }}</td>
+            <td>{{ r.fecha_generacion|date:"d/m/Y" }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="4" class="text-center text-danger fst-italic py-3">No hay reportes disponibles.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

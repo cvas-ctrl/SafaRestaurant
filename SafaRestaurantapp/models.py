@@ -242,3 +242,18 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return f"{self.email} - {self.nombre} ({self.rol})"
+
+class ReporteMensualVentas(models.Model):
+    mes = models.PositiveSmallIntegerField(primary_key=True)
+    anio = models.PositiveIntegerField()
+    total_ventas = models.DecimalField(max_digits=10, decimal_places=2)
+    fecha_generacion = models.DateField()
+
+    class Meta:
+        managed = False
+        db_table = 'REPORTE_MENSUAL_VENTAS'
+        verbose_name = 'Reporte de Ventas Mensual'
+        verbose_name_plural = 'Reportes de Ventas Mensuales'
+
+    def __str__(self):
+        return f"{self.mes}/{self.anio} - Total: {self.total_ventas}€"

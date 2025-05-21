@@ -9,16 +9,14 @@ from django.http import HttpResponse
 from reportlab.pdfgen import canvas
 from SafaRestaurantapp.forms import *
 from SafaRestaurantapp.models import Camarero, Hamburguesa, Ingrediente, Cocinero, TareaCocina, TipoCocinero, \
-    DetallePedido, Pedido, IngredienteDetalle, Mesa, Cliente, Cuenta, EstadoProducto, EstadoPedido, EstadoCuenta
+    DetallePedido, Pedido, IngredienteDetalle, Mesa, Cliente, Cuenta, EstadoProducto, EstadoPedido, EstadoCuenta, \
+    ReporteMensualVentas
 
 
 # ============================ PÁGINAS ESTÁTICAS ============================
 
 def go_home_page(request):
     return render(request, 'home.html')
-
-def anaisis_mensual(request):
-    return render(request,'analisismensuaal.html')
 
 def go_about_us(request):
     return render(request, 'about_us.html')
@@ -732,3 +730,7 @@ def pedidos_cliente(request):
    cliente = request.user.cliente
    pedidos = Pedido.objects.filter(cliente=cliente)
    return render(request, 'pedidos_cliente.html', {'pedidos': pedidos})
+
+def analisis_mensual(request):
+    reportes = ReporteMensualVentas.objects.all().order_by('-anio', '-mes')
+    return render(request, 'analisis_mensual.html', {'reportes': reportes})
