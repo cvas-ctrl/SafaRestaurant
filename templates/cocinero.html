@@ -2,6 +2,13 @@
 {% block content %}
 <div class="container mt-4">
     <h2 style="color: #1e9b0f">Pedidos Pendientes</h2>
+    <div class="text-center mb-4">
+        <a href="{% url 'rol_page' %}" class="btn p-0 border-0 bg-transparent" style="transition: all 0.3s;">
+            <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-success bg-opacity-10" style="width: 40px; height: 40px; border: 1px solid #1e9b0f;">
+                <span style="color: #1e9b0f; font-size: 1.2rem;">←</span>
+            </span>
+        </a>
+    </div>
     <div class="row">
         {% for pedido in pedidos %}
         <div class="col-md-4">

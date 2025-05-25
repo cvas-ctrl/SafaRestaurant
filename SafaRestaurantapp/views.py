@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.exceptions import PermissionDenied
+from django.db import connection
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from reportlab.pdfgen import canvas
@@ -429,6 +430,18 @@ def liberar_mesa(request, mesa_id):
 
 # ============================ CUENTAS ============================
 
+@user_passes_test(es_camarero)
+def editar_pedido(request, id):
+    pedido = get_object_or_404(Pedido, id=id)
+
+    if pedido.estado != EstadoPedido.EN_COCINA:
+        return redirect('ver_cuentas')
+
+    request.session['pedido_id'] = pedido.id
+    request.session['mesa_id'] = pedido.mesa.id if pedido.mesa else None
+
+    return redirect('ver_pedidos')
+
 def finalizar_pedido(request):
     pedido_id = request.session.get('pedido_id')
     if pedido_id:
@@ -734,3 +747,8 @@ def pedidos_cliente(request):
 def analisis_mensual(request):
     reportes = ReporteMensualVentas.objects.all().order_by('-anio', '-mes')
     return render(request, 'analisis_mensual.html', {'reportes': reportes})
+
+def generar_reporte_mensual(request):
+    with connection.cursor() as cursor:
+        cursor.callproc('GENERAR_REPORTE_MENSUAL')
+    return redirect('analisis_mensual')

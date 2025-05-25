@@ -5,7 +5,20 @@
 <div class="d-flex justify-content-center align-items-center min-vh-100 p-4">
   <div class="container bg-white border border-4 border-dark rounded-4 shadow-lg p-5" style="max-width: 1000px;">
     <h1 class="text-center display-5 fw-bold fst-italic text-success mb-5">Reporte Mensual de Ventas</h1>
-
+    <div class="text-center mb-4">
+        <a href="{% url 'adminn' %}" class="btn p-0 border-0 bg-transparent" style="transition: all 0.3s;">
+            <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-success bg-opacity-10" style="width: 40px; height: 40px; border: 1px solid #1e9b0f;">
+                <span style="color: #1e9b0f; font-size: 1.2rem;">←</span>
+            </span>
+        </a>
+    </div>
+  
+    <div class="text-center mb-4">
+        <a href="{% url 'generar_reporte' %}" class="btn btn-success px-4 py-2 fw-bold rounded-pill">
+            Generar Reporte del Mes Actual
+        </a>
+    </div>
+    
     <div class="table-responsive">
       <table class="table table-bordered border-success table-hover align-middle text-center">
         <thead class="table-success text-white" style="background-color: #166534 !important;">

@@ -179,7 +179,7 @@
 <body>
    <div class="sidebar">
            <div class="sidebar-profile">
-               <img src="{% static 'img/LOGO.png' %}" alt="Tu Foto" class="profile-img">
+               <img style="cursor: pointer;" src="{% static 'img/admin.png' %}" onclick="window.location.href='{% url 'adminn' %}'" alt="Tu Foto" class="profile-img">
                <div class="profile-info">
                    <span class="profile-role">Administrador</span>
                </div>

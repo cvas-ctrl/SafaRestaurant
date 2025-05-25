@@ -38,6 +38,7 @@
                             <p>Cuenta pendiente</p>
                         {% endif %}
                         <a class="btn btn-danger" href="{% url 'eliminar_pedido_finalizado' pedido.id %}">Eliminar</a>
+                        <a class="btn btn-warning" href="{% url 'editar_pedido' pedido.id %}">Editar</a>
                     </div>
                 </div>
             {% endfor %}
