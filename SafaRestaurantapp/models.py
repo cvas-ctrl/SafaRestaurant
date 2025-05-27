@@ -181,6 +181,13 @@ class Cuenta(models.Model):
     def __str__(self):
         return f"Cuenta para el Pedido #{self.pedido.id}"
 
+class Reserva(models.Model):
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,null=True)
+    fecha_reserva = models.DateField()
+    hora_reserva = models.TimeField()
+    numero_personas = models.IntegerField(max_length=10)
+    fecha_creacion = models.DateField(auto_now_add=True)
+
 ##################### USUARIOS
 
 class UsuarioManager(BaseUserManager):

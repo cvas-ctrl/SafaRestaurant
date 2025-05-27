@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 
-from .models import Camarero, Usuario, Mesa, Hamburguesa
+from .models import Camarero, Usuario, Mesa, Hamburguesa, Reserva
 
 
 class CamareroForm(forms.ModelForm):
@@ -20,6 +20,10 @@ class HamburguesaForm(forms.ModelForm):
        model = Hamburguesa
        fields = ['nombre', 'descripcion', 'precio']
 
+class ReservaForm(forms.ModelForm):
+   class Meta:
+       model = Reserva
+       fields = ['fecha_reserva', 'hora_reserva', 'numero_personas']
 
 class RegistroForm(forms.ModelForm):
     class Meta:

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+        <div class="d-flex"><a href="{% url 'nueva_reserva' %}" class="btn btn-primary">Hacer una reserva</a></div>
+
+    {% for r in reservas %}
+        <div class="col">
+            <div class="card h-100 shadow">
+                <div class="card-body" >
+                    <h5 class="card-title" style="color: #1e9b0f">{{ r.fecha_reserva }} - {{ r.hora_reserva }}</h5>
+                    <p class="card-text">{{ r.numero_personas }} personas</p>
+                    <div style="color: #1a5c1b;margin-bottom: 15px">ACTIVO</div>
+                        <div class="d-flex">
+                            <a href="{% url 'editar_reserva' r.id %}" class="btn btn-primary">Editar</a>
+                            <a href="{% url 'eliminar_reserva' r.id %}" class="btn btn-danger">Eliminar</a>
+                        </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}
+

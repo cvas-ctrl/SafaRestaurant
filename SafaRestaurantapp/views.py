@@ -1,17 +1,21 @@
-from datetime import time, datetime
+from datetime import time, datetime, timezone
 from decimal import Decimal
+
+from PIL.ImImagePlugin import number
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.exceptions import PermissionDenied
 from django.db import connection
+from django.db.models import PositiveIntegerField
+from django.forms import IntegerField
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from reportlab.pdfgen import canvas
 from SafaRestaurantapp.forms import *
 from SafaRestaurantapp.models import Camarero, Hamburguesa, Ingrediente, Cocinero, TareaCocina, TipoCocinero, \
     DetallePedido, Pedido, IngredienteDetalle, Mesa, Cliente, Cuenta, EstadoProducto, EstadoPedido, EstadoCuenta, \
-    ReporteMensualVentas
+    ReporteMensualVentas, Reserva
 
 
 # ============================ PÁGINAS ESTÁTICAS ============================
@@ -513,6 +517,54 @@ def error_403(request, exception=None):
     return render(request, '403.html', status=403)
 
 # ============================ CLIENTE ============================
+
+@user_passes_test(es_cliente)
+def ir_reserva(request):
+    user = request.user
+    listado_reservas = Reserva.objects.all()
+    # listado_reservas = Reserva.objects.filter(user=user)
+    return render(request, 'reservas.html', {'reservas': listado_reservas })
+
+@user_passes_test(es_cliente)
+def nueva_reserva(request):
+   if request.method == 'POST':
+       form = ReservaForm(request.POST)
+       # nueva_reserva = Reserva.objects.create(
+       #     numero_personas=IntegerField(),
+       #     hora_reserva=time(),
+       #     fecha_reserva=datetime.now(),
+       #     usuario=request.user
+       # )
+       if form.is_valid():
+           form.save()
+           # nueva_reserva.save()
+           return redirect('ir_reserva')
+   else:
+       form = ReservaForm()
+
+   return render(request, 'form_reserva.html', {'form': form})
+
+@user_passes_test(es_cliente)
+def editar_reserva(request, id):
+   reserva = get_object_or_404(Reserva, id=id)
+
+   if request.method == 'POST':
+       form = ReservaForm(request.POST, instance=reserva)
+       if form.is_valid():
+           form.save()
+           return redirect('ir_reserva')
+   else:
+       form = ReservaForm(instance=reserva)
+
+   return render(request, 'form_reserva.html', {'form': form})
+
+
+@user_passes_test(es_cliente)
+def eliminar_reserva(request, id):
+   reserva = get_object_or_404(Reserva, id=id)
+   reserva.delete()
+   return redirect('ir_reserva')
+
 @user_passes_test(es_admin_o_cliente)
 def ir_carta(request):
     listado_hamburguesas = Hamburguesa.objects.all()

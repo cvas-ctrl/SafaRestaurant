@@ -397,15 +397,16 @@
                     font-size: 1.8rem;
                 }
             }
+            
         </style>
     {% endblock %}
 </head>
 <body data-bs-theme="light" class="fondo-con-detalleg">
     {% include "navbar.html" %}
-    
-    <main class="contenedor-principal">
+
+    <main class="contenedor-principal" >
         {% block content %}
-     
+            
         <div class="video-container">
             <video autoplay loop muted>
                 <source src="{% static 'videos/home_video.mp4' %}" type="video/mp4">
