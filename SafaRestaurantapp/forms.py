@@ -1,7 +1,14 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 
-from .models import Camarero, Usuario, Mesa, Hamburguesa
+from .models import Camarero, Usuario, Mesa, Hamburguesa, Resena
+
+
+##################RESENAS#################
+class ResenaForm(forms.ModelForm):
+    class Meta:
+        model = Resena
+        fields = ['puntuacion', 'comentario']
 
 
 class CamareroForm(forms.ModelForm):

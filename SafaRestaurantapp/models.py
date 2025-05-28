@@ -1,5 +1,6 @@
 from django.contrib.auth.base_user import BaseUserManager, AbstractBaseUser
 from django.contrib.auth.models import User, PermissionsMixin
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
@@ -8,7 +9,29 @@ from django.utils import timezone
 from SafaRestaurant import settings
 
 
-# Create your models here.
+####################RESEÑAS####################
+from django.conf import settings
+
+from django.conf import settings
+from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
+
+class Resena(models.Model):
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    puntuacion = models.IntegerField(
+        validators=[
+            MinValueValidator(1, message="La puntuación mínima es 1."),
+            MaxValueValidator(5, message="La puntuación máxima es 5.")
+        ]
+    )
+    comentario = models.TextField()
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.usuario.email} - {self.puntuacion}"
+
+
+
 
 ##################### CAMARERO
 
@@ -257,3 +280,4 @@ class ReporteMensualVentas(models.Model):
 
     def __str__(self):
         return f"{self.mes}/{self.anio} - Total: {self.total_ventas}€"
+

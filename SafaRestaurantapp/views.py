@@ -7,7 +7,8 @@ from django.core.exceptions import PermissionDenied
 from django.db import connection
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
-from reportlab.pdfgen import canvas
+from django.views.decorators.http import require_POST
+
 from SafaRestaurantapp.forms import *
 from SafaRestaurantapp.models import Camarero, Hamburguesa, Ingrediente, Cocinero, TareaCocina, TipoCocinero, \
     DetallePedido, Pedido, IngredienteDetalle, Mesa, Cliente, Cuenta, EstadoProducto, EstadoPedido, EstadoCuenta, \
@@ -71,6 +72,9 @@ def editar_nombre_usuario(request):
 def go_logout(request):
     logout(request)
     return redirect('login_page')
+
+def salida_pedro(request):
+    return redirect('home_page')
 
 # ============================ SEGURIDAD DE GESTIONES ============================
 @login_required
@@ -752,3 +756,55 @@ def generar_reporte_mensual(request):
     with connection.cursor() as cursor:
         cursor.callproc('GENERAR_REPORTE_MENSUAL')
     return redirect('analisis_mensual')
+
+
+##############################RESENAS############################
+
+@login_required
+def crear_resena(request):
+    if request.method == 'POST':
+        form = ResenaForm(request.POST)
+        if form.is_valid():
+            resena = form.save(commit=False)
+            resena.usuario = request.user
+            resena.save()
+            messages.success(request, "Reseña creada correctamente.")
+            return redirect('generar-resenas')
+    else:
+        form = ResenaForm()
+    return render(request, 'crear_resena.html', {'form': form})
+
+@require_POST                  # obliga a que solo se acepte POST
+def eliminar__resena(request, pk):
+    """
+    Borra la reseña indicada y redirige a la lista.
+    No muestra confirmación.
+    """
+    resena = get_object_or_404(Resena, pk=pk)
+    resena.delete()
+    messages.success(request, "Reseña eliminada correctamente.")
+    return redirect('generar-resenas')
+
+
+@login_required
+def generar_resenas(request):
+    resenas = Resena.objects.filter(usuario=request.user)
+    return render(request, 'inicio_resenas.html', {'resenas': resenas})
+
+@login_required
+def editar_resena(request, pk):
+    resena = get_object_or_404(Resena, pk=pk, usuario=request.user)
+
+    if request.method == 'POST':
+        form = ResenaForm(request.POST, instance=resena)
+        if form.is_valid():
+            form.save()
+            return redirect('generar-resenas')  # o la vista que lista las reseñas del usuario
+    else:
+        form = ResenaForm(instance=resena)
+
+    return render(request, 'editar_resena.html', {'form': form})
+
+
+
+

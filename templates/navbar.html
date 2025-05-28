@@ -94,6 +94,13 @@
                             <a class="nav-link" href="{% url 'ir_carta' %}">Pedir</a>
                         </li>
                     {% endif %}
+                
+                    {% if user.is_authenticated and user.rol == 'cliente' %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'generar-resenas' %}">Reseñas</a>
+                        </li>
+                    {% endif %}
+                
 
                     {% if user.is_authenticated %}
                         <li class="nav-item">
@@ -122,7 +129,6 @@
 
         </div>
     </nav>
-
 
 
 </body>

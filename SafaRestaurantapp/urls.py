@@ -1,5 +1,7 @@
 from django.contrib import admin
 from django.urls import path
+
+from SafaRestaurantapp import views
 from SafaRestaurantapp.views import (
     go_home_page, go_about_us, go_rol_page,
     go_cliente_view, go_camarero_view, go_cocinero_view, go_adminn_view,
@@ -12,7 +14,8 @@ from SafaRestaurantapp.views import (
     marcar_pedido_preparado, ir_carta, personalizar_carta, add_carrito, ver_carrito, comprar, confirmacion,
     eliminar_del_carrito, nueva_mesa, editar_mesa, eliminar_mesa, nueva_hamburguesa, editar_hamburguesa,
     eliminar_hamburguesa, perfil_usuario, sumar_carrito, restar_carrito, pedidos_admin, eliminar_pedido_admin,
-    pedidos_cliente, editar_nombre_usuario, analisis_mensual, editar_pedido, generar_reporte_mensual
+    pedidos_cliente, editar_nombre_usuario, analisis_mensual, editar_pedido, generar_reporte_mensual, salida_pedro,
+    generar_resenas, crear_resena, eliminar__resena
 
 )
 
@@ -27,6 +30,7 @@ urlpatterns = [
     path('editar/login/', editar_nombre_usuario, name='editar_nombre_usuario'),
     path('logout/', go_logout, name='logout'),
     path('perfil/', perfil_usuario, name='perfil'),
+    path('salida', salida_pedro, name='salida'),
 
     # Roles
     path('cliente/', go_cliente_view, name='cliente'),
@@ -101,6 +105,15 @@ urlpatterns = [
     path('admin/analisis_mensual/',analisis_mensual, name='analisis_mensual'),
 
     path('generar_reporte/', generar_reporte_mensual, name='generar_reporte'),
+    
+    ##Resenas
+    path('go_resenas/', generar_resenas, name='generar-resenas'),
+    path('crear_resena', crear_resena, name='crear_resena'),
+
+    path('restaurant/eliminar-resena/<int:pk>/', eliminar__resena, name='eliminar_resena'),
+    path('mis-resenas/', views.generar_resenas, name='mis_resenas'),
+    path('editar_resena/<int:pk>/', views.editar_resena, name='editar_resena'),
+
 
 ]
 
