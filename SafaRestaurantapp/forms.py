@@ -1,7 +1,8 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
+from django.core.exceptions import ValidationError
 
-from .models import Camarero, Usuario, Mesa, Hamburguesa, Reserva
+from .models import Camarero, Usuario, Mesa, Hamburguesa, Reserva, Articulo
 
 
 class CamareroForm(forms.ModelForm):
@@ -21,9 +22,34 @@ class HamburguesaForm(forms.ModelForm):
        fields = ['nombre', 'descripcion', 'precio']
 
 class ReservaForm(forms.ModelForm):
-   class Meta:
-       model = Reserva
-       fields = ['fecha_reserva', 'hora_reserva', 'numero_personas']
+    fecha_reserva = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+    hora_reserva = forms.TimeField(widget=forms.TimeInput(attrs={'type': 'time'}))
+    class Meta:
+        model = Reserva
+        fields = ['fecha_reserva', 'hora_reserva', 'numero_personas', 'estado']
+
+    def clean_numero_personas(self):
+        numero_personas = self.cleaned_data.get('numero_personas')
+        if numero_personas is None:
+            raise ValidationError("Este campo es obligatorio.")
+        if not (1 <= numero_personas <= 20):
+            raise ValidationError("El número de personas debe estar entre 1 y 20.")
+
+        return numero_personas
+
+class ArticuloForm(forms.ModelForm):
+    class Meta:
+        model = Articulo
+        fields = ['titulo', 'contenido', 'estado']
+
+    def clean_titulo(self):
+        titulo = self.cleaned_data.get('titulo')
+        if len(titulo) == 0:
+            raise ValidationError("Este campo es obligatorio.")
+        elif len(titulo) < 5:
+            raise ValidationError("Debe contener almenos 5 caracteres.")
+
+        return titulo
 
 class RegistroForm(forms.ModelForm):
     class Meta:

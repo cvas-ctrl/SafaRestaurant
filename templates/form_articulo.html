@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/style_register.css' %}">
+{% endblock %}
+{% block content %}
+   <h2 class="text-center mt-5" style="color: #28c112">
+       {% if form.instance.id %}Editar{% else %}Nuevo{% endif %} Articulo
+   </h2>
+   <form method="post">
+       {% csrf_token %}
+       {{ form.as_p }}
+       <button type="submit">Guardar</button>
+   </form>
+
+
+{% endblock %}

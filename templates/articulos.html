@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+    {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+    {% endif %}
+    
+    <div style="margin-left: 20px" class="d-flex"><a href="{% url 'nuevo_articulo' %}" class="btn btn-primary">Haz un articulo</a></div>
+
+    {% if articulos %}
+        {% for a in articulos %}
+            <div class="col" style="margin: 20px" >
+                <div class="card h-100 shadow" style="margin-bottom: 20px" >
+                    <div class="card-body">
+                        <h5 class="card-title" style="color: #14500b;text-transform: uppercase;font-weight: bold;font-size: 40px ">{{ a.titulo }}</h5> 
+                        <h5 class="card-title" style="color: #1e9b0f">{{ a.contenido }}</h5>
+                        <p class="card-text">{{ a.estado }}</p>
+    
+                        <div class="d-flex gap-2"> 
+                            <a href="{% url 'editar_articulo' a.id %}" class="btn btn-warning btn-sm">Editar</a>
+                            <a href="{% url 'eliminar_articulo' a.id %}" class="btn btn-danger btn-sm">Cancelar</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}    
+        <p class="alert alert-warning" style="margin: 10px" >NO HAY NINGUN ARTICULO</p>
+    {% endif %}
+{% endblock %}
+

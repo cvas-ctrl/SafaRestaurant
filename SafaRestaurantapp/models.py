@@ -181,12 +181,36 @@ class Cuenta(models.Model):
     def __str__(self):
         return f"Cuenta para el Pedido #{self.pedido.id}"
 
+# class Reserva(models.Model):
+#     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,null=True)
+#     fecha_reserva = models.DateField()
+#     hora_reserva = models.TimeField()
+#     numero_personas = models.IntegerField(max_length=10)
+#     fecha_creacion = models.DateField(auto_now_add=True)
+
 class Reserva(models.Model):
-    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,null=True)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     fecha_reserva = models.DateField()
     hora_reserva = models.TimeField()
-    numero_personas = models.IntegerField(max_length=10)
-    fecha_creacion = models.DateField(auto_now_add=True)
+    numero_personas = models.IntegerField()
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    ESTADO_CHOICES = [
+        ('ACTIVA', 'Activa'),
+        ('CANCELADA', 'Cancelada'),
+    ]
+    estado = models.CharField(max_length=10, choices=ESTADO_CHOICES, default='ACTIVA')
+
+class Articulo(models.Model):
+    autor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    titulo = models.CharField(max_length=200)
+    contenido = models.TextField()
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    fecha_publicacion = models.DateTimeField(null=True,blank=True)
+    ESTADO_CHOICES = [
+        ('BORRADOR', 'Borrador'),
+        ('PUBLICADO', 'Publicado'),
+    ]
+    estado = models.CharField(max_length=10, choices=ESTADO_CHOICES, default='BORRADOR')
 
 ##################### USUARIOS
 

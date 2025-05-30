@@ -520,50 +520,136 @@ def error_403(request, exception=None):
 
 @user_passes_test(es_cliente)
 def ir_reserva(request):
-    user = request.user
-    listado_reservas = Reserva.objects.all()
-    # listado_reservas = Reserva.objects.filter(user=user)
+    listado_reservas = Reserva.objects.filter(usuario=request.user)
     return render(request, 'reservas.html', {'reservas': listado_reservas })
 
+# @user_passes_test(es_cliente)
+# def nueva_reserva(request):
+#    if request.method == 'POST':
+#        form = ReservaForm(request.POST)
+#        nueva_reserva = Reserva.objects.create(
+#            numero_personas=IntegerField(),
+#            hora_reserva=time(),
+#            fecha_reserva=datetime.now(),
+#            usuario=request.user
+#        )
+#        if form.is_valid():
+#            form.save()
+#            nueva_reserva.save()
+#            return redirect('ir_reserva')
+#    else:
+#        form = ReservaForm()
+#
+#    return render(request, 'form_reserva.html', {'form': form})
+
+
 @user_passes_test(es_cliente)
+@login_required
 def nueva_reserva(request):
-   if request.method == 'POST':
-       form = ReservaForm(request.POST)
-       # nueva_reserva = Reserva.objects.create(
-       #     numero_personas=IntegerField(),
-       #     hora_reserva=time(),
-       #     fecha_reserva=datetime.now(),
-       #     usuario=request.user
-       # )
-       if form.is_valid():
-           form.save()
-           # nueva_reserva.save()
-           return redirect('ir_reserva')
-   else:
-       form = ReservaForm()
+    if request.method == 'POST':
+        form = ReservaForm(request.POST)
+        if form.is_valid():
+            reserva = form.save(commit=False)
+            reserva.usuario = request.user
+            reserva.save()
+            messages.success(request, '¡Reserva creada con éxito!')
+            return redirect('ir_reserva')
+        else:
+            messages.error(request, 'Hubo un error al crear la reserva. Por favor, revisa los datos.')
+    else:
+        form = ReservaForm()
 
-   return render(request, 'form_reserva.html', {'form': form})
+    return render(request, 'form_reserva.html', {'form': form})
+
+# @user_passes_test(es_cliente)
+# def editar_reserva(request, id):
+#    reserva = get_object_or_404(Reserva, id=id)
+#    if request.method == 'POST':
+#        form = ReservaForm(request.POST, instance=reserva)
+#        if form.is_valid():
+#            form.save()
+#            return redirect('ir_reserva')
+#    else:
+#        form = ReservaForm(instance=reserva)
+#
+#    return render(request, 'form_reserva.html', {'form': form})
 
 @user_passes_test(es_cliente)
+@login_required
 def editar_reserva(request, id):
-   reserva = get_object_or_404(Reserva, id=id)
+    reserva = get_object_or_404(Reserva, id=id, usuario=request.user)
+    if request.method == 'POST':
+        form = ReservaForm(request.POST, instance=reserva)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Reserva actualizada con éxito.')
+            return redirect('ir_reserva')
+    else:
+        form = ReservaForm(instance=reserva)
 
-   if request.method == 'POST':
-       form = ReservaForm(request.POST, instance=reserva)
-       if form.is_valid():
-           form.save()
-           return redirect('ir_reserva')
-   else:
-       form = ReservaForm(instance=reserva)
-
-   return render(request, 'form_reserva.html', {'form': form})
-
+    return render(request, 'form_reserva.html', {'form': form})
 
 @user_passes_test(es_cliente)
 def eliminar_reserva(request, id):
    reserva = get_object_or_404(Reserva, id=id)
    reserva.delete()
    return redirect('ir_reserva')
+
+
+# @user_passes_test(es_cliente)
+# @login_required
+# def eliminar_reserva(request, id):
+#     reserva = get_object_or_404(Reserva, id=id, usuario=request.user)
+#     if request.method == 'POST':
+#         reserva.estado = 'CANCELADA'
+#         reserva.save()
+#         messages.info(request, 'Tu reserva ha sido cancelada correctamente.')
+#         return redirect('ir_reserva')
+#     return render(request, 'reservas.html', {'reserva': reserva})
+
+@user_passes_test(es_cliente)
+def ir_blog(request):
+    listado_articulos = Articulo.objects.filter(autor=request.user)
+    return render(request, 'articulos.html', {'articulos': listado_articulos })
+
+@user_passes_test(es_cliente)
+@login_required
+def nuevo_articulo(request):
+    if request.method == 'POST':
+        form = ArticuloForm(request.POST)
+        if form.is_valid():
+            articulo = form.save(commit=False)
+            articulo.autor = request.user
+            articulo.save()
+            messages.success(request, '¡Articulo creado con éxito!')
+            return redirect('ir_blog')
+        else:
+            messages.error(request, 'Hubo un error al crear el articulo. Por favor, revisa los datos.')
+    else:
+        form = ArticuloForm()
+
+    return render(request, 'form_articulo.html', {'form': form})
+
+@user_passes_test(es_cliente)
+@login_required
+def editar_articulo(request, id):
+    articulo = get_object_or_404(Articulo, id=id, autor=request.user)
+    if request.method == 'POST':
+        form = ArticuloForm(request.POST, instance=articulo)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Articulo actualizado con éxito.')
+            return redirect('ir_blog')
+    else:
+        form = ArticuloForm(instance=articulo)
+
+    return render(request, 'form_articulo.html', {'form': form})
+
+@user_passes_test(es_cliente)
+def eliminar_articulo(request, id):
+   articulo = get_object_or_404(Articulo, id=id)
+   articulo.delete()
+   return redirect('ir_blog')
 
 @user_passes_test(es_admin_o_cliente)
 def ir_carta(request):
