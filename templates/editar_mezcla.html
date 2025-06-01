@@ -83,50 +83,22 @@
 </style>
 
 <div class="form-container">
-  <h2>Editar Reserva</h2>
+  <h2>Editar Mezcla</h2>
   <form method="post">
     {% csrf_token %}
     {{ form.non_field_errors }}
 
-    <label for="id_fecha_reserva">Fecha de la reserva:</label>
-    {{ form.fecha_reserva }}
-    {{ form.fecha_reserva.errors }}
+    <label for="id_calificacion">Calificacion</label>
+    {{ form.calificacion }}
+    {{ form.calificacion.errors }}
 
-    <label for="id_hora_reserva">Hora de la reserva:</label>
-    {{ form.hora_reserva }}
-    {{ form.hora_reserva.errors }}
-
-    <label for="id_numero_personas">Número de personas:</label>
-    {{ form.numero_personas }}
-    {{ form.numero_personas.errors }}
-    
-      <label for="id_numero_personas">Estado de reserva</label>
-    {{ form.estado }}
-    {{ form.estado.errors }}
+    <label for="id_texto">Introduce alguna nota de informacion</label>
+    {{ form.texto }}
+    {{ form.texto.errors }}
       
-
     <button type="submit">Actualizar</button>
   </form>
-  <a href="{% url 'generar-reservas' %}" class="cancel-link">Cancelar</a>
+  <a href="{% url 'generar-mezclas' %}" class="cancel-link">Cancelar</a>
 </div>
 {% endblock %}
-
-{% block extra_js %}
-<!-- Flatpickr JS -->
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<script>
-  flatpickr("#id_fecha_reserva", {
-    dateFormat: "Y-m-d",
-    minDate: "today",
-    altInput: true,
-    altFormat: "F j, Y"
-  });
-
-  flatpickr("#id_hora_reserva", {
-    enableTime: true,
-    noCalendar: true,
-    dateFormat: "H:i",
-    time_24hr: true
-  });
-</script>
-{% endblock %}
+¡

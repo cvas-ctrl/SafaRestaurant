@@ -36,10 +36,27 @@ class Reserva(models.Model):
         ]
     )
     fecha_creacion = models.DateTimeField(auto_now_add=True)
+    ESTADO_CHOICES = [
+        ('ACTIVA', 'Activa'),
+        ('CANCELADA', 'Cancelada'),
+    ]
+    estado = models.CharField(max_length=10, choices=ESTADO_CHOICES, default='ACTIVA')
     def __str__(self):
         return f"{self.usuario.email} - {self.fecha_reserva}"
 
-
+##################### PRACTICA MEXCLA DE AMBOS ######################
+class Mezcla(models.Model):
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    calificacion = models.IntegerField(
+        validators=[
+            MinValueValidator(1, message="La puntunacion minima es 1"),
+            MaxValueValidator(10, message="La puntuacion maxima es 10")
+        ]
+    )
+    texto = models.TextField()
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return f"{self.usuario.email} - {self.calificacion}"
 
 ##################### CAMARERO ######################
 

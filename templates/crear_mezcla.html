@@ -71,26 +71,20 @@
   </style>
 
   <div class="form-container">
-    <h2>{% if form.instance.pk %}Editar Reserva{% else %}Nueva Reserva{% endif %}</h2>
+    <h2>{% if form.instance.pk %}Editar Mezcla{% else %}Nueva Mezcla{% endif %}</h2>
 
     <form method="post">
       {% csrf_token %}
       {{ form.non_field_errors }}
 
-      <label for="id_fecha_reserva">Fecha Reserva:</label>
-      {{ form.fecha_reserva }}
+      <label for="id_calificacion">Calificacion</label>
+      {{ form.calificacion }}
 
-      <label for="id_hora_reserva">Hora Reserva:</label>
-      {{ form.hora_reserva }}
-        
-      <label for="id_numero_personas">Numero de Personas (Min 1/Max 20):</label>
-      {{ form.numero_personas }}
-    
-        <label for="id_numero_personas">Estado de la reserva:</label>
-      {{ form.estado }}
+      <label for="id_texto">Texto</label>
+      {{ form.texto }}
     
       <button type="submit">{% if form.instance.pk %}Actualizar{% else %}Publicar{% endif %}</button>
-      <a href="{% url 'generar-reservas' %}">Cancelar</a>
+      <a href="{% url 'generar-mezclas' %}">Cancelar</a>
     </form>
   </div>
 {% endblock %}

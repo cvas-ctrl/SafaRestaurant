@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 
-from .models import Camarero, Usuario, Mesa, Hamburguesa, Resena, Reserva
+from .models import Camarero, Usuario, Mesa, Hamburguesa, Resena, Mezcla
 
 
 ##################RESENAS#################
@@ -10,8 +10,11 @@ class ResenaForm(forms.ModelForm):
         model = Resena
         fields = ['puntuacion', 'comentario']
 
-
-
+###############MEZCLAS###################
+class MezclaForm(forms.ModelForm):
+    class Meta:
+        model = Mezcla
+        fields = ['calificacion', 'texto']
 ###############RESERVAS###################
 from django import forms
 from .models import Reserva
@@ -19,7 +22,7 @@ from .models import Reserva
 class ReservaForm(forms.ModelForm):
     class Meta:
         model = Reserva
-        fields = ['fecha_reserva', 'hora_reserva', 'numero_personas']
+        fields = ['fecha_reserva', 'hora_reserva', 'numero_personas', 'estado']
         widgets = {
             'fecha_reserva': forms.DateInput(attrs={
                 'type': 'date',

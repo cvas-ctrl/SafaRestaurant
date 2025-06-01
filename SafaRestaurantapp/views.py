@@ -793,9 +793,6 @@ def generar_resenas(request):
     resenas = Resena.objects.filter(usuario=request.user)
     return render(request, 'inicio_resenas.html', {'resenas': resenas})
 
-
-
-
 @login_required
 def editar_resena(request, pk):
     resena = get_object_or_404(Resena, pk=pk, usuario=request.user)
@@ -854,6 +851,50 @@ def editar_reserva(request, pk):
         form = ReservaForm(instance=reserva)
 
     return render(request, 'editar_reserva.html', {'form': form})
+
+######################## MEZCLA ##########################
+def generar_mezcla(request):
+    mezclas = Mezcla.objects.filter(usuario=request.user)   # <- SIN .values()
+    return render(request, 'inicio_mezcla.html', {
+        'mezclas': mezclas,      # usa plural para que quede claro
+    })
+
+def crear_mezcla(request):
+    if request.method == 'POST':
+        form = MezclaForm(request.POST)
+        if form.is_valid():
+            mezcla = form.save(commit=False)
+            mezcla.usuario = request.user  # Asigna usuario actual
+            mezcla.save()
+            return redirect('generar-mezclas')  # O a donde quieras ir después
+    else:
+        form = MezclaForm()
+    return render(request, 'crear_mezcla.html', {'form': form})
+
+@login_required
+def editar_mezcla(request, pk):
+    mezcla = get_object_or_404(Mezcla, pk=pk, usuario=request.user)
+
+    if request.method == 'POST':
+        form = MezclaForm(request.POST, instance=mezcla)
+        if form.is_valid():
+            form.save()
+            return redirect('generar-mezclas')  # nombre de la ruta que lista las reservas
+    else:
+        form = MezclaForm(instance=mezcla)
+
+    return render(request, 'editar_mezcla.html', {'form': form})
+
+@require_POST                  # obliga a que solo se acepte POST
+def eliminar__mezcla(request, pk):
+    """
+    Borra la reseña indicada y redirige a la lista.
+    No muestra confirmación.
+    """
+    mezcla = get_object_or_404(Mezcla, pk=pk)
+    mezcla.delete()
+    messages.success(request, "Mezcla eliminada correctamente.")
+    return redirect('generar-mezclas')
 
 
 
