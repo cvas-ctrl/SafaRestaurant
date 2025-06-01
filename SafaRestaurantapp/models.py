@@ -10,12 +10,6 @@ from SafaRestaurant import settings
 
 
 ####################RESEÑAS####################
-from django.conf import settings
-
-from django.conf import settings
-from django.db import models
-from django.core.validators import MinValueValidator, MaxValueValidator
-
 class Resena(models.Model):
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     puntuacion = models.IntegerField(
@@ -30,10 +24,24 @@ class Resena(models.Model):
     def __str__(self):
         return f"{self.usuario.email} - {self.puntuacion}"
 
+####################RESERVAS####################
+class Reserva(models.Model):
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    fecha_reserva = models.DateField()
+    hora_reserva = models.TimeField()
+    numero_personas = models.IntegerField(
+        validators=[
+            MinValueValidator(1, message="La puntuación mínima es 1."),
+            MaxValueValidator(20, message="La puntuación máxima es 20.")
+        ]
+    )
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return f"{self.usuario.email} - {self.fecha_reserva}"
 
 
 
-##################### CAMARERO
+##################### CAMARERO ######################
 
 class Camarero(models.Model):
     nombre = models.CharField(max_length=250)

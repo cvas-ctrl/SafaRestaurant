@@ -1,5 +1,7 @@
 from datetime import time, datetime
 from decimal import Decimal
+from urllib import request
+
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -12,7 +14,7 @@ from django.views.decorators.http import require_POST
 from SafaRestaurantapp.forms import *
 from SafaRestaurantapp.models import Camarero, Hamburguesa, Ingrediente, Cocinero, TareaCocina, TipoCocinero, \
     DetallePedido, Pedido, IngredienteDetalle, Mesa, Cliente, Cuenta, EstadoProducto, EstadoPedido, EstadoCuenta, \
-    ReporteMensualVentas
+    ReporteMensualVentas, Reserva
 
 
 # ============================ PÁGINAS ESTÁTICAS ============================
@@ -791,6 +793,9 @@ def generar_resenas(request):
     resenas = Resena.objects.filter(usuario=request.user)
     return render(request, 'inicio_resenas.html', {'resenas': resenas})
 
+
+
+
 @login_required
 def editar_resena(request, pk):
     resena = get_object_or_404(Resena, pk=pk, usuario=request.user)
@@ -804,6 +809,51 @@ def editar_resena(request, pk):
         form = ResenaForm(instance=resena)
 
     return render(request, 'editar_resena.html', {'form': form})
+
+
+#######################RESERVAS###################################
+@login_required
+def generar_reservas(request):
+    reservas = Reserva.objects.filter(usuario=request.user)   # <- SIN .values()
+    return render(request, 'inicio_reservas.html', {
+        'reservas': reservas,      # usa plural para que quede claro
+    })
+def crear_reserva(request):
+    if request.method == 'POST':
+        form = ReservaForm(request.POST)
+        if form.is_valid():
+            reserva = form.save(commit=False)
+            reserva.usuario = request.user  # Asigna usuario actual
+            reserva.save()
+            return redirect('generar-reservas')  # O a donde quieras ir después
+    else:
+        form = ReservaForm()
+    return render(request, 'crear_reserva.html', {'form': form})
+
+@require_POST                  # obliga a que solo se acepte POST
+def eliminar__reserva(request, pk):
+    """
+    Borra la reseña indicada y redirige a la lista.
+    No muestra confirmación.
+    """
+    reserva = get_object_or_404(Reserva, pk=pk)
+    reserva.delete()
+    messages.success(request, "Reserva eliminada correctamente.")
+    return redirect('generar-reservas')
+
+@login_required
+def editar_reserva(request, pk):
+    reserva = get_object_or_404(Reserva, pk=pk, usuario=request.user)
+
+    if request.method == 'POST':
+        form = ReservaForm(request.POST, instance=reserva)
+        if form.is_valid():
+            form.save()
+            return redirect('generar-reservas')  # nombre de la ruta que lista las reservas
+    else:
+        form = ReservaForm(instance=reserva)
+
+    return render(request, 'editar_reserva.html', {'form': form})
 
 
 

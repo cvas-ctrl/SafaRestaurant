@@ -1,9 +1,0 @@
-<h1>Mis Reseñas</h1>
-
-<ul>
-  {% for resena in reseñas %}
-    <li>{{ resena.comentario }} — Puntuación: {{ resena.puntuacion }}</li>
-  {% empty %}
-    <li>No tienes reseñas.</li>
-  {% endfor %}
-</ul>

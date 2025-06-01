@@ -57,7 +57,7 @@
     }
 
     button:hover, a:hover {
-      
+      background-color: #45a049;
     }
 
     a {
@@ -71,22 +71,23 @@
   </style>
 
   <div class="form-container">
-    <h2>{% if form.instance.pk %}Editar Reseña{% else %}Nueva Reseña{% endif %}</h2>
+    <h2>{% if form.instance.pk %}Editar Reserva{% else %}Nueva Reserva{% endif %}</h2>
 
     <form method="post">
       {% csrf_token %}
       {{ form.non_field_errors }}
 
-      <label for="id_puntuacion">Puntuación (1-5):</label>
-      {{ form.puntuacion }}
-      {{ form.puntuacion.errors }}
+      <label for="id_fecha_reserva">Fecha Reserva:</label>
+      {{ form.fecha_reserva }}
 
-      <label for="id_comentario">Comentario:</label>
-      {{ form.comentario }}
-      {{ form.comentario.errors }}
-
+      <label for="id_hora_reserva">Hora Reserva:</label>
+      {{ form.hora_reserva }}
+        
+      <label for="id_numero_personas">Numero de Personas (Min 1/Max 20):</label>
+      {{ form.numero_personas }}
+    
       <button type="submit">{% if form.instance.pk %}Actualizar{% else %}Publicar{% endif %}</button>
-      <a href="{% url 'generar-resenas' %}">Cancelar</a>
+      <a href="{% url 'generar-reservas' %}">Cancelar</a>
     </form>
   </div>
 {% endblock %}

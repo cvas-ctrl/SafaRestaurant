@@ -15,7 +15,7 @@ from SafaRestaurantapp.views import (
     eliminar_del_carrito, nueva_mesa, editar_mesa, eliminar_mesa, nueva_hamburguesa, editar_hamburguesa,
     eliminar_hamburguesa, perfil_usuario, sumar_carrito, restar_carrito, pedidos_admin, eliminar_pedido_admin,
     pedidos_cliente, editar_nombre_usuario, analisis_mensual, editar_pedido, generar_reporte_mensual, salida_pedro,
-    generar_resenas, crear_resena, eliminar__resena
+    generar_resenas, crear_resena, eliminar__resena, generar_reservas, crear_reserva, eliminar__reserva
 
 )
 
@@ -106,13 +106,23 @@ urlpatterns = [
 
     path('generar_reporte/', generar_reporte_mensual, name='generar_reporte'),
     
-    ##Resenas
+    ########################Resenas###########################
     path('go_resenas/', generar_resenas, name='generar-resenas'),
     path('crear_resena', crear_resena, name='crear_resena'),
 
     path('restaurant/eliminar-resena/<int:pk>/', eliminar__resena, name='eliminar_resena'),
-    path('mis-resenas/', views.generar_resenas, name='mis_resenas'),
+
     path('editar_resena/<int:pk>/', views.editar_resena, name='editar_resena'),
+
+
+
+    ########################Reservas###########################
+    path('go_reservas/', generar_reservas, name='generar-reservas'),
+    path('restaurant/crear_reserva', crear_reserva, name='crear_reserva'),
+    path('restaurant/eliminar-reserva/<int:pk>/', eliminar__reserva, name='eliminar_reserva'),
+    path('editar_reserva/<int:pk>/', views.editar_reserva, name='editar_reserva')
+
+
 
 
 ]
