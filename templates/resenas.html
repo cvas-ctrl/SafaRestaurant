@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/style_register.css' %}">
+{% endblock %}
+{% block content %}
+    <h1 style="color: #28c112; text-align: center; margin-bottom: 2rem; font-size: 2rem;margin-top: 7rem;">¡Danos tu opinión!</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn-amargura">Enviar</button>
+    </form>
+
+{% endblock %}

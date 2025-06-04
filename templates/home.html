@@ -1,4 +1,4 @@
-{% load static %}
+ bbbgv    {% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -396,6 +396,10 @@
                 .informacion-main h2 {
                     font-size: 1.8rem;
                 }
+                .iframe {
+                    justify-content: center;
+                    display: flex;
+                }
             }
         </style>
     {% endblock %}
@@ -415,6 +419,7 @@
         </div>
 
         <section class="informacion-main">
+
             <div class="container">
                 <h2>Bienvenidos a Chill Burguer</h2>
                 <p class="lead">Disfruta de las mejores hamburguesas artesanales de la ciudad, elaboradas con ingredientes frescos, locales y de la más alta calidad. ¡Una experiencia gastronómica que despertará tus sentidos!</p>
@@ -543,11 +548,28 @@
                 </div>
             </div>
         </section>
-        
+            <h3>Nuestra lista de spotify</h3>
+            <div class="iframe">
+            <iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1DX2sUQwD7tbmL?utm_source=generator" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy">
+            </div>
+
         <section class="testimonials-section">
             <div class="container">
                 <h2 class="text-center mb-5">Lo que dicen nuestros clientes</h2>
-                
+                <h2 class="mb-4" style="color: #1e9b0f">Selecciona una hamburguesa</h2>
+                <div class="row row-cols-1 row-cols-md-2 g-4">
+                    {% for r in resenas %}
+                    <div class="col">
+                        <div class="card h-100 shadow">
+                            <div class="card-body">
+                                <h5 class="card-title" style="color: #1e9b0f">{{ r.comentario }}</h5>
+                                <p class="card-text">{{ r.usuario }}</p>
+                                <p class="fw-bold">{{ r.puntuacion }} €</p>
+                                </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
                 <div class="row">
                     <div class="col-md-4">
                         <div class="testimonial-card">
@@ -604,7 +626,7 @@
             <div class="container">
                 <h2 class="text-center mb-4">Déjanos tu comentario</h2>
                 <p class="text-center mb-5">Queremos conocer tu opinión. Comparte tus sugerencias, dudas o experiencias con nosotros.</p>
-            
+
                 <form class="newsletter-form d-flex flex-column gap-3">
                     <div class="mb-3">
                         <textarea class="form-control" placeholder="Escribe tu comentario aquí..." rows="4" required></textarea>

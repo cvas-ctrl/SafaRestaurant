@@ -12,7 +12,8 @@ from SafaRestaurantapp.views import (
     marcar_pedido_preparado, ir_carta, personalizar_carta, add_carrito, ver_carrito, comprar, confirmacion,
     eliminar_del_carrito, nueva_mesa, editar_mesa, eliminar_mesa, nueva_hamburguesa, editar_hamburguesa,
     eliminar_hamburguesa, perfil_usuario, sumar_carrito, restar_carrito, pedidos_admin, eliminar_pedido_admin,
-    pedidos_cliente, editar_nombre_usuario, analisis_mensual, editar_pedido, generar_reporte_mensual
+    pedidos_cliente, editar_nombre_usuario, analisis_mensual, editar_pedido, generar_reporte_mensual, resenas,
+    lista_resenas
 
 )
 
@@ -101,6 +102,8 @@ urlpatterns = [
     path('admin/analisis_mensual/',analisis_mensual, name='analisis_mensual'),
 
     path('generar_reporte/', generar_reporte_mensual, name='generar_reporte'),
+    path('resenas_usuarios/', resenas, name='resenas_usuarios'),
+    path('lista_resenas/', lista_resenas, name='lista_resenas')
 
 ]
 

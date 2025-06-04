@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/style_register.css' %}">
+{% endblock %}
+
+{% block content %}
+    <h1 style="color: #28c112; text-align: center; margin-bottom: 2rem; font-size: 2rem; margin-top: 7rem;">
+        ¡Lo que dicen nuestros usuarios!
+    </h1>
+
+    {% if resenas %}
+        <ul style="list-style: none; padding: 0;">
+            {% for resena in resenas %}
+                <li style="background: #f9f9f9; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; box-shadow: 0 0 5px rgba(0,0,0,0.1);">
+                    <p><strong>Usuario:</strong> {{ resena.usuario.nombre }}</p>
+                    <p><strong>Puntuación:</strong> {{ resena.puntuacion }}</p>
+                    <p><strong>Comentario:</strong> {{ resena.comentario }}</p>
+                    <p style="font-size: 0.8rem; color: gray;">
+                        Creado: {{ resena.fecha_creacion|date:"d/m/Y H:i" }}
+                    </p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p style="text-align:center; color: #888;">No hay reseñas disponibles.</p>
+    {% endif %}
+{% endblock %}

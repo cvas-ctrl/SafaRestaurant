@@ -76,6 +76,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
 
+
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto nav-menu">
                     <button onclick="cambiarTema()" class="btn rounded-fill"><i id="dl-icon" class="bi bi-moon-fill"></i></button>
@@ -85,9 +86,26 @@
                         </li>
                     {% endif %}
 
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'resenas_usuarios' %}">Enviar reseñas</a>
+                        </li>
+
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'lista_resenas' %}">Ver reseñas</a>
+                        </li>
+                    {% endif %}
+
+
+
+
+
                     <li class="nav-item">
                         <a href="{% static 'pdf/CartaSafa.pdf' %}" class="nav-link">Carta</a>
                     </li>
+
+                    {% endif %}
 
                     {% if user.is_authenticated and user.rol == 'cliente' %}
                         <li class="nav-item">

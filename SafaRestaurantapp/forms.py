@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 
-from .models import Camarero, Usuario, Mesa, Hamburguesa
+from .models import Camarero, Usuario, Mesa, Hamburguesa, Resena
 
 
 class CamareroForm(forms.ModelForm):
@@ -100,3 +100,23 @@ class AccesoEmpleadoForm(forms.Form):
 
 class LoginForm(AuthenticationForm):
     username = forms.EmailField(label="Correo Electrónico")
+
+class ResenasForm(forms.ModelForm):
+    class Meta:
+        model = Resena
+        fields = ['comentario', 'puntuacion']
+        widgets = {
+            'comentario': forms.Textarea(attrs={
+                'class': 'form-control',
+                'placeholder': 'Comentario',
+                'id': 'comentario'
+            }),
+            'puntuacion': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Puntuacion',
+                'id': 'puntuacion'
+            }),
+
+
+
+        }

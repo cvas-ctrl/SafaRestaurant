@@ -1,5 +1,6 @@
 from django.contrib.auth.base_user import BaseUserManager, AbstractBaseUser
 from django.contrib.auth.models import User, PermissionsMixin
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
@@ -257,3 +258,18 @@ class ReporteMensualVentas(models.Model):
 
     def __str__(self):
         return f"{self.mes}/{self.anio} - Total: {self.total_ventas}€"
+
+class Resena(models.Model):
+    comentario = models.CharField(max_length=250)
+    puntuacion = models.PositiveSmallIntegerField(
+        validators=[
+            MinValueValidator(1),
+            MaxValueValidator(5)
+            ],
+
+    )
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    fecha_modificacion = models.DateTimeField(auto_now=True)
+
+

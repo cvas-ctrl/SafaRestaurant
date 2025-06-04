@@ -1,4 +1,5 @@
 from datetime import time, datetime
+from .forms import ResenasForm
 from decimal import Decimal
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, get_user_model
@@ -11,7 +12,7 @@ from reportlab.pdfgen import canvas
 from SafaRestaurantapp.forms import *
 from SafaRestaurantapp.models import Camarero, Hamburguesa, Ingrediente, Cocinero, TareaCocina, TipoCocinero, \
     DetallePedido, Pedido, IngredienteDetalle, Mesa, Cliente, Cuenta, EstadoProducto, EstadoPedido, EstadoCuenta, \
-    ReporteMensualVentas
+    ReporteMensualVentas, Resena
 
 
 # ============================ PÁGINAS ESTÁTICAS ============================
@@ -752,3 +753,49 @@ def generar_reporte_mensual(request):
     with connection.cursor() as cursor:
         cursor.callproc('GENERAR_REPORTE_MENSUAL')
     return redirect('analisis_mensual')
+
+@login_required
+def resenas(request):
+    if request.method == 'POST':
+        form = ResenasForm(request.POST)
+        if form.is_valid():
+            resena = form.save(commit=False)
+            resena.usuario = request.user
+            resena.save()
+            return redirect('home_page')
+    else:
+        form = ResenasForm()
+
+    return render(request, "resenas.html", {'form': form})
+
+
+@login_required
+def editar_resena(request, resena_id):
+    resena = get_object_or_404(Resena, id=resena_id)
+
+    if request.user != resena.usuario and request.user.rol != 'admin':
+        return redirect('lista_resenas')
+
+    if request.method == 'POST':
+        form = ResenasForm(request.POST, instance=resena)
+        if form.is_valid():
+            form.save()
+            return redirect('lista_resenas')
+    else:
+        form = ResenasForm(instance=resena)
+
+    return render(request, 'lista_reseñas.html', {'form': form})
+
+
+@login_required
+def borrar_resena(request, resena_id):
+    resena = get_object_or_404(Resena, id=resena_id)
+
+    if request.user == resena.usuario or request.user.rol == 'admin':
+        resena.delete()
+
+    return redirect('lista_resenas')
+
+def lista_resenas(request):
+    resenas = Resena.objects.all().order_by('-fecha_creacion')
+    return render(request, 'lista_reseñas.html', {'resenas': resenas})
