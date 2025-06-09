@@ -13,7 +13,9 @@ from SafaRestaurantapp.views import (
     eliminar_del_carrito, nueva_mesa, editar_mesa, eliminar_mesa, nueva_hamburguesa, editar_hamburguesa,
     eliminar_hamburguesa, perfil_usuario, sumar_carrito, restar_carrito, pedidos_admin, eliminar_pedido_admin,
     pedidos_cliente, editar_nombre_usuario, analisis_mensual, editar_pedido, generar_reporte_mensual, ir_reserva,
-    nueva_reserva, editar_reserva, eliminar_reserva, ir_blog, nuevo_articulo, editar_articulo, eliminar_articulo
+    nueva_reserva, editar_reserva, eliminar_reserva, ir_blog, nuevo_articulo, editar_articulo, eliminar_articulo,
+    dejar_resena, mis_resenas, editar_resena, eliminar_resena, listar_sugerencias, crear_sugerencia, editar_sugerencia,
+    eliminar_sugerencia
 
 )
 
@@ -87,6 +89,14 @@ urlpatterns = [
     path('articulo/nuevo/', nuevo_articulo, name='nuevo_articulo'),
     path('articulo/editar/<int:id>/', editar_articulo, name='editar_articulo'),
     path('articulo/eliminar/<int:id>/', eliminar_articulo, name='eliminar_articulo'),
+    path('resenas/nueva/', dejar_resena, name='dejar_resena'),
+    path('resenas/mis-resenas/', mis_resenas, name='mis_resenas'),
+    path('resenas/editar/<int:resena_id>/', editar_resena, name='editar_resena'),
+    path('resenas/eliminar/<int:resena_id>/', eliminar_resena, name='eliminar_resena'),
+    path('sugerencias/mis_sugerencias/', listar_sugerencias, name='listar_sugerencias'), # Ruta raíz de la app
+    path('sugerencias/nueva/', crear_sugerencia, name='crear_sugerencia'),
+    path('sugerencias/editar/<int:id>/', editar_sugerencia, name='editar_sugerencia'),
+    path('sugerencias/eliminar/<int:id>/', eliminar_sugerencia, name='eliminar_sugerencia'),
     path('carta/', ir_carta, name='ir_carta'),
     path('carta/<int:id>/personalizar/', personalizar_carta, name='personalizar_carta'),
     path('carrito/add/<int:id>/', add_carrito, name='add_carrito'),

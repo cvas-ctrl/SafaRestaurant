@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="container mt-4">
+        <h1 style="color: #28c112" class="mb-4">Mis Reseñas de Platos</h1>
+        <div class="d-flex mb-3">
+            <a href="{% url 'dejar_resena' %}" class="btn btn-primary" style="color: #28c112" >Dejar Nueva Reseña</a>
+        </div>
+
+        {% if resenas %}
+            <div class="row row-cols-1 g-4">
+                {% for resena in resenas %}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title text-primary">{{ resena.plato.nombre }}</h5>
+                                <p class="card-text">
+                                    <strong>Puntuación:</strong> {{ resena.puntuacion }} estrellas
+                                </p>
+                                {% if resena.comentario %}
+                                    <p class="card-text">
+                                        <strong>Comentario:</strong> {{ resena.comentario }}
+                                    </p>
+                                {% endif %}
+                                <p class="card-text">
+                                    <small class="text-muted">Fecha: {{ resena.fecha_creacion|date:"d M Y H:i" }}</small>
+                                </p>
+                                <div class="d-flex gap-2 mt-3">
+                                    <a href="{% url 'editar_resena' resena.id %}" class="btn btn-warning btn-sm">Editar</a>
+                                    <a href="{% url 'eliminar_resena' resena.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="alert alert-info">Aún no has dejado ninguna reseña. ¡Anímate a dejar una!</p>
+        {% endif %}
+    </div>
+{% endblock %}

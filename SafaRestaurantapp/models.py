@@ -212,6 +212,86 @@ class Articulo(models.Model):
     ]
     estado = models.CharField(max_length=10, choices=ESTADO_CHOICES, default='BORRADOR')
 
+
+class Plato(models.Model):
+    nombre = models.CharField(max_length=100, unique=True)
+    descripcion = models.TextField(blank=True, null=True)
+    precio = models.DecimalField(max_digits=5, decimal_places=2)
+    disponible = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.nombre
+
+    class Meta:
+        verbose_name = "Plato"
+        verbose_name_plural = "Platos"
+        ordering = ['nombre']
+
+
+# --- Modelo de Reseña ---
+class Resena(models.Model):
+    cliente = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='resenas_realizadas')
+    plato = models.ForeignKey(Plato, on_delete=models.CASCADE, related_name='resenas_del_plato')
+    PUNTUACION_CHOICES = [
+        (1, '1 Estrella'),
+        (2, '2 Estrellas'),
+        (3, '3 Estrellas'),
+        (4, '4 Estrellas'),
+        (5, '5 Estrellas'),
+    ]
+    puntuacion = models.IntegerField(choices=PUNTUACION_CHOICES)
+    comentario = models.TextField(blank=True, null=True)
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Reseña de {self.cliente.nombre} para {self.plato.nombre} ({self.puntuacion} estrellas)"
+
+    class Meta:
+        verbose_name = "Reseña"
+        verbose_name_plural = "Reseñas"
+        ordering = ['-fecha_creacion']
+        # Opcional: Un usuario solo puede dejar una reseña por plato
+        unique_together = ('cliente', 'plato')
+
+
+class Sugerencia(models.Model):
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
+
+    TIPO_CHOICES = [
+        ('MENU', 'Sobre el Menú'),
+        ('SERVICIO', 'Sobre el Servicio'),
+        ('INSTALACIONES', 'Sobre las Instalaciones'),
+        ('OTROS', 'Otros (Especificar)')
+    ]
+    tipo = models.CharField(max_length=20, choices=TIPO_CHOICES, default='SERVICIO')
+
+    CATEGORIA_CHOICES = [
+        ('MEJORA', 'Sugerencia de Mejora'),
+        ('QUEJA', 'Queja'),
+        ('FELICITACION', 'Felicitación')
+    ]
+    categoria = models.CharField(max_length=20, choices=CATEGORIA_CHOICES, default='MEJORA')
+
+    PRIORIDAD_CHOICES = [
+        ('BAJA', 'Baja'),
+        ('NORMAL', 'Normal'),
+        ('ALTA', 'Alta')
+    ]
+    prioridad = models.CharField(max_length=10, choices=PRIORIDAD_CHOICES, default='NORMAL')
+
+    mensaje = models.TextField()
+    fecha_envio = models.DateTimeField(auto_now_add=True)
+
+    revisada = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Sugerencia de {self.usuario.nombre if self.usuario else 'Anónimo'} ({self.tipo} - {self.categoria})"
+
+    class Meta:
+        verbose_name = "Sugerencia"
+        verbose_name_plural = "Sugerencias"
+        ordering = ['-fecha_envio']
+
 ##################### USUARIOS
 
 class UsuarioManager(BaseUserManager):

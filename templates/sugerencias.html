@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="container mt-4">
+        <h1 style="color: #28c112" class="mb-4">Mis Sugerencias</h1>
+        <div class="d-flex mb-3">
+            <a href="{% url 'crear_sugerencia' %}" class="btn btn-primary">Enviar Nueva Sugerencia</a>
+        </div>
+
+        {% if sugerencias %}
+            <div class="list-group">
+                {% for sug in sugerencias %}
+                    <div class="list-group-item list-group-item-action mb-2 shadow-sm">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1 text-primary">Tipo: {{ sug.get_tipo_display }}</h5>
+                            <small class="text-muted">{{ sug.fecha_envio|date:"d M Y H:i" }}</small>
+                        </div>
+                        <p class="mb-1">{{ sug.mensaje }}</p>
+                        <div class="d-flex gap-2 mt-3">
+                            <a href="{% url 'editar_sugerencia' sug.id %}" class="btn btn-warning btn-sm">Editar</a>
+                            <a href="{% url 'eliminar_sugerencia' sug.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="alert alert-info">No has enviado ninguna sugerencia todavía. ¡Anímate a dejar una!</p>
+        {% endif %}
+    </div>
+{% endblock %}

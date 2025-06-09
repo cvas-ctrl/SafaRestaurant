@@ -99,6 +99,12 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'ir_blog' %}">Mis Articulos</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'mis_resenas' %}">Mis Reseñas</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'listar_sugerencias' %}">Mis Sugerencias</a>
+                        </li>
                     {% endif %}
 
                     {% if user.is_authenticated %}

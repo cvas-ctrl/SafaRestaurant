@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import ValidationError
 
-from .models import Camarero, Usuario, Mesa, Hamburguesa, Reserva, Articulo
+from .models import Camarero, Usuario, Mesa, Hamburguesa, Reserva, Articulo, Resena, Plato, Sugerencia
 
 
 class CamareroForm(forms.ModelForm):
@@ -50,6 +50,75 @@ class ArticuloForm(forms.ModelForm):
             raise ValidationError("Debe contener almenos 5 caracteres.")
 
         return titulo
+
+
+class ResenaForm(forms.ModelForm):
+    # Por defecto, ModelChoiceField se renderiza como un <select> (combo box)
+    # Si quisieras filtrar los platos, lo harías en el __init__ de la vista.
+    # Plato.objects.all() hará que aparezcan todos los platos disponibles.
+    plato = forms.ModelChoiceField(queryset=Plato.objects.filter(disponible=True).order_by('nombre'),
+                                   empty_label="Selecciona un plato",
+                                   label="Plato a puntuar")
+    # La puntuación se convierte automáticamente en un select por IntegerField con choices
+    puntuacion = forms.ChoiceField(choices=Resena.PUNTUACION_CHOICES, label="Tu Puntuación (1-5 Estrellas)")
+
+    class Meta:
+        model = Resena
+        fields = ['plato', 'puntuacion', 'comentario']
+        # No incluyas 'cliente' aquí, lo asigna automáticamente la vista.
+        # No incluyas 'fecha_creacion', es auto_now_add.
+        widgets = {
+            'comentario': forms.Textarea(
+                attrs={'rows': 4, 'placeholder': 'Escribe aquí tu comentario sobre el plato...'}),
+        }
+
+    # Validación a nivel de formulario (clean) para reglas adicionales
+    def clean(self):
+        cleaned_data = super().clean()
+
+        # Aquí puedes añadir validaciones adicionales si es necesario.
+        # Por ejemplo, si el comentario es obligatorio para puntuaciones bajas.
+        puntuacion = cleaned_data.get('puntuacion')
+        comentario = cleaned_data.get('comentario')
+
+        if puntuacion and int(puntuacion) < 3 and not comentario:
+            self.add_error('comentario',
+                           "Para puntuaciones bajas (menos de 3 estrellas), el comentario es obligatorio.")
+
+        return cleaned_data
+
+
+class SugerenciaForm(forms.ModelForm):
+    # Los ChoiceField se renderizan automáticamente como combo boxes (<select>)
+    tipo = forms.ChoiceField(choices=Sugerencia.TIPO_CHOICES, label="Tipo de Sugerencia" )
+    categoria = forms.ChoiceField(choices=Sugerencia.CATEGORIA_CHOICES, label="Categoría")
+    prioridad = forms.ChoiceField(choices=Sugerencia.PRIORIDAD_CHOICES, label="Prioridad")
+
+    class Meta:
+        model = Sugerencia
+        fields = ['tipo', 'categoria', 'prioridad', 'mensaje']
+        widgets = {
+            'mensaje': forms.Textarea(attrs={'rows': 5, 'placeholder': 'Describe tu sugerencia en detalle...'}),
+        }
+
+    def clean_mensaje(self):
+        mensaje = self.cleaned_data.get('mensaje')
+        if not mensaje:
+            raise forms.ValidationError("El mensaje de la sugerencia no puede estar vacío.")
+        if len(mensaje) < 20:
+            raise forms.ValidationError("El mensaje debe tener al menos 20 caracteres.")
+        return mensaje
+
+    def clean(self):
+        cleaned_data = super().clean()
+        tipo = cleaned_data.get('tipo')
+        mensaje = cleaned_data.get('mensaje')
+
+        # Ejemplo de validación cruzada: si el tipo es 'OTROS', el mensaje debe especificar
+        if tipo == 'OTROS' and mensaje and 'especificar' not in mensaje.lower():
+            self.add_error('mensaje', "Si el tipo es 'Otros', por favor, especifica más en tu mensaje.")
+
+        return cleaned_data
 
 class RegistroForm(forms.ModelForm):
     class Meta:

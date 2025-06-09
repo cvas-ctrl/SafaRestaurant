@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.exceptions import PermissionDenied
-from django.db import connection
+from django.db import connection, IntegrityError
 from django.db.models import PositiveIntegerField
 from django.forms import IntegerField
 from django.shortcuts import render, redirect, get_object_or_404
@@ -607,6 +607,8 @@ def eliminar_reserva(request, id):
 #         return redirect('ir_reserva')
 #     return render(request, 'reservas.html', {'reserva': reserva})
 
+# --- -------------------- ---
+
 @user_passes_test(es_cliente)
 def ir_blog(request):
     listado_articulos = Articulo.objects.filter(autor=request.user)
@@ -650,6 +652,129 @@ def eliminar_articulo(request, id):
    articulo = get_object_or_404(Articulo, id=id)
    articulo.delete()
    return redirect('ir_blog')
+
+# --- -------------------- ---
+
+@user_passes_test(es_cliente)
+@login_required
+def dejar_resena(request):
+    if request.method == 'POST':
+        form = ResenaForm(request.POST)
+        if form.is_valid():
+            resena = form.save(commit=False)
+            resena.cliente = request.user
+            try:
+                resena.save()
+                messages.success(request, '¡Gracias por dejar tu reseña!')
+                return redirect('mis_resenas')  # Redirige a una vista para ver las reseñas
+            except IntegrityError:
+                messages.error(request,
+                               'Ya has dejado una reseña para este plato. Puedes editarla en la sección "Mis Reseñas".')
+                return render(request, 'resena_form.html', {'form': form})
+        else:
+            messages.error(request, 'Hubo un error al enviar tu reseña. Por favor, revisa los datos.')
+    else:
+        form = ResenaForm()  # Formulario vacío para GET
+
+    return render(request, 'resena_form.html', {'form': form})
+
+
+@user_passes_test(es_cliente)
+@login_required
+def mis_resenas(request):
+    resenas = Resena.objects.filter(cliente=request.user).order_by('-fecha_creacion')
+    return render(request, 'mis_resenas.html', {'resenas': resenas})
+
+
+@user_passes_test(es_cliente)
+@login_required
+def editar_resena(request, resena_id):
+    resena = get_object_or_404(Resena, id=resena_id, cliente=request.user)
+
+    if request.method == 'POST':
+        form = ResenaForm(request.POST, instance=resena)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Reseña actualizada con éxito.')
+            return redirect('mis_resenas')
+        else:
+            messages.error(request, 'Hubo un error al actualizar la reseña. Por favor, revisa los datos.')
+    else:
+        form = ResenaForm(instance=resena)
+    return render(request, 'resena_form.html', {'form': form})
+
+
+@user_passes_test(es_cliente)
+@login_required
+def eliminar_resena(request, id):
+    resena = get_object_or_404(Resena, id=id)
+    resena.delete()
+    return redirect('mis_resenas')
+
+# --- -------------------- ---
+
+@login_required
+def listar_sugerencias(request):
+    # Solo se listan las sugerencias del usuario logueado
+    sugerencias = Sugerencia.objects.filter(usuario=request.user).order_by('-fecha_envio')
+    return render(request, 'sugerencias.html', {'sugerencias': sugerencias})
+
+@user_passes_test(es_cliente)
+@login_required
+def crear_sugerencia(request):
+    if request.method == 'POST':
+        form = SugerenciaForm(request.POST)
+        if form.is_valid():
+            sugerencia = form.save(commit=False)
+            sugerencia.usuario = request.user  # Asigna el usuario logueado
+
+            # Opcional: Si implementaste unique_together en el modelo para usuario y tipo,
+            # y quieres manejarlo aquí con un mensaje amigable:
+            # try:
+            #     sugerencia.save()
+            #     messages.success(request, '¡Gracias! Tu sugerencia ha sido enviada con éxito.')
+            #     return redirect('listar_sugerencias')
+            # except IntegrityError: # Asegúrate de importar IntegrityError de django.db.utils
+            #     messages.error(request, f"Ya has enviado una sugerencia del tipo '{sugerencia.get_tipo_display()}'. Por favor, edítala si deseas modificarla.")
+            #     return render(request, 'sugerencias/sugerencia_form.html', {'form': form})
+
+            sugerencia.save()  # Guarda la sugerencia en la DB
+            messages.success(request, '¡Gracias! Tu sugerencia ha sido enviada con éxito.')
+            return redirect('listar_sugerencias')
+        else:
+            messages.error(request, 'Hubo un error al enviar tu sugerencia. Por favor, revisa los datos.')
+    else:
+        form = SugerenciaForm()  # Formulario vacío para GET
+
+    return render(request, 'sugerencia_form.html', {'form': form})
+
+
+@user_passes_test(es_cliente)
+@login_required
+def editar_sugerencia(request, id):
+    sugerencia = get_object_or_404(Sugerencia, id=id, usuario=request.user)
+
+    if request.method == 'POST':
+        form = SugerenciaForm(request.POST, instance=sugerencia)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Sugerencia actualizada con éxito.')
+            return redirect('listar_sugerencias')
+        else:
+            messages.error(request, 'Hubo un error al actualizar la sugerencia. Por favor, revisa los datos.')
+    else:
+        form = SugerenciaForm(instance=sugerencia)
+
+    return render(request, 'sugerencia_form.html', {'form': form})
+
+@user_passes_test(es_cliente)
+@login_required
+def eliminar_sugerencia(request, id):
+    sugerencia = get_object_or_404(Sugerencia, id=id)
+    sugerencia.delete()
+    return redirect('listar_sugerencias')
+
+# --- -------------------- ---
 
 @user_passes_test(es_admin_o_cliente)
 def ir_carta(request):
