@@ -1,5 +1,6 @@
 from django.contrib.auth.base_user import BaseUserManager, AbstractBaseUser
 from django.contrib.auth.models import User, PermissionsMixin
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
@@ -8,9 +9,79 @@ from django.utils import timezone
 from SafaRestaurant import settings
 
 
-# Create your models here.
+####################RESEÑAS####################
+class Resena(models.Model):
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    puntuacion = models.IntegerField(
+        validators=[
+            MinValueValidator(1, message="La puntuación mínima es 1."),
+            MaxValueValidator(5, message="La puntuación máxima es 5.")
+        ]
+    )
+    comentario = models.TextField()
+    fecha = models.DateTimeField(auto_now_add=True)
 
-##################### CAMARERO
+    def __str__(self):
+        return f"{self.usuario.email} - {self.puntuacion}"
+
+####################RESEÑAS2####################
+class Resena2(models.Model):
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    puntuacion = models.IntegerField(
+        validators=[
+            MinValueValidator(1, message="La puntuación mínima es 1."),
+            MaxValueValidator(5, message="La puntuación máxima es 5.")
+        ]
+    )
+    comentario = models.TextField()
+    fecha = models.DateTimeField(auto_now_add=True)
+    ESTADO_CHOICES = [
+        ('ACTIVA', 'Activa'),
+        ('CANCELADA', 'Cancelada'),
+    ]
+    estado = models.CharField(max_length=10, choices=ESTADO_CHOICES, default='ACTIVA')
+    def __str__(self):
+        return f"{self.usuario.email} - {self.puntuacion}"
+
+####################RESERVAS####################
+class Reserva(models.Model):
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    fecha_reserva = models.DateField()
+    hora_reserva = models.TimeField()
+    numero_personas = models.IntegerField(
+        validators=[
+            MinValueValidator(1, message="La puntuación mínima es 1."),
+            MaxValueValidator(20, message="La puntuación máxima es 20.")
+        ]
+    )
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    ESTADO_CHOICES = [
+        ('ACTIVA', 'Activa'),
+        ('CANCELADA', 'Cancelada'),
+    ]
+    estado = models.CharField(max_length=10, choices=ESTADO_CHOICES, default='ACTIVA')
+    def __str__(self):
+        return f"{self.usuario.email} - {self.fecha_reserva}"
+
+##################### PRACTICA MEXCLA DE AMBOS ######################
+class Mezcla(models.Model):
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    calificacion = models.IntegerField(
+        validators=[
+            MinValueValidator(1, message="La puntunacion minima es 1"),
+            MaxValueValidator(10, message="La puntuacion maxima es 10")
+        ]
+    )
+    texto = models.TextField()
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    ESTADO_CHOICES = [
+        ('ACTIVA', 'Activa'),
+        ('CANCELADA', 'Cancelada'),
+    ]
+    def __str__(self):
+        return f"{self.usuario.email} - {self.calificacion}"
+
+##################### CAMARERO ######################
 
 class Camarero(models.Model):
     nombre = models.CharField(max_length=250)
@@ -257,3 +328,4 @@ class ReporteMensualVentas(models.Model):
 
     def __str__(self):
         return f"{self.mes}/{self.anio} - Total: {self.total_ventas}€"
+

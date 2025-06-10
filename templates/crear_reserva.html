@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <style>
+    body {
+      background-color: #1a1a1a;
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .form-container {
+      max-width: 500px;
+      margin: 40px auto;
+      background-color:white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    }
+
+    .form-container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    input[type="number"],
+    textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: none;
+      border-radius: 5px;
+      background-color: #444;
+      color: white;
+    }
+
+    .errorlist {
+      color: #ff4d4d;
+      margin-top: 5px;
+    }
+
+    button, a {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover, a:hover {
+      background-color: #45a049;
+    }
+
+    a {
+      background-color: #777;
+      margin-left: 10px;
+    }
+
+    a:hover {
+      background-color: #999;
+    }
+  </style>
+
+  <div class="form-container">
+    <h2>{% if form.instance.pk %}Editar Reserva{% else %}Nueva Reserva{% endif %}</h2>
+
+    <form method="post">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+
+      <label for="id_fecha_reserva">Fecha Reserva:</label>
+      {{ form.fecha_reserva }}
+
+      <label for="id_hora_reserva">Hora Reserva:</label>
+      {{ form.hora_reserva }}
+        
+      <label for="id_numero_personas">Numero de Personas (Min 1/Max 20):</label>
+      {{ form.numero_personas }}
+        
+      <label for="id_estado">Estado de la reserva:</label>
+      {{ form.estado }}
+    
+      <button type="submit">{% if form.instance.pk %}Actualizar{% else %}Publicar{% endif %}</button>
+      <a href="{% url 'generar-reservas' %}">Cancelar</a>
+    </form>
+  </div>
+{% endblock %}

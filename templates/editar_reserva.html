@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+
+{% block extra_css %}
+<!-- Flatpickr CSS para calendario y hora -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+{% endblock %}
+
+{% block content %}
+<style>
+  .form-container {
+    max-width: 500px;
+    margin: 40px auto;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    color: #333;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .form-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #28c112;
+  }
+
+  label {
+    display: block;
+    margin-top: 15px;
+    font-weight: bold;
+  }
+
+  input[type="number"],
+  input[type="text"],
+  input[type="time"],
+  input[type="date"],
+  textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    color: #333;
+  }
+
+  .errorlist {
+    color: #e74c3c;
+    margin-top: 5px;
+    list-style: none;
+    padding-left: 0;
+  }
+
+  button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #28c112;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s ease;
+  }
+
+  button:hover {
+    background-color: #1e7a0f;
+  }
+
+  a.cancel-link {
+    display: block;
+    text-align: center;
+    margin-top: 15px;
+    color: #777;
+    text-decoration: none;
+  }
+
+  a.cancel-link:hover {
+    text-decoration: underline;
+    color: #333;
+  }
+</style>
+
+<div class="form-container">
+  <h2>Editar Reserva</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <label for="id_fecha_reserva">Fecha de la reserva:</label>
+    {{ form.fecha_reserva }}
+    {{ form.fecha_reserva.errors }}
+
+    <label for="id_hora_reserva">Hora de la reserva:</label>
+    {{ form.hora_reserva }}
+    {{ form.hora_reserva.errors }}
+
+    <label for="id_numero_personas">Número de personas:</label>
+    {{ form.numero_personas }}
+    {{ form.numero_personas.errors }}
+    
+      <label for="id_numero_personas">Estado de reserva</label>
+    {{ form.estado }}
+    {{ form.estado.errors }}
+      
+
+    <button type="submit">Actualizar</button>
+  </form>
+  <a href="{% url 'generar-reservas' %}" class="cancel-link">Cancelar</a>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Flatpickr JS -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+  flatpickr("#id_fecha_reserva", {
+    dateFormat: "Y-m-d",
+    minDate: "today",
+    altInput: true,
+    altFormat: "F j, Y"
+  });
+
+  flatpickr("#id_hora_reserva", {
+    enableTime: true,
+    noCalendar: true,
+    dateFormat: "H:i",
+    time_24hr: true
+  });
+</script>
+{% endblock %}

@@ -1,5 +1,7 @@
 from django.contrib import admin
 from django.urls import path
+
+from SafaRestaurantapp import views
 from SafaRestaurantapp.views import (
     go_home_page, go_about_us, go_rol_page,
     go_cliente_view, go_camarero_view, go_cocinero_view, go_adminn_view,
@@ -12,7 +14,9 @@ from SafaRestaurantapp.views import (
     marcar_pedido_preparado, ir_carta, personalizar_carta, add_carrito, ver_carrito, comprar, confirmacion,
     eliminar_del_carrito, nueva_mesa, editar_mesa, eliminar_mesa, nueva_hamburguesa, editar_hamburguesa,
     eliminar_hamburguesa, perfil_usuario, sumar_carrito, restar_carrito, pedidos_admin, eliminar_pedido_admin,
-    pedidos_cliente, editar_nombre_usuario, analisis_mensual, editar_pedido, generar_reporte_mensual
+    pedidos_cliente, editar_nombre_usuario, analisis_mensual, editar_pedido, generar_reporte_mensual, salida_pedro,
+    generar_resenas, crear_resena, eliminar__resena, generar_reservas, crear_reserva, eliminar__reserva, generar_mezcla,
+    crear_mezcla, eliminar__mezcla, editar_mezcla, generar_resena2, crear_resenas2, eliminar__resena2
 
 )
 
@@ -27,6 +31,7 @@ urlpatterns = [
     path('editar/login/', editar_nombre_usuario, name='editar_nombre_usuario'),
     path('logout/', go_logout, name='logout'),
     path('perfil/', perfil_usuario, name='perfil'),
+    path('salida', salida_pedro, name='salida'),
 
     # Roles
     path('cliente/', go_cliente_view, name='cliente'),
@@ -101,6 +106,30 @@ urlpatterns = [
     path('admin/analisis_mensual/',analisis_mensual, name='analisis_mensual'),
 
     path('generar_reporte/', generar_reporte_mensual, name='generar_reporte'),
+    
+    ########################Resenas###########################
+    path('go_resenas/', generar_resenas, name='generar-resenas'),
+    path('crear_resena', crear_resena, name='crear_resena'),
+    path('restaurant/eliminar-resena/<int:pk>/', eliminar__resena, name='eliminar_resena'),
+    path('editar_resena/<int:pk>/', views.editar_resena, name='editar_resena'),
+
+    ########################Reservas###########################
+    path('go_reservas/', generar_reservas, name='generar-reservas'),
+    path('restaurant/crear_reserva', crear_reserva, name='crear_reserva'),
+    path('restaurant/eliminar-reserva/<int:pk>/', eliminar__reserva, name='eliminar_reserva'),
+    path('editar_reserva/<int:pk>/', views.editar_reserva, name='editar_reserva'),
+
+    ######################## Mezcla ###########################
+    path('go_mezcla/', generar_mezcla, name='generar-mezclas'),
+    path('restaurant/crear_mezcla', crear_mezcla, name='crear_mezcla'),
+    path('restaurant/eliminar-mezcla/<int:pk>/', eliminar__mezcla, name='eliminar_mezcla'),
+    path('editar_mezcla/<int:pk>/', views.editar_mezcla, name='editar_mezcla'),
+
+######################## Reseñas 2 ###########################
+    path('go_resenas2/', generar_resena2, name='generar-resenas2'),
+    path('restaurant/crear_resena2', crear_resenas2, name='crear_resenas2'),
+    path('restaurant/eliminar-resena2/<int:pk>/', eliminar__resena2, name='eliminar_resena2'),
+    path('editar_resena2/<int:pk>/', views.editar_resena2, name='editar_resena2'),
 
 ]
 

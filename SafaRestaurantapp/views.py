@@ -1,5 +1,7 @@
 from datetime import time, datetime
 from decimal import Decimal
+from urllib import request
+
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -7,11 +9,12 @@ from django.core.exceptions import PermissionDenied
 from django.db import connection
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
-from reportlab.pdfgen import canvas
+from django.views.decorators.http import require_POST
+
 from SafaRestaurantapp.forms import *
 from SafaRestaurantapp.models import Camarero, Hamburguesa, Ingrediente, Cocinero, TareaCocina, TipoCocinero, \
     DetallePedido, Pedido, IngredienteDetalle, Mesa, Cliente, Cuenta, EstadoProducto, EstadoPedido, EstadoCuenta, \
-    ReporteMensualVentas
+    ReporteMensualVentas, Reserva
 
 
 # ============================ PÁGINAS ESTÁTICAS ============================
@@ -71,6 +74,9 @@ def editar_nombre_usuario(request):
 def go_logout(request):
     logout(request)
     return redirect('login_page')
+
+def salida_pedro(request):
+    return redirect('home_page')
 
 # ============================ SEGURIDAD DE GESTIONES ============================
 @login_required
@@ -752,3 +758,190 @@ def generar_reporte_mensual(request):
     with connection.cursor() as cursor:
         cursor.callproc('GENERAR_REPORTE_MENSUAL')
     return redirect('analisis_mensual')
+
+
+##############################RESENAS############################
+@login_required
+def generar_resenas(request):
+    resenas = Resena.objects.filter(usuario=request.user)
+    return render(request, 'inicio_resenas.html', {'resenas': resenas})
+
+@login_required
+def crear_resena(request):
+    if request.method == 'POST':
+        form = ResenaForm(request.POST)
+        if form.is_valid():
+            resena = form.save(commit=False)
+            resena.usuario = request.user
+            resena.save()
+            messages.success(request, "Reseña creada correctamente.")
+            return redirect('generar-resenas')
+    else:
+        form = ResenaForm()
+    return render(request, 'crear_resena.html', {'form': form})
+
+@require_POST                  # obliga a que solo se acepte POST
+def eliminar__resena(request, pk):
+    """
+    Borra la reseña indicada y redirige a la lista.
+    No muestra confirmación.
+    """
+    resena = get_object_or_404(Resena, pk=pk)
+    resena.delete()
+    messages.success(request, "Reseña eliminada correctamente.")
+    return redirect('generar-resenas')
+
+
+
+
+@login_required
+def editar_resena(request, pk):
+    resena = get_object_or_404(Resena, pk=pk, usuario=request.user)
+
+    if request.method == 'POST':
+        form = ResenaForm(request.POST, instance=resena)
+        if form.is_valid():
+            form.save()
+            return redirect('generar-resenas')  # o la vista que lista las reseñas del usuario
+    else:
+        form = ResenaForm(instance=resena)
+
+    return render(request, 'editar_resena.html', {'form': form})
+
+
+#######################RESERVAS###################################
+@login_required
+def generar_reservas(request):
+    reservas = Reserva.objects.filter(usuario=request.user)   # <- SIN .values()
+    return render(request, 'inicio_reservas.html', {
+        'reservas': reservas,      # usa plural para que quede claro
+    })
+def crear_reserva(request):
+    if request.method == 'POST':
+        form = ReservaForm(request.POST)
+        if form.is_valid():
+            reserva = form.save(commit=False)
+            reserva.usuario = request.user  # Asigna usuario actual
+            reserva.save()
+            return redirect('generar-reservas')  # O a donde quieras ir después
+    else:
+        form = ReservaForm()
+    return render(request, 'crear_reserva.html', {'form': form})
+
+@require_POST                  # obliga a que solo se acepte POST
+def eliminar__reserva(request, pk):
+    """
+    Borra la reseña indicada y redirige a la lista.
+    No muestra confirmación.
+    """
+    reserva = get_object_or_404(Reserva, pk=pk)
+    reserva.delete()
+    messages.success(request, "Reserva eliminada correctamente.")
+    return redirect('generar-reservas')
+
+@login_required
+def editar_reserva(request, pk):
+    reserva = get_object_or_404(Reserva, pk=pk, usuario=request.user)
+
+    if request.method == 'POST':
+        form = ReservaForm(request.POST, instance=reserva)
+        if form.is_valid():
+            form.save()
+            return redirect('generar-reservas')  # nombre de la ruta que lista las reservas
+    else:
+        form = ReservaForm(instance=reserva)
+
+    return render(request, 'editar_reserva.html', {'form': form})
+
+######################## MEZCLA ##########################
+def generar_mezcla(request):
+    mezclas = Mezcla.objects.filter(usuario=request.user)   # <- SIN .values()
+    return render(request, 'inicio_mezcla.html', {
+        'mezclas': mezclas,      # usa plural para que quede claro
+    })
+
+def crear_mezcla(request):
+    if request.method == 'POST':
+        form = MezclaForm(request.POST)
+        if form.is_valid():
+            mezcla = form.save(commit=False)
+            mezcla.usuario = request.user  # Asigna usuario actual
+            mezcla.save()
+            return redirect('generar-mezclas')  # O a donde quieras ir después
+    else:
+        form = MezclaForm()
+    return render(request, 'crear_mezcla.html', {'form': form})
+
+@login_required
+def editar_mezcla(request, pk):
+    mezcla = get_object_or_404(Mezcla, pk=pk, usuario=request.user)
+
+    if request.method == 'POST':
+        form = MezclaForm(request.POST, instance=mezcla)
+        if form.is_valid():
+            form.save()
+            return redirect('generar-mezclas')  # nombre de la ruta que lista las reservas
+    else:
+        form = MezclaForm(instance=mezcla)
+
+    return render(request, 'editar_mezcla.html', {'form': form})
+
+@require_POST                  # obliga a que solo se acepte POST
+def eliminar__mezcla(request, pk):
+    """
+    Borra la reseña indicada y redirige a la lista.
+    No muestra confirmación.
+    """
+    mezcla = get_object_or_404(Mezcla, pk=pk)
+    mezcla.delete()
+    messages.success(request, "Mezcla eliminada correctamente.")
+    return redirect('generar-mezclas')
+
+
+##################resenas2#################
+def generar_resena2(request):
+    pedros = Resena2.objects.filter(usuario=request.user)   # <- SIN .values()
+    return render(request, 'inicio_resenas2.html', {
+        'pedros': pedros,      # usa plural para que quede claro
+    })
+
+def crear_resenas2(request):
+    if request.method == 'POST':
+        form = Resenas2Form(request.POST)
+        if form.is_valid():
+            pedro = form.save(commit=False)
+            pedro.usuario = request.user  # Asigna usuario actual
+            pedro.save()
+            return redirect('generar-resenas2')  # O a donde quieras ir después
+    else:
+        form = Resenas2Form()
+    return render(request, 'crear_resena2.html', {'form': form})
+
+@login_required
+def editar_resena2(request, pk):
+    pedro = get_object_or_404(Resena2, pk=pk, usuario=request.user)
+
+    if request.method == 'POST':
+        form = Resenas2Form(request.POST, instance=pedro)
+        if form.is_valid():
+            form.save()
+            return redirect('generar-resenas2')  # nombre de la ruta que lista las reservas
+    else:
+        form = Resenas2Form(instance=pedro)
+
+    return render(request, 'editar_resena2.html', {'form': form})
+
+@require_POST                  # obliga a que solo se acepte POST
+def eliminar__resena2(request, pk):
+    """
+    Borra la reseña indicada y redirige a la lista.
+    No muestra confirmación.
+    """
+    pedro = get_object_or_404(Resena2, pk=pk)
+    pedro.delete()
+    messages.success(request, "Resena 2 eliminada correctamente.")
+    return redirect('generar-resenas2')
+
+
+
+

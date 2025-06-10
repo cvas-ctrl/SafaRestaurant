@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <style>
+    .form-container {
+      max-width: 500px;
+      margin: 40px auto;
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+      color: #333;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .form-container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #28c112;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    input[type="number"],
+    textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 1rem;
+      color: #333;
+    }
+
+    .errorlist {
+      color: #e74c3c;
+      margin-top: 5px;
+      list-style: none;
+      padding-left: 0;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #28c112;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #1e7a0f;
+    }
+
+    a.cancel-link {
+      display: block;
+      text-align: center;
+      margin-top: 15px;
+      color: #777;
+      text-decoration: none;
+    }
+
+    a.cancel-link:hover {
+      text-decoration: underline;
+      color: #333;
+    }
+  </style>
+
+  <div class="form-container">
+    <h2>Editar Reseña</h2>
+    <form method="post">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+
+      <label for="id_puntuacion">Puntuación (1-5):</label>
+      {{ form.puntuacion }}
+      {{ form.puntuacion.errors }}
+
+      <label for="id_comentario">Comentario:</label>
+      {{ form.comentario }}
+      {{ form.comentario.errors }}
+
+      <button type="submit">Actualizar</button>
+    </form>
+    <a href="{% url 'generar-resenas' %}" class="cancel-link">Cancelar</a>
+  </div>
+{% endblock %}
