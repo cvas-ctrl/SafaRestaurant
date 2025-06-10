@@ -16,7 +16,7 @@ from SafaRestaurantapp.views import (
     eliminar_hamburguesa, perfil_usuario, sumar_carrito, restar_carrito, pedidos_admin, eliminar_pedido_admin,
     pedidos_cliente, editar_nombre_usuario, analisis_mensual, editar_pedido, generar_reporte_mensual, salida_pedro,
     generar_resenas, crear_resena, eliminar__resena, generar_reservas, crear_reserva, eliminar__reserva, generar_mezcla,
-    crear_mezcla, eliminar__mezcla,editar_mezcla
+    crear_mezcla, eliminar__mezcla, editar_mezcla, generar_resena2, crear_resenas2, eliminar__resena2
 
 )
 
@@ -125,6 +125,11 @@ urlpatterns = [
     path('restaurant/eliminar-mezcla/<int:pk>/', eliminar__mezcla, name='eliminar_mezcla'),
     path('editar_mezcla/<int:pk>/', views.editar_mezcla, name='editar_mezcla'),
 
+######################## Reseñas 2 ###########################
+    path('go_resenas2/', generar_resena2, name='generar-resenas2'),
+    path('restaurant/crear_resena2', crear_resenas2, name='crear_resenas2'),
+    path('restaurant/eliminar-resena2/<int:pk>/', eliminar__resena2, name='eliminar_resena2'),
+    path('editar_resena2/<int:pk>/', views.editar_resena2, name='editar_resena2'),
 
 ]
 

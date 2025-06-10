@@ -761,6 +761,10 @@ def generar_reporte_mensual(request):
 
 
 ##############################RESENAS############################
+@login_required
+def generar_resenas(request):
+    resenas = Resena.objects.filter(usuario=request.user)
+    return render(request, 'inicio_resenas.html', {'resenas': resenas})
 
 @login_required
 def crear_resena(request):
@@ -788,10 +792,7 @@ def eliminar__resena(request, pk):
     return redirect('generar-resenas')
 
 
-@login_required
-def generar_resenas(request):
-    resenas = Resena.objects.filter(usuario=request.user)
-    return render(request, 'inicio_resenas.html', {'resenas': resenas})
+
 
 @login_required
 def editar_resena(request, pk):
@@ -895,6 +896,51 @@ def eliminar__mezcla(request, pk):
     mezcla.delete()
     messages.success(request, "Mezcla eliminada correctamente.")
     return redirect('generar-mezclas')
+
+
+##################resenas2#################
+def generar_resena2(request):
+    pedros = Resena2.objects.filter(usuario=request.user)   # <- SIN .values()
+    return render(request, 'inicio_resenas2.html', {
+        'pedros': pedros,      # usa plural para que quede claro
+    })
+
+def crear_resenas2(request):
+    if request.method == 'POST':
+        form = Resenas2Form(request.POST)
+        if form.is_valid():
+            pedro = form.save(commit=False)
+            pedro.usuario = request.user  # Asigna usuario actual
+            pedro.save()
+            return redirect('generar-resenas2')  # O a donde quieras ir después
+    else:
+        form = Resenas2Form()
+    return render(request, 'crear_resena2.html', {'form': form})
+
+@login_required
+def editar_resena2(request, pk):
+    pedro = get_object_or_404(Resena2, pk=pk, usuario=request.user)
+
+    if request.method == 'POST':
+        form = Resenas2Form(request.POST, instance=pedro)
+        if form.is_valid():
+            form.save()
+            return redirect('generar-resenas2')  # nombre de la ruta que lista las reservas
+    else:
+        form = Resenas2Form(instance=pedro)
+
+    return render(request, 'editar_resena2.html', {'form': form})
+
+@require_POST                  # obliga a que solo se acepte POST
+def eliminar__resena2(request, pk):
+    """
+    Borra la reseña indicada y redirige a la lista.
+    No muestra confirmación.
+    """
+    pedro = get_object_or_404(Resena2, pk=pk)
+    pedro.delete()
+    messages.success(request, "Resena 2 eliminada correctamente.")
+    return redirect('generar-resenas2')
 
 
 

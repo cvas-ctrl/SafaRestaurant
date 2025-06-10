@@ -24,6 +24,25 @@ class Resena(models.Model):
     def __str__(self):
         return f"{self.usuario.email} - {self.puntuacion}"
 
+####################RESEÑAS2####################
+class Resena2(models.Model):
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    puntuacion = models.IntegerField(
+        validators=[
+            MinValueValidator(1, message="La puntuación mínima es 1."),
+            MaxValueValidator(5, message="La puntuación máxima es 5.")
+        ]
+    )
+    comentario = models.TextField()
+    fecha = models.DateTimeField(auto_now_add=True)
+    ESTADO_CHOICES = [
+        ('ACTIVA', 'Activa'),
+        ('CANCELADA', 'Cancelada'),
+    ]
+    estado = models.CharField(max_length=10, choices=ESTADO_CHOICES, default='ACTIVA')
+    def __str__(self):
+        return f"{self.usuario.email} - {self.puntuacion}"
+
 ####################RESERVAS####################
 class Reserva(models.Model):
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -55,6 +74,10 @@ class Mezcla(models.Model):
     )
     texto = models.TextField()
     fecha_creacion = models.DateTimeField(auto_now_add=True)
+    ESTADO_CHOICES = [
+        ('ACTIVA', 'Activa'),
+        ('CANCELADA', 'Cancelada'),
+    ]
     def __str__(self):
         return f"{self.usuario.email} - {self.calificacion}"
 
